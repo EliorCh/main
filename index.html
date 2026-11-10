@@ -63,6 +63,13 @@
 
   section.sem{margin-block-start:44px}
   .sem-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-block-end:2px solid var(--border); padding-block-end:10px; margin-block-end:20px}
+  .sem-head{inline-size:100%; background:none; border:0; border-block-end:2px solid var(--border); color:inherit; font:inherit; text-align:start; cursor:pointer}
+  .sem-head:hover h2{color:var(--ink-soft)}
+  .chev{margin-inline-start:auto; font-size:22px; color:var(--muted); transition:transform .2s ease}
+  section.sem.collapsed .chev{transform:rotate(90deg)}
+  section.sem.collapsed .grid{display:none}
+  section.sem.collapsed .sem-head{margin-block-end:0}
+  .sem-tools{display:flex; gap:8px}
   .sem-head h2{font-family:"Frank Ruhl Libre",serif; font-weight:700; font-size:30px; margin:0}
   .sem-head .meta{color:var(--muted); font-size:15px}
   .badge-now{background:var(--teal-bg); color:var(--teal-text); font-weight:700; font-size:13px; border-radius:999px; padding:3px 10px}
@@ -132,16 +139,17 @@
     </div>
     <div class="legend">
       <span><i class="dot fill"></i> סיכום</span>
-      <span><i class="dot"></i> תרגול / מאגר שאלות</span>
+      <span><i class="dot"></i> תרגול</span>
     </div>
   </header>
 
   <!-- ================= סמסטר ב׳ שנה ב׳ ================= -->
   <section class="sem" id="sem-2b">
-    <div class="sem-head">
+    <button class="sem-head" type="button" aria-expanded="true">
       <h2>סמסטר ב׳ · שנה ב׳</h2>
       <span class="meta">4 קורסים</span>
-    </div>
+      <span class="chev" aria-hidden="true">▾</span>
+    </button>
     <div class="grid">
 
       <article class="card c-sky" data-k="תקשורת מחשבים 141418 בינסקי מור פרי רשתות">
@@ -150,7 +158,7 @@
         <p class="desc">שכבות ה־OSI מהאפליקציה ועד הקישור, עם מילון מונחים, חיפוש ופתרון מלא של מועד א׳.</p>
         <div class="links">
           <a class="btn sum" href="https://eliorch.github.io/comsum/">📘 סיכום</a>
-          <a class="btn que" href="https://eliorch.github.io/comque/">📝 תרגול <small>116 שאלות</small></a>
+          <a class="btn que" href="https://eliorch.github.io/comque/">📝 תרגול</a>
         </div>
       </article>
 
@@ -160,7 +168,7 @@
         <p class="desc">NumPy ו־Pandas, סטטיסטיקה, רגרסיה, סיווג, רשתות נוירונים ואשכולות, מבחן לדוגמה, וגם דף נוסחאות וטבלת Z.</p>
         <div class="links">
           <a class="btn sum" href="https://eliorch.github.io/mlsum/">📘 סיכום</a>
-          <a class="btn que" href="https://eliorch.github.io/mlque/">📝 תרגול <small>147 אמריקאיות + 38 פתוחות</small></a>
+          <a class="btn que" href="https://eliorch.github.io/mlque/">📝 תרגול</a>
         </div>
       </article>
 
@@ -187,11 +195,12 @@
 
   <!-- ================= סמסטר א׳ שנה ג׳ ================= -->
   <section class="sem" id="sem-3a">
-    <div class="sem-head">
+    <button class="sem-head" type="button" aria-expanded="true">
       <h2>סמסטר א׳ · שנה ג׳</h2>
       <span class="badge-now">הסמסטר הנוכחי</span>
       <span class="meta">4 קורסים</span>
-    </div>
+      <span class="chev" aria-hidden="true">▾</span>
+    </button>
     <div class="grid">
 
       <article class="card c-teal" data-k="מערכות הפעלה os סולמי רדליך מאדי תהליכים זיכרון וירטואלי">
@@ -245,6 +254,24 @@
   const q = document.getElementById('q');
   const cards = [...document.querySelectorAll('.card')];
   const sems = [...document.querySelectorAll('section.sem')];
+
+  const KEY='semCollapsed';
+  let saved={}; try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function setOpen(s,open){
+    s.classList.toggle('collapsed',!open);
+    s.querySelector('.sem-head').setAttribute('aria-expanded',String(open));
+  }
+  sems.forEach(s=>{
+    if(saved[s.id]) setOpen(s,false);
+    s.querySelector('.sem-head').addEventListener('click',()=>{
+      const open=s.classList.contains('collapsed');
+      setOpen(s,open); saved[s.id]=!open;
+      try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
+    });
+  });
+  document.querySelectorAll('.jump a').forEach(a=>a.addEventListener('click',()=>{
+    const s=document.querySelector(a.getAttribute('href')); if(s) setOpen(s,true);
+  }));
   q.addEventListener('input', () => {
     const t = q.value.trim().toLowerCase();
     let any = false;
@@ -254,6 +281,7 @@
       if (hit) any = true;
     });
     sems.forEach(s => {
+      if (t) s.classList.remove('collapsed'); else if (saved[s.id]) s.classList.add('collapsed');
       s.style.display = [...s.querySelectorAll('.card')].some(c => c.style.display !== 'none') ? '' : 'none';
     });
     document.getElementById('empty').style.display = any ? 'none' : 'block';
