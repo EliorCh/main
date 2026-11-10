@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אתרי הלימוד · MTA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap" rel="stylesheet">
+<script data-goatcounter="https://eliorch.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<style>
+  :root{
+    --bg:#FBF8F3; --bg-soft:#F5F0E8; --card:#FFFFFF;
+    --ink:#2C2A26; --ink-soft:#5C5852; --muted:#8B867E; --border:#E8E0D0;
+    --teal:#7BA89A; --teal-bg:#E8F2EE; --teal-text:#2F5A4D;
+    --pink:#E8B4BC; --pink-bg:#FAE9EC; --pink-text:#6E2A35;
+    --lav:#B8A9D9; --lav-bg:#EDE6F5; --lav-text:#3D2E5C;
+    --peach:#F0B894; --peach-bg:#FCEFE4; --peach-text:#7A4220;
+    --sky:#9DBCDB; --sky-bg:#E7F0F9; --sky-text:#24476B;
+    --sage:#B5C49A; --sage-bg:#EFF3E6; --sage-text:#3F4E24;
+    --gold:#E2C47A; --gold-bg:#FBF3DE; --gold-text:#6B5212;
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1C1B19; --bg-soft:#24221F; --card:#2A2825;
+      --ink:#F1ECE4; --ink-soft:#C9C2B7; --muted:#958E83; --border:#3A3733;
+      --teal-bg:#22332E; --teal-text:#A9D3C6;
+      --pink-bg:#3A272B; --pink-text:#F2C3CB;
+      --lav-bg:#2E2840; --lav-text:#D4C9F0;
+      --peach-bg:#3A2C22; --peach-text:#F5CDB0;
+      --sky-bg:#22303F; --sky-text:#BBD5EF;
+      --sage-bg:#2C3324; --sage-text:#CFDDB3;
+      --gold-bg:#373020; --gold-text:#EED89E;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Assistant",system-ui,sans-serif; font-size:17px; line-height:1.55;
+  }
+  .wrap{max-inline-size:1080px; margin-inline:auto; padding-inline:22px; padding-block:48px 64px}
+
+  header.hero{margin-block-end:34px}
+  .eyebrow{color:var(--muted); font-weight:600; letter-spacing:.02em; font-size:15px; margin:0 0 6px}
+  h1{font-family:"Frank Ruhl Libre",serif; font-weight:900; font-size:clamp(34px,5.5vw,52px); line-height:1.1; margin:0 0 12px}
+  .lead{color:var(--ink-soft); font-size:18px; max-inline-size:640px; margin:0}
+
+  .tools{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-block:28px 8px}
+  .search{
+    flex:1 1 260px; display:flex; align-items:center; gap:8px;
+    background:var(--card); border:1px solid var(--border); border-radius:999px; padding:10px 16px;
+  }
+  .search input{border:0; outline:0; background:transparent; color:var(--ink); font:inherit; inline-size:100%}
+  .search:focus-within{border-color:var(--teal)}
+  .jump{display:flex; gap:8px; flex-wrap:wrap}
+  .jump a{
+    text-decoration:none; color:var(--ink-soft); font-weight:600; font-size:15px;
+    border:1px solid var(--border); border-radius:999px; padding:9px 16px; background:var(--card);
+  }
+  .jump a:hover{color:var(--ink); border-color:var(--muted)}
+
+  section.sem{margin-block-start:44px}
+  .sem-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-block-end:2px solid var(--border); padding-block-end:10px; margin-block-end:20px}
+  .sem-head h2{font-family:"Frank Ruhl Libre",serif; font-weight:700; font-size:30px; margin:0}
+  .sem-head .meta{color:var(--muted); font-size:15px}
+  .badge-now{background:var(--teal-bg); color:var(--teal-text); font-weight:700; font-size:13px; border-radius:999px; padding:3px 10px}
+
+  .grid{display:flex; flex-wrap:wrap; gap:18px}
+  .card{
+    flex:1 1 300px; max-inline-size:100%;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 20px 18px; display:flex; flex-direction:column; gap:10px;
+    border-block-start:6px solid var(--accent);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.06)}
+  .card .top{display:flex; gap:12px; align-items:flex-start}
+  .icon{
+    flex:none; inline-size:44px; block-size:44px; border-radius:12px;
+    display:grid; place-items:center; font-size:22px; background:var(--accent-bg);
+  }
+  .card h3{margin:0; font-size:21px; font-weight:800; line-height:1.25}
+  .card .who{margin:2px 0 0; color:var(--muted); font-size:14.5px}
+  .card .desc{margin:0; color:var(--ink-soft); font-size:15.5px}
+  .links{display:flex; flex-wrap:wrap; gap:8px; margin-block-start:auto; padding-block-start:6px}
+  .btn{
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700; font-size:15px;
+    border-radius:10px; padding:9px 14px; border:1.5px solid transparent;
+  }
+  .btn.sum{background:var(--accent-bg); color:var(--accent-text)}
+  .btn.que{background:transparent; color:var(--accent-text); border-color:var(--accent)}
+  .btn:hover{filter:brightness(.96)}
+  .btn.soon{background:var(--bg-soft); color:var(--muted); cursor:default; pointer-events:none}
+  .c-rose{--accent:#D9A3C7;--accent-bg:var(--pink-bg);--accent-text:var(--pink-text)}
+  .btn small{font-weight:500; opacity:.8}
+
+  .c-teal{--accent:var(--teal);--accent-bg:var(--teal-bg);--accent-text:var(--teal-text)}
+  .c-pink{--accent:var(--pink);--accent-bg:var(--pink-bg);--accent-text:var(--pink-text)}
+  .c-lav{--accent:var(--lav);--accent-bg:var(--lav-bg);--accent-text:var(--lav-text)}
+  .c-peach{--accent:var(--peach);--accent-bg:var(--peach-bg);--accent-text:var(--peach-text)}
+  .c-sky{--accent:var(--sky);--accent-bg:var(--sky-bg);--accent-text:var(--sky-text)}
+  .c-sage{--accent:var(--sage);--accent-bg:var(--sage-bg);--accent-text:var(--sage-text)}
+  .c-gold{--accent:var(--gold);--accent-bg:var(--gold-bg);--accent-text:var(--gold-text)}
+
+  .empty{display:none; color:var(--muted); padding:30px 0; text-align:center}
+  footer{margin-block-start:56px; color:var(--muted); font-size:14px; text-align:center}
+  footer a{color:inherit}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); font-size:14px; margin-block-start:10px}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .dot{inline-size:14px; block-size:14px; border-radius:4px; background:var(--bg-soft); border:1.5px solid var(--muted)}
+  .dot.fill{background:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">מדעי המחשב · המכללה האקדמית תל אביב–יפו</p>
+    <h1>אתרי הלימוד שלנו</h1>
+    <p class="lead">כל אתרי הסיכום והתרגול במקום אחד, לפי סמסטר. חינם ופתוחים לכולם. בהצלחה במבחנים!</p>
+
+    <div class="tools">
+      <label class="search">
+        <span aria-hidden="true">🔎</span>
+        <input id="q" type="search" placeholder="חיפוש קורס, מרצה או מספר קורס…" autocomplete="off">
+      </label>
+      <nav class="jump" aria-label="מעבר לסמסטר">
+        <a href="#sem-3a">סמסטר א׳ · שנה ג׳</a>
+        <a href="#sem-2b">סמסטר ב׳ · שנה ב׳</a>
+      </nav>
+    </div>
+    <div class="legend">
+      <span><i class="dot fill"></i> סיכום</span>
+      <span><i class="dot"></i> תרגול / מאגר שאלות</span>
+    </div>
+  </header>
+
+  <!-- ================= סמסטר ב׳ שנה ב׳ ================= -->
+  <section class="sem" id="sem-2b">
+    <div class="sem-head">
+      <h2>סמסטר ב׳ · שנה ב׳</h2>
+      <span class="meta">4 קורסים</span>
+    </div>
+    <div class="grid">
+
+      <article class="card c-sky" data-k="תקשורת מחשבים 141418 בינסקי מור פרי רשתות">
+        <div class="top"><div class="icon">🌐</div>
+          <div><h3>מבוא לתקשורת מחשבים</h3><p class="who">141418 · ד״ר בינסקי · ד״ר מור פרי</p></div></div>
+        <p class="desc">שכבות ה־OSI מהאפליקציה ועד הקישור, עם מילון מונחים, חיפוש ופתרון מלא של מועד א׳.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/comsum/">📘 סיכום</a>
+          <a class="btn que" href="https://eliorch.github.io/comque/">📝 תרגול <small>116 שאלות</small></a>
+        </div>
+      </article>
+
+      <article class="card c-lav" data-k="למידת מכונה מדעי הנתונים ml 12112123 רבינוביץ סעאבנה pandas רגרסיה">
+        <div class="top"><div class="icon">🤖</div>
+          <div><h3>מבוא ללמידת מכונה ומדעי הנתונים</h3><p class="who">12112123 · ד״ר אלה רבינוביץ · פרופ׳ ראיד סעאבנה</p></div></div>
+        <p class="desc">NumPy ו־Pandas, סטטיסטיקה, רגרסיה, סיווג, רשתות נוירונים ואשכולות, מבחן לדוגמה, וגם דף נוסחאות וטבלת Z.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/mlsum/">📘 סיכום</a>
+          <a class="btn que" href="https://eliorch.github.io/mlque/">📝 תרגול <small>147 אמריקאיות + 38 פתוחות</small></a>
+        </div>
+      </article>
+
+      <article class="card c-peach" data-k="אלגוריתמים 121120 גולדנברג שלומית אריאן גרפים dfs bfs דייקסטרה">
+        <div class="top"><div class="icon">🧭</div>
+          <div><h3>אלגוריתמים</h3><p class="who">121120 · ד״ר אלעזר גולדנברג · הגב׳ שלומית אריאן</p></div></div>
+        <p class="desc">גרפים, DFS/BFS, מיון טופולוגי, מסלולים קצרים, עפ״מ, זרימה ותכנון דינמי, עם הדגמות אינטראקטיביות.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/algosum/">📘 סיכום</a>
+        </div>
+      </article>
+
+      <article class="card c-pink" data-k="סטטיסטיקה 142206 בק מבחני השערות מרקוב">
+        <div class="top"><div class="icon">📊</div>
+          <div><h3>סטטיסטיקה</h3><p class="who">142206 · ד״ר נילי בק</p></div></div>
+        <p class="desc">10 פרקים מהסתברות בסיסית, נורמלי ו־CLT, מרקוב ו־HMM ועד מבחני z, t ו־χ², עם פתרונות מודרכים.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/statsum/">📘 סיכום</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= סמסטר א׳ שנה ג׳ ================= -->
+  <section class="sem" id="sem-3a">
+    <div class="sem-head">
+      <h2>סמסטר א׳ · שנה ג׳</h2>
+      <span class="badge-now">הסמסטר הנוכחי</span>
+      <span class="meta">4 קורסים</span>
+    </div>
+    <div class="grid">
+
+      <article class="card c-teal" data-k="מערכות הפעלה os סולמי רדליך מאדי תהליכים זיכרון וירטואלי">
+        <div class="top"><div class="icon">⚙️</div>
+          <div><h3>מערכות הפעלה</h3><p class="who">ד״ר משה סולמי רדליך · בוראק מאדי</p></div></div>
+        <p class="desc">הרצאות ותרגולים 1–5: תהליכים, סיגנלים, הפניות, תזמון וזיכרון וירטואלי, ומאגר שאלות ממבחני עבר לפי מועד.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/ossum/">📘 סיכום</a>
+          <a class="btn que" href="https://eliorch.github.io/osque/">📝 תרגול</a>
+        </div>
+      </article>
+
+      <article class="card c-gold" data-k="מערכות בסיסי נתונים db דרור sql er מודל יחסי">
+        <div class="top"><div class="icon">🗄️</div>
+          <div><h3>מערכות בסיסי נתונים</h3><p class="who">פרופ׳ גדעון דרור</p></div></div>
+        <p class="desc">מודל ER, המודל היחסי, SQL, תלויות ונרמול, אינדקסים ובקרת מקביליות, עם תרגילים פתורים ודף תרגול.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/dbsum/">📘 סיכום</a>
+        </div>
+      </article>
+
+      <article class="card c-sage" data-k="קריפטוגרפיה שימושית crypto אשכנזי הצפנה">
+        <div class="top"><div class="icon">🔐</div>
+          <div><h3>מבוא לקריפטוגרפיה שימושית</h3><p class="who">ד״ר יותם אשכנזי</p></div></div>
+        <p class="desc">מבוא, RSA, לוג דיסקרטי ו־Diffie-Hellman, הצפנה סימטרית ו־DES, וגם שיטת עבודה לתרגיל בית 1.</p>
+        <div class="links">
+          <a class="btn sum" href="https://eliorch.github.io/cryptosum/">📘 סיכום</a>
+        </div>
+      </article>
+
+      <article class="card c-rose" data-k="חישוביות אריאלי while goto מכונת טיורינג רייס רדוקציות כריעות">
+        <div class="top"><div class="icon">♾️</div>
+          <div><h3>חישוביות</h3><p class="who">פרופ׳ עופר אריאלי</p></div></div>
+        <p class="desc">WHILE, GOTO ושפת F, פונקציות חשיבות, R/RE/coRE, רדוקציות, משפט רייס ומכונות טיורינג, עם מפרשים שרצים בדפדפן.</p>
+        <div class="links">
+          <span class="btn soon">📘 סיכום · בקרוב</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <p class="empty" id="empty">לא נמצא קורס מתאים לחיפוש.</p>
+
+  <footer>
+    נבנה ע״י <a href="https://github.com/EliorCh">אליאור</a> · מצאתם טעות? ספרו לי ואתקן
+  </footer>
+</div>
+
+<script>
+  const q = document.getElementById('q');
+  const cards = [...document.querySelectorAll('.card')];
+  const sems = [...document.querySelectorAll('section.sem')];
+  q.addEventListener('input', () => {
+    const t = q.value.trim().toLowerCase();
+    let any = false;
+    cards.forEach(c => {
+      const hit = !t || (c.textContent + ' ' + c.dataset.k).toLowerCase().includes(t);
+      c.style.display = hit ? '' : 'none';
+      if (hit) any = true;
+    });
+    sems.forEach(s => {
+      s.style.display = [...s.querySelectorAll('.card')].some(c => c.style.display !== 'none') ? '' : 'none';
+    });
+    document.getElementById('empty').style.display = any ? 'none' : 'block';
+  });
+</script>
+</body>
+</html>
