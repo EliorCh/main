@@ -98,6 +98,12 @@
   body:not(.authed) #view-issues{display:block!important}
   body.checking #conn{visibility:hidden}
   .gate-lock{font-size:15px;color:var(--soft);margin:0 0 10px}
+  .gate{text-align:center;padding:18px 10px 6px}
+  .gate-ic{font-size:44px;line-height:1}
+  .gate h2{font-family:"Frank Ruhl Libre",serif;font-size:28px;margin:10px 0 12px}
+  .gate p{max-width:560px;margin:8px auto;font-size:16.5px;line-height:1.7;color:var(--soft)}
+  .gate-key{display:flex;justify-content:center;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+  .gate-key input{width:220px}
   .steps{margin:8px 0 6px;padding-inline-start:22px;line-height:1.7}
   .tag.done{background:#E3F1EB;color:#2F6B57}
   .card .who{font-size:13.5px;color:var(--muted);margin:0 0 6px}
@@ -204,11 +210,11 @@
     } else {
       var url = "https://github.com/settings/personal-access-tokens/new?name=" + encodeURIComponent("תפעול אתרי הלימוד") +
         "&description=" + encodeURIComponent("ops.html: reading reports and fixing questions") + "&target_name=" + OWNER + "&expires_in=366&contents=write";
-      c.innerHTML = '<p class="gate-lock">🔒 העמוד הזה פתוח רק לבעלים של האתרים, אחרי התחברות עם מפתח GitHub אישי.</p><b>חיבור חד־פעמי לדפדפן הזה.</b> גם אם אתה מחובר ל־GitHub, העמוד הזה לא יכול להשתמש בחיבור שלך: דפדפנים לא מעבירים התחברות מאתר לאתר, אחרת כל אתר היה יכול לפעול בשמך. לכן נותנים לעמוד "מפתח" אישי, פעם אחת, והוא נשמר רק כאן.' +
-        '<ol class="steps"><li><a href="' + url + '" target="_blank" rel="noopener">יצירת מפתח ב־GitHub ↗</a> (הטופס כבר ממולא).</li>' +
-        '<li>בחלק <bdi>Repository access</bdi> לבחור <b><bdi>Only select repositories</bdi></b> ולסמן את: <bdi dir="ltr">ops-inbox, comque, mlque, osque, computque</bdi>. ההרשאה <bdi dir="ltr">Contents: Read and write</bdi> כבר מסומנת.</li>' +
-        '<li>ללחוץ <bdi>Generate token</bdi>, להעתיק ולהדביק כאן:</li></ol>' +
-'<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off"> <button class="btn pri" id="login" type="button">התחברות</button> <span id="cmsg"></span>';
+      c.innerHTML = '<div class="gate"><div class="gate-ic">🚧</div><h2>אזור לצוות בלבד</h2>' +
+        '<p>הגעת לחדר המכונות של האתרים. אין פה סיכומים, אין פה תשובות למבחן, ואין פה שום דבר מעניין חוץ מכוס קפה שהתקררה וכמה ברגים רופפים.</p>' +
+        '<p>אם חיפשת את התשובות למבחן: יפה שניסית 😉 אבל בשביל זה יש <a href="./">אתרי סיכום ותרגול</a>, ושם הן באמת עוזרות.</p></div>' +
+        '<div class="gate-key">'+
+'<input id="tok" type="password" placeholder="מפתח" autocomplete="off" aria-label="מפתח GitHub"> <button class="btn pri" id="login" type="button">כניסה</button> <span id="cmsg"></span></div>';
       $("#login").onclick = function () {
         token = $("#tok").value.trim(); if (!token) return;
         api("/user").then(function (u) {
