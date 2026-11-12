@@ -11,12 +11,13 @@ var OWNER = 'EliorCh', REPO = 'ops-inbox';
 
 function doPost(e) {
   try {
+    var d = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (d.action === 'stats') return out(stats(d));
     var lock = LockService.getScriptLock(); lock.tryLock(5000);
     var cache = CacheService.getScriptCache(), n = +(cache.get('n') || 0);
     if (n > 40) return out({ ok: false, error: 'busy' });          // simple flood guard: 40 reports / 10 minutes
     cache.put('n', String(n + 1), 600);
 
-    var d = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     var clip = function (s, k) { return String(s == null ? '' : s).slice(0, k); };
     if (!d.problem || !d.site) return out({ ok: false, error: 'missing fields' });
 
@@ -46,5 +47,19 @@ function doPost(e) {
     return out({ ok: false, error: String(err) });
   }
 }
-function doGet() { return out({ ok: true, service: 'study-sites report relay' }); }
+/* Usage numbers for the ops page: the page sends its own GoatCounter key, the relay asks GoatCounter
+   server-side (no browser blocking), one call at a time to stay under GoatCounter's 4-per-second limit. */
+function stats(d) {
+  var paths = (d.paths || []).slice(0, 8), res = [];
+  for (var i = 0; i < paths.length; i++) {
+    var p = String(paths[i]);
+    if (!/^(me|stats\/(total|hits))(\?|$)/.test(p)) { res.push({ status: 400, body: '{"error":"path not allowed"}' }); continue; }
+    if (i) Utilities.sleep(350);
+    var r = UrlFetchApp.fetch('https://eliorch.goatcounter.com/api/v0/' + p, {
+      muteHttpExceptions: true, headers: { Authorization: 'Bearer ' + d.gc, 'Content-Type': 'application/json' } });
+    res.push({ status: r.getResponseCode(), body: r.getContentText() });
+  }
+  return { ok: true, results: res, version: 2 };
+}
+function doGet() { return out({ ok: true, service: 'study-sites report relay', version: 2 }); }
 function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
