@@ -15,7 +15,8 @@
     links: (me && me.dataset.links) || "",     /* "label|url;label|url" shown in that bar */
     hero: (me && me.dataset.hero) || "",       /* on a site's home page: the old header to replace with the shared one */
     heroHide: (me && me.dataset.heroHide) || "",
-    heroAt: (me && me.dataset.heroAt) || "",   /* put the new header before this element instead of before the old one */ /* more old home-page bits to hide (e.g. a practice-site banner) */
+    heroAt: (me && me.dataset.heroAt) || "",
+    homeHide: (me && me.dataset.homeHide) || "", /* on a home page: the site's own chapter grid, replaced by the shared one */   /* put the new header before this element instead of before the old one */ /* more old home-page bits to hide (e.g. a practice-site banner) */
   };
   /* ---- one place for each course's identity (used by the home hero, menus and top bars) ---- */
   var COURSES = {
@@ -284,6 +285,41 @@
     if (cfg.heroHide) document.querySelectorAll(cfg.heroHide).forEach(function (e) { e.classList.add("mta-hidden"); });
   }
 
+
+  /* shared chapter grid on every summary site's home page (built from MENUS; descriptions are read from the site's own old grid) */
+  function descFor(href) {
+    var all = document.querySelectorAll('a[href="' + href + '"]'), best = "";
+    for (var i = 0; i < all.length; i++) {
+      var a = all[i], d = "";
+      if (a.closest(".mta-menu, .mta-home-grid, .mta-hero, nav, aside, .sidebar, .rail")) continue;
+      var p = a.querySelector(".card-desc, p, .desc");
+      if (p) d = p.textContent;
+      else { var lis = a.querySelectorAll("li"); if (lis.length) d = [].slice.call(lis, 0, 4).map(function (l) { return l.textContent.trim(); }).join(" · "); }
+      if (!d) { var sp = a.querySelectorAll(":scope > span"); if (sp.length > 1) d = sp[sp.length - 1].textContent; }
+      d = (d || "").replace(/\s+/g, " ").trim();
+      if (d.length > best.length) best = d;
+    }
+    return best;
+  }
+  function homeGrid() {
+    var menu = MENUS[cfg.course], hero = document.querySelector(".mta-hero");
+    if (!menu || !hero || document.querySelector(".mta-home-grid")) return;
+    var g = document.createElement("div"); g.className = "mta-home-grid"; g.setAttribute("dir", "rtl");
+    var h = "";
+    menu.forEach(function (grp) {
+      h += '<div class="mta-hg-label">' + esc(grp[0]) + '</div><div class="mta-hg-grid">';
+      grp[1].forEach(function (it) {
+        var m = /^(\S+)\s+·\s+(.*)$/.exec(it[0]), num = m ? m[1] : "", title = m ? m[2] : it[0];
+        var d = descFor(it[1]);
+        h += '<a class="mta-hg-card" href="' + it[1] + '">' + (num ? '<span class="mta-hg-num">' + (/^\d+$/.test(num) ? "פרק " + num : num) + "</span>" : "") +
+          '<span class="mta-hg-title">' + esc(title) + "</span>" + (d ? '<span class="mta-hg-desc">' + esc(d) + "</span>" : "") + "</a>";
+      });
+      h += "</div>";
+    });
+    g.innerHTML = h;
+    hero.parentNode.insertBefore(g, hero.nextSibling);
+    if (cfg.homeHide) document.querySelectorAll(cfg.homeHide).forEach(function (e) { if (!e.closest(".mta-home-grid")) e.classList.add("mta-hidden"); });
+  }
   /* ---- the shared side menu ---- */
   function here() {
     var f = location.pathname.split("/").pop() || "index.html";
@@ -409,6 +445,7 @@
   function boot() {
     osqBrand();
     hero();
+    homeGrid();
     hideOld();
     buildMenu();
     resizer();

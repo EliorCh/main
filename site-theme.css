@@ -264,3 +264,17 @@ html:is([data-fam="os"],[data-fam="cr"]) main :not(pre)>code{background:#f5f5f4;
 /* code is never scrolled sideways inside a box: long lines wrap */
 html[data-fam] main pre{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible}
 html[data-fam="que"] .mta-tb-who{font-weight:500;font-size:13px;opacity:.75}
+
+/* ---------- 9. Shared chapter grid on the home pages ---------- */
+.mta-home-grid{direction:rtl;margin:0 0 40px;font-family:"Assistant",-apple-system,sans-serif}
+.mta-hg-label{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--mta-acc);margin:34px 0 14px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,.08)}
+.mta-hg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.mta-hg-card{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;background:#fffefa;border:1px solid #e7e5e0;border-radius:14px;padding:18px 20px;
+  box-shadow:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06);transition:transform .15s ease,box-shadow .15s ease,border-color .15s}
+.mta-hg-card:hover{transform:translateY(-2px);border-color:var(--mta-acc);box-shadow:0 4px 12px rgba(28,25,23,.08)}
+.mta-hg-num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:700;color:var(--mta-acc);letter-spacing:.04em}
+.mta-hg-title{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:21px;line-height:1.25;color:#1c1917}
+.mta-hg-desc{font-size:14.5px;line-height:1.55;color:#57534e}
+html.mta-has-menu[data-fam="os"] .wrap{display:block;max-width:1100px;margin-inline:auto;padding-inline:32px}
+html.mta-has-menu[data-fam="os"] main{max-width:none}
+html.mta-has-menu[data-fam="cr"] main{max-width:1100px;margin-inline:auto}
