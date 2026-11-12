@@ -11,7 +11,7 @@
   var ISSUES = "https://github.com/EliorCh/" + REPO + "/issues/new";
   /* where reports are sent: the relay (Google Apps Script) that files them into the private ops inbox.
      One place to change for every site. Empty = not set up yet (the panel then offers copy + email). */
-  var RELAY = "";
+  var RELAY = "https://script.google.com/macros/s/AKfycbwe0X00W-l6fK2QrrsSmIme9NGE5iyO9IVR74VXYEeWYvLWF1RqNjhX4MqAW5wXkt47rg/exec";
   var DECORATE = !(me && me.dataset.decorate === "0");
   var CARD = ".practice-question";
   var SKIP = "#view-exam, #view-results";
