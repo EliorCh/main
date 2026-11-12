@@ -66,6 +66,7 @@
   .note{font-size:13.5px;color:var(--muted)}
   #chart svg{display:block;width:100%;height:auto;direction:ltr}
   @media (max-width:900px){.board{grid-template-columns:1fr}}
+  .steps{margin:8px 0 6px;padding-inline-start:22px;line-height:1.7}
   .tag.done{background:#E3F1EB;color:#2F6B57}
   .card .who{font-size:13.5px;color:var(--muted);margin:0 0 6px}
   .card .notes{list-style:none;margin:8px 0 0;padding:8px 10px;background:#FAF7F1;border-radius:8px;font-size:13.5px;color:var(--soft)}
@@ -166,8 +167,13 @@
       c.innerHTML = '<span class="ok">מחובר כ־' + esc(me) + '</span> · אפשר לטפל בדיווחים ולתקן שאלות מכאן. <button class="btn" id="logout" type="button">ניתוק</button>';
       $("#logout").onclick = function () { try { localStorage.removeItem(TK); } catch (e) {} token = ""; me = null; all = []; drawConn(); draw(); };
     } else {
-      c.innerHTML = 'הדיווחים שמורים בריפו פרטי, אז צריך להתחבר כדי לראות אותם. הדבק טוקן אישי של GitHub (Fine-grained) עם הרשאת <b>Contents: Read and write</b> על הריפו <code>ops-inbox</code> ועל אתרי התרגול. הטוקן נשמר רק בדפדפן הזה.<br>' +
-        '<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off"> <button class="btn pri" id="login" type="button">התחברות</button> <span id="cmsg"></span>';
+      var url = "https://github.com/settings/personal-access-tokens/new?name=" + encodeURIComponent("תפעול אתרי הלימוד") +
+        "&description=" + encodeURIComponent("ops.html: reading reports and fixing questions") + "&target_name=" + OWNER + "&expires_in=366&contents=write";
+      c.innerHTML = '<b>חיבור חד־פעמי לדפדפן הזה.</b> גם אם אתה מחובר ל־GitHub, העמוד הזה לא יכול להשתמש בחיבור שלך: דפדפנים לא מעבירים התחברות מאתר לאתר, אחרת כל אתר היה יכול לפעול בשמך. לכן נותנים לעמוד "מפתח" אישי, פעם אחת, והוא נשמר רק כאן.' +
+        '<ol class="steps"><li><a href="' + url + '" target="_blank" rel="noopener">יצירת מפתח ב־GitHub ↗</a> (הטופס כבר ממולא).</li>' +
+        '<li>בחלק <bdi>Repository access</bdi> לבחור <b><bdi>Only select repositories</bdi></b> ולסמן את: <bdi dir="ltr">ops-inbox, comque, mlque, osque, computque</bdi>. ההרשאה <bdi dir="ltr">Contents: Read and write</bdi> כבר מסומנת.</li>' +
+        '<li>ללחוץ <bdi>Generate token</bdi>, להעתיק ולהדביק כאן:</li></ol>' +
+'<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off"> <button class="btn pri" id="login" type="button">התחברות</button> <span id="cmsg"></span>';
       $("#login").onclick = function () {
         token = $("#tok").value.trim(); if (!token) return;
         api("/user").then(function (u) {
@@ -362,8 +368,22 @@
   try { gtoken = localStorage.getItem(GK) || ""; } catch (e) {}
   var SITE_OF = {}; SITES.forEach(function (s) { SITE_OF[s[0]] = s; });
   function gapi(path) {
-    return fetch(GC + path, { headers: { "Authorization": "Bearer " + gtoken, "Content-Type": "application/json" } })
-      .then(function (r) { if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "המפתח לא תקין או בלי הרשאה" : r.status + " " + r.statusText); return r.json(); });
+    return fetch(GC + path, { headers: { "Authorization": "Bearer " + gtoken } })
+      .catch(function () {
+        throw new Error("הדפדפן לא הצליח להגיע ל־GoatCounter. הסיבה הנפוצה: חוסם פרסומות או מעקב (uBlock, AdBlock, Brave וכו׳) שחוסם את goatcounter.com. כדאי לאשר את העמוד הזה בחוסם ולרענן. ");
+      })
+      .then(function (r) {
+        if (r.ok) return r.json();
+        return r.text().then(function (body) {
+          var m = ""; try { m = JSON.parse(body).error || ""; } catch (e) {}
+          if (r.status === 401 || r.status === 403) throw new Error("GoatCounter דחה את המפתח" + (m ? " (" + m + ")" : "") + ". צריך מפתח עם הרשאת Read statistics.");
+          if (r.status === 429) throw new Error("יותר מדי בקשות ל־GoatCounter. לנסות שוב בעוד דקה.");
+          throw new Error("שגיאה מ־GoatCounter: " + r.status + (m ? " · " + m : ""));
+        });
+      });
+  }
+  function gfail(el, e) {
+    el.innerHTML = '<span class="err">' + esc(e.message) + '</span> <a href="https://eliorch.goatcounter.com" target="_blank" rel="noopener">לדשבורד של GoatCounter ↗</a>';
   }
   function drawG() {
     var c = $("#gconn");
@@ -371,12 +391,13 @@
       c.innerHTML = '<span class="ok">מחובר ל־GoatCounter</span> <button class="btn" id="glogout" type="button">ניתוק</button>';
       $("#glogout").onclick = function () { try { localStorage.removeItem(GK); } catch (e) {} gtoken = ""; drawG(); };
     } else {
-      c.innerHTML = 'כדי לראות סטטיסטיקות, הדבק מפתח API של GoatCounter (באתר GoatCounter: שם המשתמש בתפריט העליון ← API, עם הרשאת קריאת סטטיסטיקות בלבד). המפתח נשמר רק בדפדפן הזה.<br>' +
-        '<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
+      c.innerHTML = '<b>חיבור חד־פעמי ל־GoatCounter.</b> <ol class="steps"><li><a href="https://eliorch.goatcounter.com/user/api" target="_blank" rel="noopener">יצירת מפתח API ב־GoatCounter ↗</a></li>' +
+        '<li>לתת לו שם, לסמן רק את <b><bdi>Read statistics</bdi></b>, ללחוץ <bdi>Create</bdi>, ולהעתיק ולהדביק כאן:</li></ol>' +
+'<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
       $("#glogin").onclick = function () {
         gtoken = $("#gtok").value.trim(); if (!gtoken) return;
         gapi("/me").then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} drawG(); loadG(); })
-          .catch(function (e) { gtoken = ""; $("#gmsg").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
+          .catch(function (e) { gtoken = ""; gfail($("#gmsg"), e); });
       };
     }
     $("#range").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(+b.dataset.d === days)); });
@@ -400,7 +421,7 @@
       gapi("/stats/total?start=" + iso(pstart) + "&end=" + iso(start) + "&group=day").catch(function () { return null; }),
       page([])
     ]).then(function (res) { renderG(res[0], res[1], hits); $("#gstatus").textContent = "עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }); })
-      .catch(function (e) { $("#gstatus").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
+      .catch(function (e) { gfail($("#gstatus"), e); });
   }
   function fmt(n) { return Number(n || 0).toLocaleString("he-IL"); }
   function series(stats) { return (stats || []).map(function (s) { return [s.day, s.daily || 0]; }); }
