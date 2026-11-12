@@ -291,3 +291,9 @@ html:is([data-fam="ind"],[data-fam="rail"],[data-fam="os"],[data-fam="db"],[data
 html[data-fam="os"] .bits{margin-inline:auto}
 html[data-fam="os"] .bcap{text-align:center}
 html[data-fam="os"] :is(.pt-row,.fl-chain){justify-content:center}
+/* ossum code tracer: long lines wrap inside the box instead of being cut off */
+html[data-fam="os"] .tr-pre > code{min-width:0}
+html[data-fam="os"] .tr-ln{align-items:flex-start}
+html[data-fam="os"] .tr-src{white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
+html[data-fam="os"] .tr-mk{align-self:center}
+html[data-fam="os"] .fn-sig{white-space:pre-wrap;overflow-wrap:anywhere}
