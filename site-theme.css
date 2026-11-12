@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap");
+/* =====================================================================
+   Shared design language for all of Elior's MTA study sites.
+   Loaded by every site as ../main/site-theme.css (+ site-theme.js).
+   One place to change: course colors, themes, footer, per-family hooks.
+   ===================================================================== */
+
+/* ---------- 1. Course colors (one line per course; .mta-c-<course> applies them to a single element, e.g. a card on the home page) ---------- */
+:root{
+  --mta-acc:#4f46e5; --mta-acc-soft:#eef2ff; --mta-acc-ink:#3730a3;
+  --mta-side1:#1e1b4b; --mta-side2:#312e81; --mta-hi:#fbbf24;
+}
+html[data-course="com"],.mta-c-com{--mta-acc:#4f46e5;--mta-acc-soft:#eef2ff;--mta-acc-ink:#3730a3;--mta-side1:#1e1b4b;--mta-side2:#312e81}
+html[data-course="ml"],.mta-c-ml{--mta-acc:#7c3aed;--mta-acc-soft:#f5f3ff;--mta-acc-ink:#5b21b6;--mta-side1:#2e1065;--mta-side2:#4c1d95}
+html[data-course="algo"],.mta-c-algo{--mta-acc:#c2410c;--mta-acc-soft:#fff7ed;--mta-acc-ink:#9a3412;--mta-side1:#431407;--mta-side2:#7c2d12}
+html[data-course="stats"],.mta-c-stats{--mta-acc:#4d7c0f;--mta-acc-soft:#f7fee7;--mta-acc-ink:#3f6212;--mta-side1:#1a2e05;--mta-side2:#365314}
+html[data-course="os"],.mta-c-os{--mta-acc:#be123c;--mta-acc-soft:#fff1f2;--mta-acc-ink:#9f1239;--mta-side1:#4c0519;--mta-side2:#881337}
+html[data-course="db"],.mta-c-db{--mta-acc:#1d4ed8;--mta-acc-soft:#eff6ff;--mta-acc-ink:#1e40af;--mta-side1:#172554;--mta-side2:#1e3a8a}
+html[data-course="comp"],.mta-c-comp{--mta-acc:#0f766e;--mta-acc-soft:#f0fdfa;--mta-acc-ink:#115e59;--mta-side1:#042f2e;--mta-side2:#134e4a}
+html[data-course="crypto"],.mta-c-crypto{--mta-acc:#475569;--mta-acc-soft:#f1f5f9;--mta-acc-ink:#334155;--mta-side1:#0f172a;--mta-side2:#1e293b}
+html[data-course="home"],.mta-c-home{--mta-acc:#44403c;--mta-acc-soft:#f5f5f4;--mta-acc-ink:#292524;--mta-side1:#1c1917;--mta-side2:#292524}
+
+/* ---------- 2. Reading themes (chosen by the student, saved across all sites) ---------- */
+html[data-mta-theme="sepia"]{filter:sepia(.32) brightness(.97) contrast(.97)}
+html[data-mta-theme="dark"]{filter:invert(1) hue-rotate(180deg) contrast(.86);background:#fbf9f3}
+/* things that are already dark, or are pictures, are flipped back so they keep their real colors */
+html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep){filter:invert(1) hue-rotate(180deg)}
+html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep) :is(img,video,canvas,picture,iframe,.mta-keep){filter:none}
+
+/* ---------- 3. Footer and theme switcher ---------- */
+.mta-foot{direction:rtl;text-align:center;margin:56px auto 24px;padding:20px 16px 8px;max-width:760px;
+  border-top:1px solid rgba(0,0,0,.09);color:#78716c;font-size:13.5px;line-height:1.6;font-family:inherit}
+.mta-foot p{margin:0 0 6px;color:inherit}
+.mta-foot .mta-by{font-weight:600;color:#57534e}
+.mta-foot a{color:var(--mta-acc);text-decoration:none}
+.mta-foot a:hover{text-decoration:underline}
+.mta-theme{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.1);direction:rtl}
+.mta-theme button svg{display:block}
+.mta-theme button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;
+  font:500 13px/1.4 inherit;color:#57534e;font-family:inherit}
+.mta-theme button:hover{background:#f5f5f4}
+.mta-theme button[aria-pressed="true"]{background:var(--mta-acc);color:#fff}
+.mta-theme button:focus-visible{outline:2px solid var(--mta-acc);outline-offset:1px}
+.mta-theme-inline{margin-top:10px}
+.mta-theme-float{position:fixed;left:14px;bottom:14px;z-index:90;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.mta-theme-float .mta-l{display:none}
+.mta-theme-float button{padding:5px 9px;font-size:14px}
+@media print{.mta-theme-float,.mta-theme-inline{display:none}}
+
+/* ---------- 4. Family hooks: map the course color into each site family ---------- */
+
+/* 4a. Summary sites with the indigo sidebar (comsum, algosum, statsum, mlsum) */
+html[data-fam="ind"]{--indigo-9:var(--mta-side2);--indigo-7:var(--mta-acc);--indigo-3:var(--mta-acc-soft);--indigo-1:var(--mta-acc-soft)}
+html[data-fam="ind"] .sidebar{background:linear-gradient(180deg,var(--mta-side1) 0%,var(--mta-side2) 100%)}
+html[data-fam="ind"] .sidebar :is(.brand-sub,.nav-list a){color:rgba(255,255,255,.78)}
+html[data-fam="ind"] .sidebar :is(.brand-meta,.nav-label){color:rgba(255,255,255,.55)}
+html[data-fam="ind"] .sidebar .nav-list a:hover,html[data-fam="ind"] .sidebar .nav-list a.active{color:#fff}
+html[data-fam="ind"][data-mta-theme="dark"] :is(.sidebar,pre,.code-label){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* 4b. Computability summary (computsum) */
+html[data-fam="rail"] body{--accent:var(--mta-acc);--accent-soft:var(--mta-acc-soft)}
+html[data-fam="rail"] .rail{background:linear-gradient(180deg,var(--mta-side1) 0%,var(--mta-side2) 100%)}
+html[data-fam="rail"] .rail :is(a.ch,.brand small){color:rgba(255,255,255,.8)}
+html[data-fam="rail"] .rail :is(.secs a,.brand-meta,.nav-label){color:rgba(255,255,255,.58)}
+html[data-fam="rail"] .rail :is(a.ch:hover,a.ch.active,.secs a.on,.secs a:hover){color:#fff}
+html[data-fam="rail"][data-mta-theme="dark"] :is(.rail,pre,.menu-btn,#nilv,.nil-float){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* 4c. Operating-systems summary (ossum) */
+html[data-fam="os"]{--ink:var(--mta-acc);--rail-1:var(--mta-side1);--rail-2:var(--mta-side2)}
+html[data-fam="os"] nav.side :is(.sub,a.sec){color:rgba(255,255,255,.62)}
+html[data-fam="os"] nav.side a.ch{color:rgba(255,255,255,.85)}
+html[data-fam="os"][data-mta-theme="dark"] :is(nav.side,pre){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* shared building blocks the restyled families use */
+html[data-fam="db"],html[data-fam="cr"]{--mta-serif:"Frank Ruhl Libre",Georgia,serif;--mta-sans:"Assistant",-apple-system,sans-serif}
+
+/* 4d. Database systems summary (dbsum) */
+html[data-fam="db"]{--paper:#fbf9f3;--surface:#fffefa;--ink:#1c1917;--muted:#6f6863;--line:#e7e5e0;--grid:#f1efe9}
+html[data-fam="db"] body{font-family:var(--mta-sans);
+  background-image:radial-gradient(circle at 20% 0%,rgba(99,102,241,.035),transparent 40%),radial-gradient(circle at 80% 100%,rgba(245,158,11,.035),transparent 40%);background-attachment:fixed}
+html[data-fam="db"] :is(h1,h2,h3){font-family:var(--mta-serif);font-weight:700}
+html[data-fam="db"] h1{letter-spacing:-.02em}
+html[data-fam="db"] main h2{border-bottom:0;position:relative;padding-inline-start:18px;padding-bottom:0;letter-spacing:-.01em}
+html[data-fam="db"] main h2::before{content:"";position:absolute;inset-inline-start:0;top:.3em;bottom:.3em;width:4px;border-radius:2px;background:var(--mta-acc)}
+html[data-fam="db"] nav.side{background:linear-gradient(180deg,var(--mta-side1),var(--mta-side2))!important;color:#fff;border:0!important}
+html[data-fam="db"] nav.side :is(.brand,a){color:rgba(255,255,255,.82)}
+html[data-fam="db"] nav.side .brand{font-family:var(--mta-serif);font-weight:700;color:#fff}
+html[data-fam="db"] nav.side :is(.navh,li.navpart){color:rgba(255,255,255,.55)}
+html[data-fam="db"] nav.side a:hover{background:rgba(255,255,255,.08);color:#fff}
+html[data-fam="db"] nav.side :is(a.active,ol.pages a[aria-current="page"]){background:rgba(255,255,255,.12);color:#fff;box-shadow:inset -3px 0 0 var(--mta-hi)}
+html[data-fam="db"] .menubtn{background:var(--mta-side2);color:#fff;border-color:var(--mta-side2)}
+html[data-fam="db"] table{border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06)}
+html[data-fam="db"][data-mta-theme="dark"] :is(nav.side,.menubtn){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* 4e. Cryptography summary (cryptosum) */
+html[data-fam="cr"]{--bg:#fbf9f3;--paper:#fffefa;--ink:#1c1917;--muted:#6f6863;--line:#e7e5e0;--side:var(--mta-side1);--accent:var(--mta-acc)}
+html[data-fam="cr"] body{font-family:var(--mta-sans);
+  background-image:radial-gradient(circle at 20% 0%,rgba(99,102,241,.035),transparent 40%),radial-gradient(circle at 80% 100%,rgba(245,158,11,.035),transparent 40%);background-attachment:fixed}
+html[data-fam="cr"] :is(h1,h2,h3){font-family:var(--mta-serif);font-weight:700}
+html[data-fam="cr"] h3{color:var(--ink)}
+html[data-fam="cr"] nav.side{background:linear-gradient(180deg,var(--mta-side1),var(--mta-side2));color:rgba(255,255,255,.82)}
+html[data-fam="cr"] nav.side .brand{font-family:var(--mta-serif)}
+html[data-fam="cr"] nav.side h4{color:var(--mta-hi)}
+html[data-fam="cr"] .cover{background:linear-gradient(135deg,var(--mta-side1),var(--mta-side2))}
+html[data-fam="cr"] th{background:#f1f5f9}
+html[data-fam="cr"] code{background:#f5f5f4;border:1px solid #e7e5e4;color:#be185d}
+html[data-fam="cr"] .box{border-radius:14px;box-shadow:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06)}
+html[data-fam="cr"][data-mta-theme="dark"] :is(nav.side,pre,.cover){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* 4f. Practice sites built on the pastel quiz app (comque, mlque, computque) */
+html[data-fam="que"] .course-code{background:var(--mta-acc-soft);color:var(--mta-acc-ink);border-color:color-mix(in srgb,var(--mta-acc) 30%,transparent)}
+html[data-fam="que"] .hero-stat-value{color:var(--mta-acc-ink)}
+html[data-fam="que"] .exam-header{border-top:4px solid var(--mta-acc)}
+html[data-fam="que"] nav{border-top:4px solid var(--mta-acc)}
+html[data-fam="que"] .btn-primary{background:var(--mta-acc)}
+html[data-fam="que"] .mta-topbar{display:flex;gap:6px 14px;align-items:center;justify-content:center;flex-wrap:wrap;padding:8px 16px;
+  background:linear-gradient(90deg,var(--mta-side1),var(--mta-side2));color:#fff;font-size:14px;font-weight:600}
+html[data-fam="que"] .mta-topbar a{color:#fff;text-decoration:none;opacity:.85;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 12px}
+html[data-fam="que"] .mta-topbar a:hover{opacity:1;background:rgba(255,255,255,.12)}
+html[data-fam="que"][data-mta-theme="dark"] :is(.mta-topbar,pre.wh){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* 4g. Operating-systems practice (osque) */
+html[data-fam="osq"]{--accent:var(--mta-acc);--accent-soft:var(--mta-acc-soft)}
+html[data-fam="osq"] header.top{border-top:5px solid var(--mta-acc);background:linear-gradient(90deg,var(--mta-side1),var(--mta-side2));border-bottom:0}
+html[data-fam="osq"] header.top :is(.brand,.brand small){color:#fff}
+html[data-fam="osq"] header.top nav.tabs a{color:rgba(255,255,255,.82)}
+html[data-fam="osq"] header.top nav.tabs a:hover{color:#fff;background:rgba(255,255,255,.1)}
+html[data-fam="osq"] header.top nav.tabs a[aria-current="page"]{background:#fff;color:var(--mta-acc-ink)}
+html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6);color:#fff}
+html[data-fam="osq"][data-mta-theme="dark"] :is(header.top,pre){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
+
+/* ---------- 5. Report / ask-the-lecturer panel (practice sites) ---------- */
+.mta-fb-bar{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.1);direction:rtl}
+.mta-fb-bar>button{all:unset;cursor:pointer;font:500 13px/1.4 inherit;font-family:inherit;color:#78716c;padding:3px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.12)}
+.mta-fb-bar>button:hover{color:var(--mta-acc-ink);border-color:var(--mta-acc);background:var(--mta-acc-soft)}
+.mta-fb-slot{flex-basis:100%}
+.mta-fb{margin-top:8px;padding:14px 16px;border-radius:12px;background:#fffefa;border:1px solid color-mix(in srgb,var(--mta-acc) 35%,#e7e5e0);text-align:right;cursor:auto}
+.mta-fb h4{margin:0 0 8px;font-size:15px;color:var(--mta-acc-ink)}
+.mta-fb label{display:block;font-size:13.5px;color:#57534e;margin-bottom:8px}
+.mta-fb textarea,.mta-fb input:not([type=checkbox]){display:block;width:100%;box-sizing:border-box;margin-top:4px;font:inherit;font-size:14px;padding:7px 9px;border-radius:8px;border:1px solid #d6d3d1;background:#fff;color:#1c1917}
+.mta-fb .mta-cb{display:flex;gap:6px;align-items:center}
+.mta-fb-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.mta-fb-btn{all:unset;cursor:pointer;font:600 13.5px/1.4 inherit;font-family:inherit;padding:6px 14px;border-radius:8px;background:var(--mta-acc);color:#fff}
+.mta-fb-btn.ghost{background:transparent;color:var(--mta-acc-ink);border:1px solid var(--mta-acc)}
+.mta-fb-hint{font-size:12.5px;color:#78716c;margin:4px 0 0}
+.mta-fb-msg{font-size:13px;color:#15803d;margin-top:4px}
+.mta-fb-msg textarea{direction:rtl}
+.mta-fb-prev{max-height:220px;overflow:auto;font-size:13px;line-height:1.55;background:#f5f5f4;border-radius:8px;padding:8px 12px;margin:6px 0;color:#44403c;white-space:pre-wrap}

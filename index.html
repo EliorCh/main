@@ -21,19 +21,6 @@
     --gold:#E2C47A; --gold-bg:#FBF3DE; --gold-text:#6B5212;
     --radius:16px;
   }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#1C1B19; --bg-soft:#24221F; --card:#2A2825;
-      --ink:#F1ECE4; --ink-soft:#C9C2B7; --muted:#958E83; --border:#3A3733;
-      --teal-bg:#22332E; --teal-text:#A9D3C6;
-      --pink-bg:#3A272B; --pink-text:#F2C3CB;
-      --lav-bg:#2E2840; --lav-text:#D4C9F0;
-      --peach-bg:#3A2C22; --peach-text:#F5CDB0;
-      --sky-bg:#22303F; --sky-text:#BBD5EF;
-      --sage-bg:#2C3324; --sage-text:#CFDDB3;
-      --gold-bg:#373020; --gold-text:#EED89E;
-    }
-  }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
@@ -76,6 +63,7 @@
 
   .grid{display:flex; flex-wrap:wrap; gap:18px}
   .card{
+    --accent:var(--mta-acc); --accent-bg:var(--mta-acc-soft); --accent-text:var(--mta-acc-ink);
     flex:1 1 300px; max-inline-size:100%;
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
     padding:20px 20px 18px; display:flex; flex-direction:column; gap:10px;
@@ -99,16 +87,8 @@
   .btn.sum{background:var(--accent-bg); color:var(--accent-text)}
   .btn.que{background:transparent; color:var(--accent-text); border-color:var(--accent)}
   .btn:hover{filter:brightness(.96)}
-  .c-rose{--accent:#D9A3C7;--accent-bg:var(--pink-bg);--accent-text:var(--pink-text)}
   .btn small{font-weight:500; opacity:.8}
 
-  .c-teal{--accent:var(--teal);--accent-bg:var(--teal-bg);--accent-text:var(--teal-text)}
-  .c-pink{--accent:var(--pink);--accent-bg:var(--pink-bg);--accent-text:var(--pink-text)}
-  .c-lav{--accent:var(--lav);--accent-bg:var(--lav-bg);--accent-text:var(--lav-text)}
-  .c-peach{--accent:var(--peach);--accent-bg:var(--peach-bg);--accent-text:var(--peach-text)}
-  .c-sky{--accent:var(--sky);--accent-bg:var(--sky-bg);--accent-text:var(--sky-text)}
-  .c-sage{--accent:var(--sage);--accent-bg:var(--sage-bg);--accent-text:var(--sage-text)}
-  .c-gold{--accent:var(--gold);--accent-bg:var(--gold-bg);--accent-text:var(--gold-text)}
 
   .empty{display:none; color:var(--muted); padding:30px 0; text-align:center}
   footer{margin-block-start:56px; color:var(--muted); font-size:14px; text-align:center}
@@ -118,6 +98,7 @@
   .dot{inline-size:14px; block-size:14px; border-radius:4px; background:var(--bg-soft); border:1.5px solid var(--muted)}
   .dot.fill{background:var(--muted)}
 </style>
+<!-- mta-theme --><link rel="stylesheet" href="site-theme.css"><script src="site-theme.js" data-course="home" data-fam="home" data-footer=".wrap"></script><!-- /mta-theme -->
 </head>
 <body>
 <div class="wrap">
@@ -152,7 +133,7 @@
     </button>
     <div class="grid">
 
-      <article class="card c-sky" data-k="תקשורת מחשבים 141418 בינסקי מור פרי רשתות">
+      <article class="card mta-c-com" data-k="תקשורת מחשבים 141418 בינסקי מור פרי רשתות">
         <div class="top"><div class="icon">🌐</div>
           <div><h3>מבוא לתקשורת מחשבים</h3><p class="who">141418 · ד״ר בינסקי · ד״ר מור פרי</p></div></div>
         <p class="desc">שכבות ה־OSI מהאפליקציה ועד הקישור, עם מילון מונחים, חיפוש ופתרון מלא של מועד א׳.</p>
@@ -162,7 +143,7 @@
         </div>
       </article>
 
-      <article class="card c-lav" data-k="למידת מכונה מדעי הנתונים ml 12112123 רבינוביץ סעאבנה pandas רגרסיה">
+      <article class="card mta-c-ml" data-k="למידת מכונה מדעי הנתונים ml 12112123 רבינוביץ סעאבנה pandas רגרסיה">
         <div class="top"><div class="icon">🤖</div>
           <div><h3>מבוא ללמידת מכונה ומדעי הנתונים</h3><p class="who">12112123 · ד״ר אלה רבינוביץ · פרופ׳ ראיד סעאבנה</p></div></div>
         <p class="desc">NumPy ו־Pandas, סטטיסטיקה, רגרסיה, סיווג, רשתות נוירונים ואשכולות, מבחן לדוגמה, וגם דף נוסחאות וטבלת Z.</p>
@@ -172,7 +153,7 @@
         </div>
       </article>
 
-      <article class="card c-peach" data-k="אלגוריתמים 121120 גולדנברג שלומית אריאן גרפים dfs bfs דייקסטרה">
+      <article class="card mta-c-algo" data-k="אלגוריתמים 121120 גולדנברג שלומית אריאן גרפים dfs bfs דייקסטרה">
         <div class="top"><div class="icon">🧭</div>
           <div><h3>אלגוריתמים</h3><p class="who">121120 · ד״ר אלעזר גולדנברג · הגב׳ שלומית אריאן</p></div></div>
         <p class="desc">גרפים, DFS/BFS, מיון טופולוגי, מסלולים קצרים, עפ״מ, זרימה ותכנון דינמי, עם הדגמות אינטראקטיביות.</p>
@@ -181,7 +162,7 @@
         </div>
       </article>
 
-      <article class="card c-pink" data-k="סטטיסטיקה 142206 בק מבחני השערות מרקוב">
+      <article class="card mta-c-stats" data-k="סטטיסטיקה 142206 בק מבחני השערות מרקוב">
         <div class="top"><div class="icon">📊</div>
           <div><h3>סטטיסטיקה</h3><p class="who">142206 · ד״ר נילי בק</p></div></div>
         <p class="desc">10 פרקים מהסתברות בסיסית, נורמלי ו־CLT, מרקוב ו־HMM ועד מבחני z, t ו־χ², עם פתרונות מודרכים.</p>
@@ -203,7 +184,7 @@
     </button>
     <div class="grid">
 
-      <article class="card c-teal" data-k="מערכות הפעלה os סולמי רדליך מאדי תהליכים זיכרון וירטואלי">
+      <article class="card mta-c-os" data-k="מערכות הפעלה os סולמי רדליך מאדי תהליכים זיכרון וירטואלי">
         <div class="top"><div class="icon">⚙️</div>
           <div><h3>מערכות הפעלה</h3><p class="who">ד״ר משה סולמי רדליך · בוראק מאדי</p></div></div>
         <p class="desc">הרצאות ותרגולים 1–5: תהליכים, סיגנלים, הפניות, תזמון וזיכרון וירטואלי, ומאגר שאלות ממבחני עבר לפי מועד.</p>
@@ -213,7 +194,7 @@
         </div>
       </article>
 
-      <article class="card c-gold" data-k="מערכות בסיסי נתונים db דרור sql er מודל יחסי">
+      <article class="card mta-c-db" data-k="מערכות בסיסי נתונים db דרור sql er מודל יחסי">
         <div class="top"><div class="icon">🗄️</div>
           <div><h3>מערכות בסיסי נתונים</h3><p class="who">פרופ׳ גדעון דרור</p></div></div>
         <p class="desc">מודל ER, המודל היחסי, SQL, תלויות ונרמול, אינדקסים ובקרת מקביליות, עם תרגילים פתורים ודף תרגול.</p>
@@ -222,7 +203,7 @@
         </div>
       </article>
 
-      <article class="card c-sage" data-k="קריפטוגרפיה שימושית crypto אשכנזי הצפנה">
+      <article class="card mta-c-crypto" data-k="קריפטוגרפיה שימושית crypto אשכנזי הצפנה">
         <div class="top"><div class="icon">🔐</div>
           <div><h3>מבוא לקריפטוגרפיה שימושית</h3><p class="who">ד״ר יותם אשכנזי</p></div></div>
         <p class="desc">מבוא, RSA, לוג דיסקרטי ו־Diffie-Hellman, הצפנה סימטרית ו־DES, וגם שיטת עבודה לתרגיל בית 1.</p>
@@ -231,12 +212,13 @@
         </div>
       </article>
 
-      <article class="card c-rose" data-k="חישוביות אריאלי while goto מכונת טיורינג רייס רדוקציות כריעות">
+      <article class="card mta-c-comp" data-k="חישוביות אריאלי while goto מכונת טיורינג רייס רדוקציות כריעות">
         <div class="top"><div class="icon">♾️</div>
           <div><h3>חישוביות</h3><p class="who">פרופ׳ עופר אריאלי</p></div></div>
         <p class="desc">WHILE, GOTO ושפת F, פונקציות חשיבות, R/RE/coRE, רדוקציות, משפט רייס ומכונות טיורינג, עם מפרשים שרצים בדפדפן.</p>
         <div class="links">
           <a class="btn sum" href="https://eliorch.github.io/computsum/">📘 סיכום</a>
+          <a class="btn que" href="https://eliorch.github.io/computque/">📝 תרגול</a>
         </div>
       </article>
 
@@ -245,9 +227,6 @@
 
   <p class="empty" id="empty">לא נמצא קורס מתאים לחיפוש.</p>
 
-  <footer>
-    נבנה ע״י <a href="https://github.com/EliorCh">אליאור</a> · מצאתם טעות? ספרו לי ואתקן
-  </footer>
 </div>
 
 <script>
