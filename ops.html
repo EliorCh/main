@@ -66,6 +66,31 @@
   .note{font-size:13.5px;color:var(--muted)}
   #chart svg{display:block;width:100%;height:auto;direction:ltr}
   @media (max-width:900px){.board{grid-template-columns:1fr}}
+  .col{border:1px solid transparent;transition:background .15s,border-color .15s}
+  .col h2{padding-bottom:8px;border-bottom:3px solid var(--st)}
+  .col.st-new{--st:#3B82F6;background:#EFF5FE}
+  .col.st-working{--st:#D97706;background:#FDF5E6}
+  .col.st-claude{--st:#7C3AED;background:#F4F0FD}
+  .col.st-done{--st:#16A34A;background:#EDF7F0}
+  .col.drop-on{border:2px dashed var(--st)}
+  .card[draggable=true]{cursor:grab}
+  .card.dragging{opacity:.45}
+  html[data-mta-theme="dark"] .col.st-new{background:#18222f} html[data-mta-theme="dark"] .col.st-working{background:#2a2216}
+  html[data-mta-theme="dark"] .col.st-claude{background:#231d30} html[data-mta-theme="dark"] .col.st-done{background:#17261c}
+  .ed-rich{min-height:44px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#FFFEFA;font-size:15.5px;line-height:1.65;outline:none}
+  .ed-rich:focus{border-color:#93a3b8;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+  :is(.ed-rich,.ed-rich-view) :is(.ltr,bdi[dir=ltr]){direction:ltr;unicode-bidi:isolate}
+  :is(.ed-rich,.ed-rich-view) .nw{white-space:nowrap}
+  :is(.ed-rich,.ed-rich-view) p{margin:6px 0}
+  :is(.ed-rich,.ed-rich-view) .f{display:block;direction:ltr;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:14.5px;background:#fef9e7;border:1px solid #fcd34d;color:#78350f;border-radius:8px;padding:8px 12px;margin:8px 0;white-space:pre-wrap}
+  :is(.ed-rich,.ed-rich-view) :is(.mono,code){font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  :is(.ed-rich,.ed-rich-view) pre{direction:ltr;text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;background:#1e2433;color:#e6edf7;border-radius:8px;padding:10px 14px;white-space:pre-wrap;margin:8px 0}
+  :is(.ed-rich,.ed-rich-view) table{border-collapse:collapse;margin:8px auto;font-size:14px}
+  :is(.ed-rich,.ed-rich-view) :is(td,th){border:1px solid #e5ded0;padding:4px 10px}
+  :is(.ed-rich,.ed-rich-view) th{background:#f5f0e8}
+  :is(.ed-rich,.ed-rich-view) :is(ul,ol){margin:6px 0;padding-inline-start:22px}
+  .ed-ch :is(del,ins).ed-rich-view{white-space:normal;text-decoration:none}
+  .ed-ch del.ed-rich-view{opacity:.8}
   .steps{margin:8px 0 6px;padding-inline-start:22px;line-height:1.7}
   .tag.done{background:#E3F1EB;color:#2F6B57}
   .card .who{font-size:13.5px;color:var(--muted);margin:0 0 6px}
@@ -228,7 +253,7 @@
       return '<li><b>' + esc(WHO[n.by] || n.by) + "</b> · " + esc(new Date(n.at).toLocaleDateString("he-IL")) + "<br>" + esc(n.text) + (n.commit ? ' <a target="_blank" rel="noopener" href="' + esc(n.commit) + '">שינוי ↗</a>' : "") + "</li>";
     }).join("");
     var stLabel = { fixed: "תוקן", rejected: "לא דורש שינוי" }[st];
-    return '<article class="card mta-c-' + s[1] + '" data-id="' + esc(r.id) + '"><div class="top"><span class="tag">' + esc(s[2]) + "</span><span>" +
+    return '<article class="card mta-c-' + s[1] + '" draggable="true" data-id="' + esc(r.id) + '"><div class="top"><span class="tag">' + esc(s[2]) + "</span><span>" +
       new Date(r.created).toLocaleDateString("he-IL") + "</span>" + (stLabel ? '<span class="tag done">' + stLabel + "</span>" : "") + "</div>" +
       "<h3>" + esc(r.qlabel || r.qid) + "</h3>" + '<p class="prob">' + esc(r.problem) + "</p>" +
       (who.name || who.email || who.year ? '<p class="who">מאת: ' + esc([who.name, who.email, who.year].filter(Boolean).join(" · ")) + "</p>" : "") +
@@ -242,7 +267,7 @@
     var list = all.filter(function (r) { var s = SITE[r.site]; return (filter === "all" || (s ? s[1] : "home") === filter) && (!q || JSON.stringify(r).toLowerCase().indexOf(q) >= 0); });
     $("#board").innerHTML = STAGES.map(function (st) {
       var items = list.filter(function (r) { return stageOf(r) === st[0]; });
-      return '<section class="col"><h2>' + st[1] + "<span>" + items.length + "</span></h2>" + (items.length ? items.map(card).join("") : '<div class="empty">אין כאן כלום</div>') + "</section>";
+      return '<section class="col st-' + st[0] + '" data-stage="' + st[0] + '"><h2>' + st[1] + "<span>" + items.length + "</span></h2>" + (items.length ? items.map(card).join("") : '<div class="empty">אין כאן כלום</div>') + "</section>";
     }).join("");
   }
   function byId(id) { for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i]; }
@@ -273,6 +298,38 @@
     b.disabled = true; b.textContent = "…";
     setStatus(r, a, text).then(load).catch(function (err) { b.textContent = "שגיאה: " + err.message; });
   });
+  /* drag a card to another column: same as the buttons (Claude asks for an instruction, "closed" = handled) */
+  var DROP = { "new": ["new", "נפתח מחדש"], working: ["working", "התחלתי לטפל"], claude: ["claude", null], done: ["fixed", "סומן כמטופל"] };
+  var dragId = null;
+  $("#board").addEventListener("dragstart", function (e) {
+    var c = e.target.closest && e.target.closest(".card"); if (!c) return;
+    dragId = c.dataset.id; c.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", dragId);
+  });
+  $("#board").addEventListener("dragend", function () {
+    dragId = null;
+    document.querySelectorAll(".dragging, .drop-on").forEach(function (x) { x.classList.remove("dragging", "drop-on"); });
+  });
+  $("#board").addEventListener("dragover", function (e) {
+    var col = e.target.closest && e.target.closest(".col"); if (!col || !dragId) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = "move";
+    document.querySelectorAll(".drop-on").forEach(function (x) { if (x !== col) x.classList.remove("drop-on"); });
+    col.classList.add("drop-on");
+  });
+  $("#board").addEventListener("drop", function (e) {
+    var col = e.target.closest && e.target.closest(".col"); if (!col || !dragId) return;
+    e.preventDefault();
+    var r = byId(dragId), stage = col.dataset.stage; col.classList.remove("drop-on");
+    if (!r || stageOf(r) === stage) return;
+    var to = DROP[stage], text = to[1];
+    if (stage === "claude") {
+      text = prompt("מה לבקש מ־Claude? (אפשר להשאיר ריק: Claude יבדוק את הדיווח ויתקן אם צריך)"); if (text === null) return;
+      text = "בקשה ל־Claude: " + (text || "לבדוק את הדיווח ולתקן אם צריך");
+    }
+    r.status = to[0]; draw();                       /* move it right away; the save follows */
+    $("#status").textContent = "שומר…";
+    setStatus(r, to[0], text).then(load).catch(function (err) { $("#status").innerHTML = '<span class="err">השמירה נכשלה: ' + esc(err.message) + "</span>"; load(); });
+  });
   $("#reload").onclick = load;
   $("#q").oninput = draw;
 
@@ -282,8 +339,11 @@
     title: "כותרת", source: "מקור", code: "קוד", note: "הערה", subtopic: "תת־נושא", sub: "תת־נושא", check: "אימות", points: "נקודות" };
   var SKIP = { id: 1, topic: 1, exam: 1, examLabel: 1, date: 1, num: 1, half: 1, type: 1, variants: 1, table: 1, atable: 1, tree: 1, rep: 1, label_: 1 };
   var ED = null;
+  /* a field holding real markup (not a stray "<" in text) is edited as formatted text, not as code */
+  var HTMLISH = /<(p|div|span|bdi|strong|em|b|i|u|table|tr|td|th|ul|ol|li|pre|code|br|sub|sup|a|h[1-6])\b[^>]*>/i;
   function field(path, val, key) {
     var lab = '<div class="ed-lab">' + esc(LABELS[key] || key) + "</div>";
+    if (typeof val === "string" && HTMLISH.test(val)) return '<div class="ed-f">' + lab + '<div class="ed-rich" contenteditable="true" dir="rtl" data-p="' + esc(path) + '" data-rich="1">' + val + "</div></div>";
     if (typeof val === "string") return '<label class="ed-f">' + lab + '<textarea data-p="' + esc(path) + '" rows="' + Math.min(14, Math.max(2, Math.ceil(val.length / 90) + (val.split("\n").length - 1))) + '">' + esc(val) + "</textarea></label>";
     if (typeof val === "number") return '<label class="ed-f">' + lab + '<input type="number" data-p="' + esc(path) + '" data-num="1" value="' + val + '"></label>';
     if (typeof val === "boolean") return '<label class="ed-f ed-cb"><input type="checkbox" data-p="' + esc(path) + '" data-bool="1"' + (val ? " checked" : "") + ">" + esc(LABELS[key] || key) + "</label>";
@@ -325,6 +385,12 @@
         '<div class="ed-diff" id="ed-diff"></div>' +
         '<div class="acts"><button type="button" class="btn" id="ed-prev">תצוגת השינויים</button><button type="button" class="btn pri" id="ed-save">שמירה ופרסום</button><button type="button" class="btn" id="ed-cancel">ביטול</button></div>' +
         '<p class="note">השמירה מעדכנת את הקובץ באתר <b>' + esc(r.site) + "</b> ב־GitHub, והאתר מתעדכן תוך דקה בערך. הדיווח עובר ל״סגורים״.</p></form>";
+      dlg.querySelectorAll("[data-rich]").forEach(function (el) {
+        el._orig = getAt(ED.orig, el.dataset.p); el._seen = el.innerHTML;
+        el.addEventListener("paste", function (ev) {   /* paste as plain text, never someone else's styling */
+          ev.preventDefault(); document.execCommand("insertText", false, (ev.clipboardData || window.clipboardData).getData("text/plain"));
+        });
+      });
       $("#ed-cancel").onclick = function () { dlg.close(); };
       $("#ed-prev").onclick = function () { collect(); $("#ed-diff").innerHTML = diffHTML(); };
       $("#ed-save").onclick = save;
@@ -332,7 +398,7 @@
   }
   function collect() {
     $("#editor").querySelectorAll("[data-p]").forEach(function (el) {
-      var v = el.dataset.bool ? el.checked : el.dataset.num ? Number(el.value) : el.value;
+      var v = el.dataset.rich ? (el.innerHTML === el._seen ? el._orig : el.innerHTML) : el.dataset.bool ? el.checked : el.dataset.num ? Number(el.value) : el.value;
       setAt(ED.q, el.dataset.p, v);
     });
   }
@@ -340,13 +406,13 @@
     var out = [];
     $("#editor").querySelectorAll("[data-p]").forEach(function (el) {
       var a = getAt(ED.orig, el.dataset.p), b = getAt(ED.q, el.dataset.p);
-      if (JSON.stringify(a) !== JSON.stringify(b)) out.push([el.dataset.p.slice(1), a, b]);
+      if (JSON.stringify(a) !== JSON.stringify(b)) out.push([el.dataset.p.slice(1), a, b, !!el.dataset.rich]);
     });
     return out;
   }
   function diffHTML() {
     var c = changes();
-    return c.length ? "<h3>מה ישתנה</h3>" + c.map(function (x) { return '<div class="ed-ch"><b>' + esc(x[0].split(".").map(function (k) { return LABELS[k] || (/^\d+$/.test(k) ? Number(k) + 1 : k); }).join(" › ")) + '</b><del>' + esc(x[1]) + "</del><ins>" + esc(x[2]) + "</ins></div>"; }).join("") : '<p class="note">אין שינויים.</p>';
+    return c.length ? "<h3>מה ישתנה</h3>" + c.map(function (x) { return '<div class="ed-ch"><b>' + esc(x[0].split(".").map(function (k) { return LABELS[k] || (/^\d+$/.test(k) ? Number(k) + 1 : k); }).join(" › ")) + '</b>' + (x[3] ? '<del class="ed-rich-view">' + x[1] + '</del><ins class="ed-rich-view">' + x[2] + "</ins>" : "<del>" + esc(x[1]) + "</del><ins>" + esc(x[2]) + "</ins>") + "</div>"; }).join("") : '<p class="note">אין שינויים.</p>';
   }
   function save() {
     collect(); var c = changes(), btn = $("#ed-save");
