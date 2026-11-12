@@ -22,7 +22,7 @@
       var a = k.querySelector('annotation[encoding="application/x-tex"]');
       k.replaceWith(document.createTextNode(a ? " " + a.textContent + " " : k.textContent));
     });
-    c.querySelectorAll(".mta-fb-bar, .mta-fb, button, textarea, [data-nocopy]").forEach(function (b) { b.remove(); });
+    c.querySelectorAll(".mta-fb-acts, .mta-fb-slot, .mta-fb, button, textarea, [data-nocopy]").forEach(function (b) { b.remove(); });
     c.querySelectorAll("br").forEach(function (b) { b.replaceWith("\n"); });
     c.querySelectorAll("p,div,li,tr,pre,h1,h2,h3,h4,h5,h6,table,.exp-label").forEach(function (b) { b.append("\n"); });
     c.querySelectorAll("td,th").forEach(function (b) { b.append(" | "); });
@@ -61,7 +61,7 @@
         '<div class="mta-fb-row"><a class="mta-fb-btn" data-fb="gh" target="_blank" rel="noopener" href="#">שליחה דרך GitHub</a>' +
         '<button type="button" class="mta-fb-btn ghost" data-fb="copy">העתקת הדיווח</button>' +
         '<button type="button" class="mta-fb-btn ghost" data-fb="close">סגירה</button></div>' +
-        '<p class="mta-fb-hint">השליחה פותחת דיווח חדש (issue) ב־GitHub, עם פרטי השאלה כבר בפנים, ואני מקבל עליו התראה. צריך חשבון GitHub. אין חשבון? אפשר להעתיק ולשלוח בכל דרך אחרת.</p>' +
+        '<p class="mta-fb-hint">השליחה פותחת דיווח חדש (issue) ב־GitHub, עם פרטי השאלה כבר בפנים, ואני מקבל עליו התראה. צריך חשבון GitHub. אפשר גם להעתיק את הדיווח ולשלוח אותו במייל ל־<a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a>.</p>' +
         '<div class="mta-fb-msg"></div></div>';
     var name = ""; try { name = localStorage.getItem("mta-name") || ""; } catch (e) {}
     return '<div class="mta-fb" data-k="ask"><h4>הודעה למרצה על השאלה</h4>' +
@@ -82,11 +82,11 @@
     if (k === "report")
       return "דיווח על " + head(card) + "\n\nהבעיה:\n" + (t || "(לא נכתב תיאור)") + "\n\nקישור: " + location.href.split("#")[0] + (card.id ? "#" + card.id : "") +
         "\n\nהשאלה:\n" + qText(p);
-    var sol = box.querySelector(".mta-fbsol").checked, name = box.querySelector(".mta-fbname").value.trim();
+    var sol = box.querySelector(".mta-fbsol").checked, signer = box.querySelector(".mta-fbname").value.trim();
     var L = ["שלום,", "", "בהכנה למבחן בקורס " + COURSE + " עברתי על " + name(card) + ", ויש לי שאלה לגביה.", "",
       t || "(כאן תכתוב את השאלה שלך)", "", "לנוחותך, זה נוסח השאלה:", "──────────", qText(p), "──────────", ""];
     if (sol && p.sol) L.push("הפתרון שמופיע באתר:", p.sol, "");
-    L.push("תודה רבה,", name);
+    L.push("תודה רבה,", signer);
     return L.join("\n").trim();
   }
 
@@ -108,13 +108,22 @@
   }
 
   function decorate(card) {
-    if (card.querySelector(":scope > .mta-fb-bar, :scope .mta-fb-bar") || card.closest(SKIP)) return;
-    var bar = document.createElement("div");
-    bar.className = "mta-fb-bar";
-    bar.innerHTML = '<button type="button" data-fbopen="report" title="דיווח על טעות או בעיה בשאלה">⚑ דיווח על השאלה</button>' +
-      '<button type="button" data-fbopen="ask" title="הכנת הודעה למרצה עם נוסח השאלה">✉ שאלה למרצה</button><div class="mta-fb-slot"></div>';
-    var host = card.querySelector(".browse-details") || card;
-    host.appendChild(bar);
+    if (card.querySelector(".mta-fb-acts") || card.closest(SKIP)) return;
+    var acts = document.createElement("span");
+    acts.className = "mta-fb-acts";
+    acts.innerHTML = '<button type="button" data-fbopen="report" title="דיווח על טעות או בעיה בשאלה">⚑ דיווח</button>' +
+      '<button type="button" data-fbopen="ask" title="הכנת הודעה למרצה עם נוסח השאלה">✉ שאלה למרצה</button>';
+    var slot = document.createElement("div"); slot.className = "mta-fb-slot";
+    var head = card.querySelector(".practice-q-header, .qtop, .question-meta");
+    if (head && !card.querySelector(".browse-details")) {
+      var flag = head.querySelector(".question-flag, .star");
+      if (flag) { head.insertBefore(acts, flag); acts.appendChild(flag); } else head.appendChild(acts);
+      head.parentNode.insertBefore(slot, head.nextSibling);
+    } else {
+      var host = card.querySelector(".browse-details") || card;
+      var row = document.createElement("div"); row.className = "mta-fb-row-top";
+      row.appendChild(acts); host.insertBefore(row, host.firstChild); host.insertBefore(slot, row.nextSibling);
+    }
   }
   function scan() { document.querySelectorAll(CARD).forEach(decorate); }
 
@@ -148,7 +157,7 @@
   }, true);
   /* keep clicks inside the panel from toggling a <details> card or answering the question */
   document.addEventListener("click", function (e) {
-    if (e.target.closest && e.target.closest(".mta-fb-bar") && e.target.closest("summary")) e.preventDefault();
+    if (e.target.closest && e.target.closest(".mta-fb-acts") && e.target.closest("summary")) e.preventDefault();
   });
   document.addEventListener("input", function (e) {
     var card = e.target.closest && e.target.closest(CARD);
