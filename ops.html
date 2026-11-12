@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>תפעול · אתרי הלימוד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Frank+Ruhl+Libre:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#FBF8F3;--card:#fff;--ink:#1c1917;--soft:#44403c;--muted:#78716c;--border:#E8E0D0;--acc:#44403c}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Assistant",-apple-system,sans-serif;font-size:16px;line-height:1.55}
+  .wrap{max-width:1320px;margin:0 auto;padding:28px 20px 40px}
+  h1{font-family:"Frank Ruhl Libre",Georgia,serif;font-size:40px;margin:0 0 6px}
+  .sub{color:var(--soft);margin:0 0 18px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+  .bar input[type=search]{flex:1 1 240px;border:1px solid var(--border);border-radius:999px;padding:8px 16px;font:inherit;background:#fff}
+  .btn{cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--soft);border-radius:10px;padding:6px 14px;font:600 14.5px "Assistant",sans-serif}
+  .btn:hover{border-color:var(--ink);color:var(--ink)}
+  .btn.pri{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .chip{cursor:pointer;border:1.5px solid var(--border);background:#fff;border-radius:999px;padding:4px 12px;font:600 14px "Assistant",sans-serif;color:var(--soft)}
+  .chip[aria-pressed=true]{background:var(--mta-acc,#44403c);border-color:var(--mta-acc,#44403c);color:#fff}
+  .status{font-size:14px;color:var(--muted);margin-inline-start:auto}
+  .conn{background:#fff;border:1px dashed var(--border);border-radius:14px;padding:14px 18px;margin-bottom:18px;font-size:14.5px;color:var(--soft)}
+  .conn input{font:inherit;border:1px solid var(--border);border-radius:8px;padding:6px 10px;min-width:280px;direction:ltr}
+  .conn .ok{color:#15803d;font-weight:700}
+  .board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+  .col{background:#F5F0E8;border-radius:16px;padding:12px}
+  .col h2{font-size:17px;margin:4px 6px 12px;display:flex;justify-content:space-between}
+  .col h2 span{font-size:13px;color:var(--muted);font-weight:600}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;border-inline-start:5px solid var(--mta-acc)}
+  .card .top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .tag{font-weight:700;border-radius:999px;padding:1px 9px;background:var(--mta-acc-soft);color:var(--mta-acc-ink)}
+  .card h3{font-size:16px;margin:2px 0 6px}
+  .card .prob{white-space:pre-wrap;color:var(--soft);font-size:14.5px;margin:0 0 6px}
+  .card details{font-size:13.5px;color:var(--soft)} .card details pre{white-space:pre-wrap;font-family:inherit;margin:6px 0 0;background:#FAF7F1;border-radius:8px;padding:8px 10px}
+  .card .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .card .acts a,.card .acts button{font:600 13px "Assistant",sans-serif;text-decoration:none;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--soft);border-radius:8px;padding:3px 10px}
+  .card .acts a:hover,.card .acts button:hover{border-color:var(--mta-acc);color:var(--mta-acc-ink)}
+  .empty{color:var(--muted);text-align:center;padding:18px 0;font-size:14px}
+  .err{color:#b91c1c}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin:6px 0 20px}
+  .tabs a{padding:8px 16px;font-weight:700;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px}
+  .tabs a[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+  .seg{display:inline-flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+  .seg button{all:unset;cursor:pointer;padding:6px 14px;font:600 14px "Assistant",sans-serif;color:var(--soft)}
+  .seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+  .kpi{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px}
+  .kpi b{display:block;font-size:30px;font-weight:800;line-height:1.2}
+  .kpi span{font-size:13.5px;color:var(--muted)}
+  .kpi .d{font-size:13px;font-weight:700;margin-inline-start:6px}
+  .kpi .up{color:#15803d} .kpi .down{color:#b91c1c}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:18px}
+  .panel h2{font-size:17px;margin:0 0 12px}
+  table.st{width:100%;border-collapse:collapse;font-size:15px}
+  table.st th{text-align:right;font-size:13px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border)}
+  table.st td{padding:8px;border-bottom:1px solid #f3efe7;vertical-align:middle}
+  table.st td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--mta-acc);margin-inline-end:8px}
+  .share{height:8px;border-radius:99px;background:#f1ece2;min-width:120px;overflow:hidden}
+  .share i{display:block;height:100%;background:var(--mta-acc)}
+  .note{font-size:13.5px;color:var(--muted)}
+  #chart svg{display:block;width:100%;height:auto;direction:ltr}
+  @media (max-width:900px){.board{grid-template-columns:1fr}}
+</style>
+<!-- mta-theme --><link rel="stylesheet" href="site-theme.css"><script src="site-theme.js" data-course="home" data-fam="home" data-footer="body"></script><!-- /mta-theme -->
+</head>
+<body>
+<div class="wrap">
+  <h1>תפעול</h1>
+  <p class="sub">הדיווחים של הסטודנטים והשימוש באתרים, במקום אחד.</p>
+  <nav class="tabs" role="tablist">
+    <a href="#issues" role="tab" id="tab-issues">דיווחים</a>
+    <a href="#usage" role="tab" id="tab-usage">שימוש באתרים</a>
+  </nav>
+  <section id="view-issues">
+  <div class="conn" id="conn"></div>
+  <div class="bar">
+    <input type="search" id="q" placeholder="חיפוש בדיווחים…">
+    <button class="btn" id="reload" type="button">רענון</button>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="board" id="board"></div>
+  </section>
+
+  <section id="view-usage" hidden>
+    <div class="conn" id="gconn"></div>
+    <div class="bar">
+      <span class="seg" id="range"><button type="button" data-d="7">7 ימים</button><button type="button" data-d="30">30 יום</button><button type="button" data-d="90">90 יום</button></span>
+      <button class="btn" id="greload" type="button">רענון</button>
+      <span class="status" id="gstatus"></span>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="panel"><h2>ביקורים ביום, בכל האתרים</h2><div id="chart"></div></div>
+    <div class="panel"><h2>לפי אתר</h2><div id="sites"></div></div>
+    <div class="panel"><h2>העמודים הנצפים ביותר</h2><div id="pages"></div></div>
+    <p class="note">הנתונים מ־GoatCounter: ביקורים לפי עמוד. מי שחוסם סקריפטים של מעקב לא נספר, אז המספרים הם הערכה מלמטה.</p>
+  </section>
+</div>
+<script>
+(function () {
+  "use strict";
+  var OWNER = "EliorCh", LABEL = "בטיפול";
+  var SITES = [
+    ["comque", "com", "תקשורת · תרגול"], ["comsum", "com", "תקשורת · סיכום"],
+    ["mlque", "ml", "למידת מכונה · תרגול"], ["mlsum", "ml", "למידת מכונה · סיכום"],
+    ["algosum", "algo", "אלגוריתמים"], ["statsum", "stats", "סטטיסטיקה"],
+    ["osque", "os", "מערכות הפעלה · תרגול"], ["ossum", "os", "מערכות הפעלה · סיכום"],
+    ["dbsum", "db", "בסיסי נתונים"], ["cryptosum", "crypto", "קריפטוגרפיה"],
+    ["computque", "comp", "חישוביות · תרגול"], ["computsum", "comp", "חישוביות · סיכום"], ["main", "home", "דף הבית"]
+  ];
+  var TK = "mta-gh-token", CACHE = "mta-issues-cache";
+  var token = ""; try { token = localStorage.getItem(TK) || ""; } catch (e) {}
+  var me = null, all = [], filter = "all";
+  var $ = function (s) { return document.querySelector(s); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function api(path, opt) {
+    opt = opt || {};
+    var h = { "Accept": "application/vnd.github+json" };
+    if (token) h.Authorization = "Bearer " + token;
+    if (opt.body) h["Content-Type"] = "application/json";
+    return fetch("https://api.github.com" + path, { method: opt.method || "GET", headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined })
+      .then(function (r) { if (!r.ok) throw new Error(r.status + " " + r.statusText); return r.status === 204 ? null : r.json(); });
+  }
+
+  /* ---- connection: reading is public; changing an issue needs your own GitHub token ---- */
+  function drawConn() {
+    var c = $("#conn");
+    if (me) {
+      c.innerHTML = '<span class="ok">מחובר כ־' + esc(me) + '</span> · אפשר להעביר דיווחים בין השלבים מכאן. <button class="btn" id="logout" type="button">ניתוק</button>';
+      $("#logout").onclick = function () { try { localStorage.removeItem(TK); } catch (e) {} token = ""; me = null; drawConn(); draw(); };
+    } else {
+      c.innerHTML = 'מצב צפייה. כדי לשנות סטטוס מכאן, הדבק טוקן אישי של GitHub (Fine-grained, הרשאת Issues: Read and write על הריפו שלך). הטוקן נשמר רק בדפדפן הזה.<br>' +
+        '<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off"> <button class="btn pri" id="login" type="button">התחברות</button> <span id="cmsg"></span>';
+      $("#login").onclick = function () {
+        token = $("#tok").value.trim(); if (!token) return;
+        api("/user").then(function (u) {
+          if (u.login.toLowerCase() !== OWNER.toLowerCase()) throw new Error("הטוקן שייך ל־" + u.login + " ולא ל־" + OWNER);
+          me = u.login; try { localStorage.setItem(TK, token); } catch (e) {} drawConn(); draw();
+        }).catch(function (e) { token = ""; $("#cmsg").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
+      };
+    }
+  }
+  if (token) api("/user").then(function (u) { if (u.login.toLowerCase() === OWNER.toLowerCase()) me = u.login; else token = ""; drawConn(); draw(); }).catch(function () { token = ""; drawConn(); });
+  drawConn();
+
+  /* ---- load every site's issues ---- */
+  function load(force) {
+    $("#status").textContent = "טוען…";
+    if (!force) {
+      try { var c = JSON.parse(sessionStorage.getItem(CACHE) || "null"); if (c && Date.now() - c.t < 180000) { all = c.d; done(c.t); return; } } catch (e) {}
+    }
+    var errs = [];
+    Promise.all(SITES.map(function (s) {
+      return api("/repos/" + OWNER + "/" + s[0] + "/issues?state=all&per_page=100").then(function (list) {
+        return list.filter(function (i) { return !i.pull_request; }).map(function (i) { i._site = s; return i; });
+      }).catch(function (e) { errs.push(s[0] + ": " + e.message); return []; });
+    })).then(function (lists) {
+      all = [].concat.apply([], lists).sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+      try { sessionStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), d: all })); } catch (e) {}
+      done(Date.now(), errs);
+    });
+  }
+  function done(t, errs) {
+    $("#status").innerHTML = all.length + " דיווחים · עודכן " + new Date(t).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }) +
+      (errs && errs.length ? ' · <span class="err" title="' + esc(errs.join("\n")) + '">חלק מהאתרים לא נטענו (מגבלת קריאות של GitHub? נסו שוב בעוד כמה דקות או התחברו)</span>' : "");
+    chips(); draw();
+  }
+  $("#reload").onclick = function () { load(true); };
+  $("#q").oninput = draw;
+
+  function chips() {
+    var used = {}; all.forEach(function (i) { used[i._site[1]] = (used[i._site[1]] || 0) + 1; });
+    var names = { com: "תקשורת", ml: "למידת מכונה", algo: "אלגוריתמים", stats: "סטטיסטיקה", os: "מערכות הפעלה", db: "בסיסי נתונים", crypto: "קריפטוגרפיה", comp: "חישוביות", home: "דף הבית" };
+    var h = '<button class="chip" data-f="all" aria-pressed="' + (filter === "all") + '">הכל · ' + all.length + "</button>";
+    Object.keys(used).forEach(function (k) { h += '<button class="chip mta-c-' + k + '" data-f="' + k + '" aria-pressed="' + (filter === k) + '">' + names[k] + " · " + used[k] + "</button>"; });
+    $("#chips").innerHTML = h;
+    $("#chips").querySelectorAll(".chip").forEach(function (b) { b.onclick = function () { filter = b.dataset.f; chips(); draw(); }; });
+  }
+
+  function stage(i) { return i.state === "closed" ? 2 : i.labels.some(function (l) { return l.name === LABEL; }) ? 1 : 0; }
+  function parts(body) {
+    body = body || "";
+    var prob = (body.match(/הבעיה:\n([\s\S]*?)\n\n/) || [])[1] || "";
+    var link = (body.match(/קישור:\s*(\S+)/) || [])[1] || "";
+    var q = (body.match(/השאלה:\n([\s\S]*)$/) || [])[1] || "";
+    return { prob: prob.trim(), link: link, q: q.trim() };
+  }
+  function card(i) {
+    var p = parts(i.body), s = i._site, st = stage(i);
+    var acts = '<a href="' + esc(i.html_url) + '" target="_blank" rel="noopener">ב־GitHub ↗</a>' + (p.link ? '<a href="' + esc(p.link) + '" target="_blank" rel="noopener">לשאלה באתר ↗</a>' : "");
+    if (me) {
+      if (st === 0) acts += '<button data-a="work" data-r="' + s[0] + '" data-n="' + i.number + '">התחלת טיפול</button>';
+      if (st < 2) acts += '<button data-a="close" data-r="' + s[0] + '" data-n="' + i.number + '">טופל ✓</button>';
+      if (st === 2) acts += '<button data-a="reopen" data-r="' + s[0] + '" data-n="' + i.number + '">פתיחה מחדש</button>';
+    }
+    return '<article class="card mta-c-' + s[1] + '"><div class="top"><span class="tag">' + esc(s[2]) + "</span><span>#" + i.number + "</span><span>" +
+      new Date(i.created_at).toLocaleDateString("he-IL") + "</span><span>" + esc(i.user && i.user.login) + "</span></div>" +
+      "<h3>" + esc(i.title) + "</h3>" + (p.prob ? '<p class="prob">' + esc(p.prob) + "</p>" : "") +
+      (p.q ? "<details><summary>נוסח השאלה</summary><pre>" + esc(p.q) + "</pre></details>" : (i.body ? "<details><summary>הדיווח המלא</summary><pre>" + esc(i.body) + "</pre></details>" : "")) +
+      '<div class="acts">' + acts + "</div></article>";
+  }
+  function draw() {
+    var q = ($("#q").value || "").trim().toLowerCase();
+    var list = all.filter(function (i) { return (filter === "all" || i._site[1] === filter) && (!q || (i.title + " " + i.body).toLowerCase().indexOf(q) >= 0); });
+    var cols = [["חדשים", []], ["בטיפול", []], ["טופלו", []]];
+    list.forEach(function (i) { cols[stage(i)][1].push(i); });
+    $("#board").innerHTML = cols.map(function (c) {
+      return '<section class="col"><h2>' + c[0] + "<span>" + c[1].length + "</span></h2>" + (c[1].length ? c[1].map(card).join("") : '<div class="empty">אין כאן כלום</div>') + "</section>";
+    }).join("");
+  }
+  $("#board").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-a]"); if (!b) return;
+    var path = "/repos/" + OWNER + "/" + b.dataset.r + "/issues/" + b.dataset.n, a = b.dataset.a, job;
+    b.disabled = true; b.textContent = "…";
+    if (a === "work") job = api(path + "/labels", { method: "POST", body: { labels: [LABEL] } });
+    else if (a === "close") job = api(path, { method: "PATCH", body: { state: "closed", state_reason: "completed" } });
+    else job = api(path, { method: "PATCH", body: { state: "open" } });
+    job.then(function () { load(true); }).catch(function (err) { b.textContent = "שגיאה: " + err.message; });
+  });
+
+  load(false);
+
+  /* ======================= usage (GoatCounter) ======================= */
+  var GC = "https://eliorch.goatcounter.com/api/v0", GK = "mta-gc-token", days = 30, gtoken = "";
+  try { gtoken = localStorage.getItem(GK) || ""; } catch (e) {}
+  var SITE_OF = {}; SITES.forEach(function (s) { SITE_OF[s[0]] = s; });
+  function gapi(path) {
+    return fetch(GC + path, { headers: { "Authorization": "Bearer " + gtoken, "Content-Type": "application/json" } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "המפתח לא תקין או בלי הרשאה" : r.status + " " + r.statusText); return r.json(); });
+  }
+  function drawG() {
+    var c = $("#gconn");
+    if (gtoken) {
+      c.innerHTML = '<span class="ok">מחובר ל־GoatCounter</span> <button class="btn" id="glogout" type="button">ניתוק</button>';
+      $("#glogout").onclick = function () { try { localStorage.removeItem(GK); } catch (e) {} gtoken = ""; drawG(); };
+    } else {
+      c.innerHTML = 'כדי לראות סטטיסטיקות, הדבק מפתח API של GoatCounter (באתר GoatCounter: שם המשתמש בתפריט העליון ← API, עם הרשאת קריאת סטטיסטיקות בלבד). המפתח נשמר רק בדפדפן הזה.<br>' +
+        '<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
+      $("#glogin").onclick = function () {
+        gtoken = $("#gtok").value.trim(); if (!gtoken) return;
+        gapi("/me").then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} drawG(); loadG(); })
+          .catch(function (e) { gtoken = ""; $("#gmsg").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
+      };
+    }
+    $("#range").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(+b.dataset.d === days)); });
+  }
+  function iso(d) { d = new Date(d); d.setUTCMinutes(0, 0, 0); return d.toISOString().replace(/\.\d+Z$/, "Z"); }
+  function siteOf(path) { var s = (path || "").split("/")[1] || "main"; return SITE_OF[s] || null; }
+  function loadG() {
+    if (!gtoken) { ["#kpis", "#chart", "#sites", "#pages"].forEach(function (s) { $(s).innerHTML = ""; }); return; }
+    $("#gstatus").textContent = "טוען…";
+    var end = Date.now(), start = end - days * 864e5, pstart = start - days * 864e5;
+    var q = "start=" + iso(start) + "&end=" + iso(end);
+    var hits = [];
+    function page(excl) {
+      return gapi("/stats/hits?" + q + "&limit=100&group=day" + excl.map(function (x) { return "&exclude_paths=" + x; }).join("")).then(function (r) {
+        hits = hits.concat(r.hits || []);
+        if (r.more && hits.length < 500) return page(hits.map(function (h) { return h.path_id; }));
+      });
+    }
+    Promise.all([
+      gapi("/stats/total?" + q + "&group=day"),
+      gapi("/stats/total?start=" + iso(pstart) + "&end=" + iso(start) + "&group=day").catch(function () { return null; }),
+      page([])
+    ]).then(function (res) { renderG(res[0], res[1], hits); $("#gstatus").textContent = "עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }); })
+      .catch(function (e) { $("#gstatus").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
+  }
+  function fmt(n) { return Number(n || 0).toLocaleString("he-IL"); }
+  function series(stats) { return (stats || []).map(function (s) { return [s.day, s.daily || 0]; }); }
+  function renderG(tot, prev, hits) {
+    var total = tot.total || 0, ptotal = prev ? prev.total || 0 : null;
+    var bySite = {};
+    hits.filter(function (h) { return !h.event; }).forEach(function (h) {
+      var s = siteOf(h.path); var k = s ? s[0] : "אחר";
+      var b = bySite[k] || (bySite[k] = { s: s, n: 0, days: {} });
+      b.n += h.count || 0;
+      (h.stats || []).forEach(function (d) { b.days[d.day] = (b.days[d.day] || 0) + (d.daily || 0); });
+    });
+    var sites = Object.keys(bySite).map(function (k) { return bySite[k]; }).sort(function (a, b) { return b.n - a.n; });
+    var delta = ptotal ? Math.round(100 * (total - ptotal) / ptotal) : null;
+    $("#kpis").innerHTML =
+      '<div class="kpi"><b>' + fmt(total) + (delta === null ? "" : '<span class="d ' + (delta >= 0 ? "up" : "down") + '">' + (delta >= 0 ? "▲ " : "▼ ") + Math.abs(delta) + "%</span>") + "</b><span>ביקורים ב־" + days + " הימים האחרונים" + (delta === null ? "" : ", לעומת התקופה שלפני") + "</span></div>" +
+      '<div class="kpi"><b>' + fmt(Math.round(total / days)) + "</b><span>ממוצע ביקורים ביום</span></div>" +
+      '<div class="kpi"><b>' + sites.length + "</b><span>אתרים עם ביקורים</span></div>" +
+      '<div class="kpi"><b>' + (sites[0] && sites[0].s ? esc(sites[0].s[2]) : "–") + "</b><span>האתר הכי פעיל</span></div>";
+    $("#chart").innerHTML = lineChart(series(tot.stats));
+    var max = sites.length ? sites[0].n : 1;
+    $("#sites").innerHTML = sites.length ? '<table class="st"><tr><th>אתר</th><th>ביקורים</th><th>חלק מהכלל</th><th>לאורך התקופה</th></tr>' + sites.map(function (b) {
+      var name = b.s ? b.s[2] : "אחר", cls = b.s ? "mta-c-" + b.s[1] : "";
+      var sp = Object.keys(b.days).sort().map(function (d) { return b.days[d]; });
+      return '<tr class="' + cls + '"><td><span class="sw"></span>' + esc(name) + '</td><td class="n">' + fmt(b.n) + '</td><td><div class="share"><i style="width:' + Math.round(100 * b.n / max) + '%"></i></div></td><td>' + spark(sp) + "</td></tr>";
+    }).join("") + "</table>" : '<div class="empty">אין ביקורים בתקופה הזו</div>';
+    var top = hits.filter(function (h) { return !h.event; }).sort(function (a, b) { return b.count - a.count; }).slice(0, 12);
+    $("#pages").innerHTML = top.length ? '<table class="st"><tr><th>עמוד</th><th>אתר</th><th>ביקורים</th></tr>' + top.map(function (h) {
+      var s = siteOf(h.path);
+      return '<tr class="' + (s ? "mta-c-" + s[1] : "") + '"><td><a href="https://eliorch.github.io' + esc(h.path) + '" target="_blank" rel="noopener">' + esc(h.title || h.path) + '</a></td><td><span class="sw"></span>' + esc(s ? s[2] : "") + '</td><td class="n">' + fmt(h.count) + "</td></tr>";
+    }).join("") + "</table>" : '<div class="empty">אין נתונים</div>';
+  }
+  /* single-series line chart: one color, light grid, the last value labeled */
+  function lineChart(pts) {
+    if (!pts.length) return '<div class="empty">אין נתונים</div>';
+    var W = 900, H = 220, L = 40, R = 16, T = 14, B = 28, n = pts.length;
+    var mx = Math.max.apply(null, pts.map(function (p) { return p[1]; }).concat([1]));
+    var nice = Math.pow(10, Math.floor(Math.log10(mx))); mx = Math.ceil(mx / nice) * nice;
+    var x = function (i) { return L + (W - L - R) * (n === 1 ? 0.5 : i / (n - 1)); }, y = function (v) { return T + (H - T - B) * (1 - v / mx); };
+    var g = "";
+    [0, 0.5, 1].forEach(function (f) { var v = Math.round(mx * f); g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#ece6da"/><text x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="11" fill="#8b867e">' + v + "</text>"; });
+    var step = Math.max(1, Math.round(n / 6));
+    pts.forEach(function (p, i) { if (i % step === 0 || i === n - 1) g += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#8b867e">' + p[0].slice(5).split("-").reverse().join("/") + "</text>"; });
+    var d = pts.map(function (p, i) { return (i ? "L" : "M") + x(i).toFixed(1) + "," + y(p[1]).toFixed(1); }).join("");
+    var area = d + "L" + x(n - 1).toFixed(1) + "," + y(0) + "L" + x(0).toFixed(1) + "," + y(0) + "Z";
+    var last = pts[n - 1];
+    return '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="ביקורים ביום">' + g +
+      '<path d="' + area + '" fill="#44403c" fill-opacity=".08"/><path d="' + d + '" fill="none" stroke="#44403c" stroke-width="2.2" stroke-linejoin="round"/>' +
+      '<circle cx="' + x(n - 1) + '" cy="' + y(last[1]) + '" r="4" fill="#44403c"/><text x="' + (x(n - 1) - 8) + '" y="' + (y(last[1]) - 8) + '" text-anchor="end" font-size="12" font-weight="700" fill="#1c1917">' + last[1] + "</text>" +
+      pts.map(function (p, i) { return '<rect x="' + (x(i) - (W - L - R) / n / 2) + '" y="' + T + '" width="' + ((W - L - R) / n) + '" height="' + (H - T - B) + '" fill="transparent"><title>' + p[0] + ": " + p[1] + " ביקורים</title></rect>"; }).join("") + "</svg>";
+  }
+  function spark(v) {
+    if (!v.length) return "";
+    var W = 120, H = 26, mx = Math.max.apply(null, v.concat([1]));
+    var d = v.map(function (a, i) { return (i ? "L" : "M") + (W * (v.length === 1 ? 0.5 : i / (v.length - 1))).toFixed(1) + "," + (H - 2 - (H - 4) * a / mx).toFixed(1); }).join("");
+    return '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="direction:ltr"><path d="' + d + '" fill="none" stroke="var(--mta-acc)" stroke-width="1.8"/></svg>';
+  }
+  $("#range").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; days = +b.dataset.d; drawG(); loadG(); });
+  $("#greload").onclick = loadG;
+
+  /* ---- tabs ---- */
+  var gLoaded = false;
+  function route() {
+    var u = location.hash === "#usage";
+    $("#view-issues").hidden = u; $("#view-usage").hidden = !u;
+    $("#tab-issues").setAttribute("aria-selected", String(!u)); $("#tab-usage").setAttribute("aria-selected", String(u));
+    if (u && !gLoaded) { gLoaded = true; drawG(); loadG(); }
+  }
+  addEventListener("hashchange", route); route();
+})();
+</script>
+</body>
+</html>
