@@ -66,28 +66,46 @@
   .note{font-size:13.5px;color:var(--muted)}
   #chart svg{display:block;width:100%;height:auto;direction:ltr}
   @media (max-width:900px){.board{grid-template-columns:1fr}}
+  .tag.done{background:#E3F1EB;color:#2F6B57}
+  .card .who{font-size:13.5px;color:var(--muted);margin:0 0 6px}
+  .card .notes{list-style:none;margin:8px 0 0;padding:8px 10px;background:#FAF7F1;border-radius:8px;font-size:13.5px;color:var(--soft)}
+  .card .notes li+li{margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)}
+  .board{grid-template-columns:repeat(4,minmax(0,1fr))}
+  dialog#editor{border:0;border-radius:16px;padding:0;width:min(900px,94vw);max-height:90vh;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  dialog#editor::backdrop{background:rgba(28,25,23,.45)}
+  .ed-box{padding:22px 26px;direction:rtl}
+  .ed-box h2{margin:0 0 8px;font-size:22px}
+  .ed-f{display:block;margin:10px 0}
+  .ed-lab{font-size:13px;font-weight:700;color:var(--soft);margin-bottom:4px}
+  .ed-f textarea,.ed-f input:not([type=checkbox]){width:100%;font:inherit;font-size:15px;line-height:1.5;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#FFFEFA}
+  .ed-cb{display:flex;gap:8px;align-items:center}
+  .ed-g{border:1px solid var(--border);border-radius:10px;padding:6px 12px 10px;margin:10px 0}
+  .ed-g legend{font-weight:700;font-size:13.5px;color:var(--soft);padding:0 6px}
+  .ed-ch{margin:8px 0;font-size:14px} .ed-ch b{display:block;margin-bottom:2px}
+  .ed-ch del{display:block;background:#FAE9EC;color:#7f1d1d;padding:4px 8px;border-radius:6px;white-space:pre-wrap}
+  .ed-ch ins{display:block;background:#E3F1EB;color:#14532d;padding:4px 8px;border-radius:6px;margin-top:3px;text-decoration:none;white-space:pre-wrap}
+  @media (max-width:1100px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <!-- mta-theme --><link rel="stylesheet" href="site-theme.css"><script src="site-theme.js" data-course="home" data-fam="home" data-footer="body"></script><!-- /mta-theme -->
 </head>
 <body>
 <div class="wrap">
   <h1>תפעול</h1>
-  <p class="sub">הדיווחים של הסטודנטים והשימוש באתרים, במקום אחד.</p>
+  <p class="sub">הדיווחים של הסטודנטים, תיקון השאלות, והשימוש באתרים, במקום אחד.</p>
   <nav class="tabs" role="tablist">
     <a href="#issues" role="tab" id="tab-issues">דיווחים</a>
     <a href="#usage" role="tab" id="tab-usage">שימוש באתרים</a>
   </nav>
   <section id="view-issues">
-  <div class="conn" id="conn"></div>
-  <div class="bar">
-    <input type="search" id="q" placeholder="חיפוש בדיווחים…">
-    <button class="btn" id="reload" type="button">רענון</button>
-    <span class="status" id="status"></span>
-  </div>
-  <div class="chips" id="chips"></div>
-  <div class="board" id="board"></div>
+    <div class="conn" id="conn"></div>
+    <div class="bar">
+      <input type="search" id="q" placeholder="חיפוש בדיווחים…">
+      <button class="btn" id="reload" type="button">רענון</button>
+      <span class="status" id="status"></span>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="board" id="board"></div>
   </section>
-
   <section id="view-usage" hidden>
     <div class="conn" id="gconn"></div>
     <div class="bar">
@@ -102,10 +120,11 @@
     <p class="note">הנתונים מ־GoatCounter: ביקורים לפי עמוד. מי שחוסם סקריפטים של מעקב לא נספר, אז המספרים הם הערכה מלמטה.</p>
   </section>
 </div>
+<dialog id="editor"></dialog>
 <script>
 (function () {
   "use strict";
-  var OWNER = "EliorCh", LABEL = "בטיפול";
+  var OWNER = "EliorCh", INBOX = "ops-inbox";
   var SITES = [
     ["comque", "com", "תקשורת · תרגול"], ["comsum", "com", "תקשורת · סיכום"],
     ["mlque", "ml", "למידת מכונה · תרגול"], ["mlsum", "ml", "למידת מכונה · סיכום"],
@@ -114,118 +133,230 @@
     ["dbsum", "db", "בסיסי נתונים"], ["cryptosum", "crypto", "קריפטוגרפיה"],
     ["computque", "comp", "חישוביות · תרגול"], ["computsum", "comp", "חישוביות · סיכום"], ["main", "home", "דף הבית"]
   ];
-  var TK = "mta-gh-token", CACHE = "mta-issues-cache";
-  var token = ""; try { token = localStorage.getItem(TK) || ""; } catch (e) {}
-  var me = null, all = [], filter = "all";
+  var SITE = {}; SITES.forEach(function (s) { SITE[s[0]] = s; });
+  /* where each practice site keeps its questions (the editor rewrites these files) */
+  var BANKS = {
+    comque: { path: "questions.js", var: "QUESTIONS", list: function (d) { return d; } },
+    mlque: { path: "questions.js", var: "QUESTIONS", list: function (d) { return d; }, open: { path: "open_questions.js", var: "OPEN_QUESTIONS", list: function (d) { return d; } } },
+    osque: { path: "bank.js", var: "BANK", list: function (d) { return d.questions; } },
+    computque: { path: "bank.js", var: "BANK", list: function (d) { return d.questions; } }
+  };
+  var STAGES = [["new", "חדשים"], ["working", "בטיפול"], ["claude", "אצל Claude"], ["done", "סגורים"]];
+  var TK = "mta-gh-token", token = "", me = null, all = [], filter = "all";
+  try { token = localStorage.getItem(TK) || ""; } catch (e) {}
   var $ = function (s) { return document.querySelector(s); };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function b64dec(b) { var bin = atob(b.replace(/\n/g, "")), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+  function b64enc(s) { var u = new TextEncoder().encode(s), bin = ""; for (var i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(bin); }
   function api(path, opt) {
     opt = opt || {};
     var h = { "Accept": "application/vnd.github+json" };
     if (token) h.Authorization = "Bearer " + token;
     if (opt.body) h["Content-Type"] = "application/json";
-    return fetch("https://api.github.com" + path, { method: opt.method || "GET", headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined })
-      .then(function (r) { if (!r.ok) throw new Error(r.status + " " + r.statusText); return r.status === 204 ? null : r.json(); });
+    return fetch("https://api.github.com" + path, { method: opt.method || "GET", headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined, cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error((j && j.message) || r.status); e.status = r.status; throw e; } return j; }); });
   }
+  function getFile(repo, path) { return api("/repos/" + OWNER + "/" + repo + "/contents/" + path).then(function (f) { return { sha: f.sha, text: b64dec(f.content) }; }); }
+  function putFile(repo, path, text, sha, message) { return api("/repos/" + OWNER + "/" + repo + "/contents/" + path, { method: "PUT", body: { message: message, content: b64enc(text), sha: sha } }); }
 
-  /* ---- connection: reading is public; changing an issue needs your own GitHub token ---- */
+  /* ---------- connection ---------- */
   function drawConn() {
     var c = $("#conn");
     if (me) {
-      c.innerHTML = '<span class="ok">מחובר כ־' + esc(me) + '</span> · אפשר להעביר דיווחים בין השלבים מכאן. <button class="btn" id="logout" type="button">ניתוק</button>';
-      $("#logout").onclick = function () { try { localStorage.removeItem(TK); } catch (e) {} token = ""; me = null; drawConn(); draw(); };
+      c.innerHTML = '<span class="ok">מחובר כ־' + esc(me) + '</span> · אפשר לטפל בדיווחים ולתקן שאלות מכאן. <button class="btn" id="logout" type="button">ניתוק</button>';
+      $("#logout").onclick = function () { try { localStorage.removeItem(TK); } catch (e) {} token = ""; me = null; all = []; drawConn(); draw(); };
     } else {
-      c.innerHTML = 'מצב צפייה. כדי לשנות סטטוס מכאן, הדבק טוקן אישי של GitHub (Fine-grained, הרשאת Issues: Read and write על הריפו שלך). הטוקן נשמר רק בדפדפן הזה.<br>' +
+      c.innerHTML = 'הדיווחים שמורים בריפו פרטי, אז צריך להתחבר כדי לראות אותם. הדבק טוקן אישי של GitHub (Fine-grained) עם הרשאת <b>Contents: Read and write</b> על הריפו <code>ops-inbox</code> ועל אתרי התרגול. הטוקן נשמר רק בדפדפן הזה.<br>' +
         '<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off"> <button class="btn pri" id="login" type="button">התחברות</button> <span id="cmsg"></span>';
       $("#login").onclick = function () {
         token = $("#tok").value.trim(); if (!token) return;
         api("/user").then(function (u) {
           if (u.login.toLowerCase() !== OWNER.toLowerCase()) throw new Error("הטוקן שייך ל־" + u.login + " ולא ל־" + OWNER);
-          me = u.login; try { localStorage.setItem(TK, token); } catch (e) {} drawConn(); draw();
+          me = u.login; try { localStorage.setItem(TK, token); } catch (e) {} drawConn(); load();
         }).catch(function (e) { token = ""; $("#cmsg").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; });
       };
     }
   }
-  if (token) api("/user").then(function (u) { if (u.login.toLowerCase() === OWNER.toLowerCase()) me = u.login; else token = ""; drawConn(); draw(); }).catch(function () { token = ""; drawConn(); });
-  drawConn();
 
-  /* ---- load every site's issues ---- */
-  function load(force) {
+  /* ---------- load reports from the private inbox ---------- */
+  function load() {
+    if (!me) { draw(); return; }
     $("#status").textContent = "טוען…";
-    if (!force) {
-      try { var c = JSON.parse(sessionStorage.getItem(CACHE) || "null"); if (c && Date.now() - c.t < 180000) { all = c.d; done(c.t); return; } } catch (e) {}
-    }
-    var errs = [];
-    Promise.all(SITES.map(function (s) {
-      return api("/repos/" + OWNER + "/" + s[0] + "/issues?state=all&per_page=100").then(function (list) {
-        return list.filter(function (i) { return !i.pull_request; }).map(function (i) { i._site = s; return i; });
-      }).catch(function (e) { errs.push(s[0] + ": " + e.message); return []; });
-    })).then(function (lists) {
-      all = [].concat.apply([], lists).sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
-      try { sessionStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), d: all })); } catch (e) {}
-      done(Date.now(), errs);
+    api("/repos/" + OWNER + "/" + INBOX + "/contents/reports").then(function (list) {
+      list = (list || []).filter(function (f) { return /\.json$/.test(f.name); });
+      return Promise.all(list.map(function (f) {
+        return getFile(INBOX, f.path).then(function (g) { var r = JSON.parse(g.text); r._sha = g.sha; r._path = f.path; return r; }).catch(function () { return null; });
+      }));
+    }).then(function (rs) {
+      all = rs.filter(Boolean).sort(function (a, b) { return a.created < b.created ? 1 : -1; });
+      $("#status").textContent = all.length + " דיווחים · עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+      chips(); draw();
+    }).catch(function (e) {
+      $("#status").innerHTML = e.status === 404 ? '<span class="err">הריפו ops-inbox לא נמצא, או שעוד אין בו דיווחים.</span>' : '<span class="err">' + esc(e.message) + "</span>";
+      all = []; chips(); draw();
     });
   }
-  function done(t, errs) {
-    $("#status").innerHTML = all.length + " דיווחים · עודכן " + new Date(t).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }) +
-      (errs && errs.length ? ' · <span class="err" title="' + esc(errs.join("\n")) + '">חלק מהאתרים לא נטענו (מגבלת קריאות של GitHub? נסו שוב בעוד כמה דקות או התחברו)</span>' : "");
-    chips(); draw();
-  }
-  $("#reload").onclick = function () { load(true); };
-  $("#q").oninput = draw;
-
+  function stageOf(r) { return r.status === "fixed" || r.status === "rejected" ? "done" : (r.status || "new"); }
   function chips() {
-    var used = {}; all.forEach(function (i) { used[i._site[1]] = (used[i._site[1]] || 0) + 1; });
-    var names = { com: "תקשורת", ml: "למידת מכונה", algo: "אלגוריתמים", stats: "סטטיסטיקה", os: "מערכות הפעלה", db: "בסיסי נתונים", crypto: "קריפטוגרפיה", comp: "חישוביות", home: "דף הבית" };
+    var used = {}; all.forEach(function (r) { var s = SITE[r.site]; var k = s ? s[1] : "home"; used[k] = (used[k] || 0) + 1; });
+    var names = { com: "תקשורת", ml: "למידת מכונה", algo: "אלגוריתמים", stats: "סטטיסטיקה", os: "מערכות הפעלה", db: "בסיסי נתונים", crypto: "קריפטוגרפיה", comp: "חישוביות", home: "אחר" };
     var h = '<button class="chip" data-f="all" aria-pressed="' + (filter === "all") + '">הכל · ' + all.length + "</button>";
     Object.keys(used).forEach(function (k) { h += '<button class="chip mta-c-' + k + '" data-f="' + k + '" aria-pressed="' + (filter === k) + '">' + names[k] + " · " + used[k] + "</button>"; });
     $("#chips").innerHTML = h;
     $("#chips").querySelectorAll(".chip").forEach(function (b) { b.onclick = function () { filter = b.dataset.f; chips(); draw(); }; });
   }
-
-  function stage(i) { return i.state === "closed" ? 2 : i.labels.some(function (l) { return l.name === LABEL; }) ? 1 : 0; }
-  function parts(body) {
-    body = body || "";
-    var prob = (body.match(/הבעיה:\n([\s\S]*?)\n\n/) || [])[1] || "";
-    var link = (body.match(/קישור:\s*(\S+)/) || [])[1] || "";
-    var q = (body.match(/השאלה:\n([\s\S]*)$/) || [])[1] || "";
-    return { prob: prob.trim(), link: link, q: q.trim() };
-  }
-  function card(i) {
-    var p = parts(i.body), s = i._site, st = stage(i);
-    var acts = '<a href="' + esc(i.html_url) + '" target="_blank" rel="noopener">ב־GitHub ↗</a>' + (p.link ? '<a href="' + esc(p.link) + '" target="_blank" rel="noopener">לשאלה באתר ↗</a>' : "");
-    if (me) {
-      if (st === 0) acts += '<button data-a="work" data-r="' + s[0] + '" data-n="' + i.number + '">התחלת טיפול</button>';
-      if (st < 2) acts += '<button data-a="close" data-r="' + s[0] + '" data-n="' + i.number + '">טופל ✓</button>';
-      if (st === 2) acts += '<button data-a="reopen" data-r="' + s[0] + '" data-n="' + i.number + '">פתיחה מחדש</button>';
-    }
-    return '<article class="card mta-c-' + s[1] + '"><div class="top"><span class="tag">' + esc(s[2]) + "</span><span>#" + i.number + "</span><span>" +
-      new Date(i.created_at).toLocaleDateString("he-IL") + "</span><span>" + esc(i.user && i.user.login) + "</span></div>" +
-      "<h3>" + esc(i.title) + "</h3>" + (p.prob ? '<p class="prob">' + esc(p.prob) + "</p>" : "") +
-      (p.q ? "<details><summary>נוסח השאלה</summary><pre>" + esc(p.q) + "</pre></details>" : (i.body ? "<details><summary>הדיווח המלא</summary><pre>" + esc(i.body) + "</pre></details>" : "")) +
+  var WHO = { me: "אני", claude: "Claude" };
+  function card(r) {
+    var s = SITE[r.site] || [r.site, "home", r.site], st = r.status || "new", who = r.reporter || {};
+    var editable = !!BANKS[r.site];
+    var acts = "";
+    if (r.url) acts += '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">לשאלה באתר ↗</a>';
+    if (st !== "fixed" && st !== "rejected") {
+      if (editable) acts += '<button data-a="edit">✎ עריכת השאלה</button>';
+      if (st === "new") acts += '<button data-a="working">התחלת טיפול</button>';
+      if (st !== "claude") acts += '<button data-a="claude">לתיקון על ידי Claude</button>';
+      acts += '<button data-a="fixed">טופל ✓</button><button data-a="rejected">לא דורש שינוי</button>';
+    } else acts += '<button data-a="new">פתיחה מחדש</button>';
+    if (who.email) acts += '<a href="mailto:' + esc(who.email) + "?subject=" + encodeURIComponent("לגבי הדיווח שלך: " + (r.qlabel || "")) + '">✉ השבה</a>';
+    var notes = (r.notes || []).map(function (n) {
+      return '<li><b>' + esc(WHO[n.by] || n.by) + "</b> · " + esc(new Date(n.at).toLocaleDateString("he-IL")) + "<br>" + esc(n.text) + (n.commit ? ' <a target="_blank" rel="noopener" href="' + esc(n.commit) + '">שינוי ↗</a>' : "") + "</li>";
+    }).join("");
+    var stLabel = { fixed: "תוקן", rejected: "לא דורש שינוי" }[st];
+    return '<article class="card mta-c-' + s[1] + '" data-id="' + esc(r.id) + '"><div class="top"><span class="tag">' + esc(s[2]) + "</span><span>" +
+      new Date(r.created).toLocaleDateString("he-IL") + "</span>" + (stLabel ? '<span class="tag done">' + stLabel + "</span>" : "") + "</div>" +
+      "<h3>" + esc(r.qlabel || r.qid) + "</h3>" + '<p class="prob">' + esc(r.problem) + "</p>" +
+      (who.name || who.email || who.year ? '<p class="who">מאת: ' + esc([who.name, who.email, who.year].filter(Boolean).join(" · ")) + "</p>" : "") +
+      (r.question ? "<details><summary>נוסח השאלה</summary><pre>" + esc(r.question) + "</pre></details>" : "") +
+      (notes ? '<ul class="notes">' + notes + "</ul>" : "") +
       '<div class="acts">' + acts + "</div></article>";
   }
   function draw() {
+    if (!me) { $("#board").innerHTML = ""; return; }
     var q = ($("#q").value || "").trim().toLowerCase();
-    var list = all.filter(function (i) { return (filter === "all" || i._site[1] === filter) && (!q || (i.title + " " + i.body).toLowerCase().indexOf(q) >= 0); });
-    var cols = [["חדשים", []], ["בטיפול", []], ["טופלו", []]];
-    list.forEach(function (i) { cols[stage(i)][1].push(i); });
-    $("#board").innerHTML = cols.map(function (c) {
-      return '<section class="col"><h2>' + c[0] + "<span>" + c[1].length + "</span></h2>" + (c[1].length ? c[1].map(card).join("") : '<div class="empty">אין כאן כלום</div>') + "</section>";
+    var list = all.filter(function (r) { var s = SITE[r.site]; return (filter === "all" || (s ? s[1] : "home") === filter) && (!q || JSON.stringify(r).toLowerCase().indexOf(q) >= 0); });
+    $("#board").innerHTML = STAGES.map(function (st) {
+      var items = list.filter(function (r) { return stageOf(r) === st[0]; });
+      return '<section class="col"><h2>' + st[1] + "<span>" + items.length + "</span></h2>" + (items.length ? items.map(card).join("") : '<div class="empty">אין כאן כלום</div>') + "</section>";
     }).join("");
+  }
+  function byId(id) { for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i]; }
+
+  /* save a report back to the inbox (re-reading it first, so a change made meanwhile by Claude is kept) */
+  function saveReport(r, change) {
+    return getFile(INBOX, r._path).then(function (g) {
+      var cur = JSON.parse(g.text); change(cur);
+      return putFile(INBOX, r._path, JSON.stringify(cur, null, 1), g.sha, "report " + cur.id + ": " + cur.status).then(function () { cur._path = r._path; return cur; });
+    });
+  }
+  function setStatus(r, st, text, extra) {
+    return saveReport(r, function (cur) {
+      cur.status = st; cur.notes = cur.notes || [];
+      if (text) cur.notes.push(Object.assign({ by: "me", at: new Date().toISOString(), text: text }, extra || {}));
+    });
   }
   $("#board").addEventListener("click", function (e) {
     var b = e.target.closest("button[data-a]"); if (!b) return;
-    var path = "/repos/" + OWNER + "/" + b.dataset.r + "/issues/" + b.dataset.n, a = b.dataset.a, job;
+    var r = byId(b.closest(".card").dataset.id), a = b.dataset.a;
+    if (a === "edit") { openEditor(r); return; }
+    var text = "";
+    if (a === "claude") { text = prompt("מה לבקש מ־Claude? (אפשר להשאיר ריק: Claude יבדוק את הדיווח ויתקן אם צריך)") ; if (text === null) return; text = "בקשה ל־Claude: " + (text || "לבדוק את הדיווח ולתקן אם צריך"); }
+    if (a === "rejected") { text = prompt("למה לא צריך לשנות? (יישמר כהערה)") || ""; }
+    if (a === "fixed") text = "סומן כמטופל";
+    if (a === "working") text = "התחלתי לטפל";
+    if (a === "new") text = "נפתח מחדש";
     b.disabled = true; b.textContent = "…";
-    if (a === "work") job = api(path + "/labels", { method: "POST", body: { labels: [LABEL] } });
-    else if (a === "close") job = api(path, { method: "PATCH", body: { state: "closed", state_reason: "completed" } });
-    else job = api(path, { method: "PATCH", body: { state: "open" } });
-    job.then(function () { load(true); }).catch(function (err) { b.textContent = "שגיאה: " + err.message; });
+    setStatus(r, a, text).then(load).catch(function (err) { b.textContent = "שגיאה: " + err.message; });
   });
+  $("#reload").onclick = load;
+  $("#q").oninput = draw;
 
-  load(false);
+  /* ---------- question editor ---------- */
+  var LABELS = { question: "השאלה", q: "השאלה", intro: "פתיח", options: "תשובות", correctIndex: "התשובה הנכונה (מספר, מ־0)", correct: "התשובה הנכונה",
+    explanation: "הסבר", expl: "הסבר", official: "הפתרון הרשמי", answer: "תשובה", parts: "סעיפים", label: "תווית", sol: "פתרון", hints: "רמזים", html: "תוכן",
+    title: "כותרת", source: "מקור", code: "קוד", note: "הערה", subtopic: "תת־נושא", sub: "תת־נושא", check: "אימות", points: "נקודות" };
+  var SKIP = { id: 1, topic: 1, exam: 1, examLabel: 1, date: 1, num: 1, half: 1, type: 1, variants: 1, table: 1, atable: 1, tree: 1, rep: 1, label_: 1 };
+  var ED = null;
+  function field(path, val, key) {
+    var lab = '<div class="ed-lab">' + esc(LABELS[key] || key) + "</div>";
+    if (typeof val === "string") return '<label class="ed-f">' + lab + '<textarea data-p="' + esc(path) + '" rows="' + Math.min(14, Math.max(2, Math.ceil(val.length / 90) + (val.split("\n").length - 1))) + '">' + esc(val) + "</textarea></label>";
+    if (typeof val === "number") return '<label class="ed-f">' + lab + '<input type="number" data-p="' + esc(path) + '" data-num="1" value="' + val + '"></label>';
+    if (typeof val === "boolean") return '<label class="ed-f ed-cb"><input type="checkbox" data-p="' + esc(path) + '" data-bool="1"' + (val ? " checked" : "") + ">" + esc(LABELS[key] || key) + "</label>";
+    if (Array.isArray(val)) return '<fieldset class="ed-g"><legend>' + esc(LABELS[key] || key) + "</legend>" + val.map(function (v, i) {
+      return typeof v === "object" && v ? '<fieldset class="ed-g"><legend>' + (i + 1) + "</legend>" + obj(path + "." + i, v) + "</fieldset>" : field(path + "." + i, v, (LABELS[key] || key) + " " + (i + 1));
+    }).join("") + "</fieldset>";
+    if (val && typeof val === "object") return '<fieldset class="ed-g"><legend>' + esc(LABELS[key] || key) + "</legend>" + obj(path, val) + "</fieldset>";
+    return "";
+  }
+  function obj(path, o) { return Object.keys(o).filter(function (k) { return !SKIP[k] && o[k] !== null; }).map(function (k) { return field(path + "." + k, o[k], k); }).join(""); }
+  /* end of the JSON array/object that starts at i (strings are JSON: double quotes only) */
+  function litEnd(t, i) {
+    var d = 0, inS = false;
+    for (var k = i; k < t.length; k++) {
+      var c = t[k];
+      if (inS) { if (c === "\\") k++; else if (c === '"') inS = false; continue; }
+      if (c === '"') inS = true; else if (c === "[" || c === "{") d++; else if ((c === "]" || c === "}") && --d === 0) return k + 1;
+    }
+    throw new Error("קובץ השאלות לא במבנה הצפוי");
+  }
+  function setAt(o, path, v) { var ks = path.split(".").slice(1); for (var i = 0; i < ks.length - 1; i++) o = o[ks[i]]; o[ks[ks.length - 1]] = v; }
+  function getAt(o, path) { path.split(".").slice(1).forEach(function (k) { o = o == null ? o : o[k]; }); return o; }
+  function openEditor(r) {
+    var bank = BANKS[r.site]; if (!bank) return;
+    if (bank.open && /פתוחה/.test(r.kind || "")) bank = bank.open;
+    var dlg = $("#editor"); dlg.innerHTML = '<div class="ed-box"><p>טוען את השאלה…</p></div>'; dlg.showModal();
+    getFile(r.site, bank.path).then(function (f) {
+      var i = f.text.indexOf("window." + bank.var); if (i < 0) throw new Error("לא מצאתי את " + bank.var + " בקובץ " + bank.path);
+      var s = f.text.indexOf("=", i) + 1; while (/\s/.test(f.text[s])) s++;
+      var e = litEnd(f.text, s);
+      var data = JSON.parse(f.text.slice(s, e)), list = bank.list(data);
+      var q = list.filter(function (x) { return String(x.id) === String(r.qid); })[0];
+      if (!q) throw new Error("השאלה " + r.qid + " לא נמצאה בקובץ " + bank.path);
+      ED = { r: r, bank: bank, file: f, data: data, q: q, orig: JSON.parse(JSON.stringify(q)), pre: f.text.slice(0, s), post: f.text.slice(e), oneLine: f.text.slice(s, e).indexOf("\n") < 0 };
+      dlg.innerHTML = '<form class="ed-box" method="dialog"><h2>עריכת ' + esc(r.qlabel || r.qid) + "</h2>" +
+        '<p class="prob"><b>הדיווח:</b> ' + esc(r.problem) + "</p>" +
+        '<div class="ed-fields">' + obj("", q) + "</div>" +
+        '<label class="ed-f">' + '<div class="ed-lab">הערה לדיווח (תופיע בהיסטוריה)</div><input id="ed-note" placeholder="למשל: תיקנתי את ההסבר של סעיף ב"></label>' +
+        '<div class="ed-diff" id="ed-diff"></div>' +
+        '<div class="acts"><button type="button" class="btn" id="ed-prev">תצוגת השינויים</button><button type="button" class="btn pri" id="ed-save">שמירה ופרסום</button><button type="button" class="btn" id="ed-cancel">ביטול</button></div>' +
+        '<p class="note">השמירה מעדכנת את הקובץ באתר <b>' + esc(r.site) + "</b> ב־GitHub, והאתר מתעדכן תוך דקה בערך. הדיווח עובר ל״סגורים״.</p></form>";
+      $("#ed-cancel").onclick = function () { dlg.close(); };
+      $("#ed-prev").onclick = function () { collect(); $("#ed-diff").innerHTML = diffHTML(); };
+      $("#ed-save").onclick = save;
+    }).catch(function (e) { dlg.innerHTML = '<div class="ed-box"><p class="err">' + esc(e.message) + '</p><button class="btn" onclick="this.closest(\'dialog\').close()">סגירה</button></div>'; });
+  }
+  function collect() {
+    $("#editor").querySelectorAll("[data-p]").forEach(function (el) {
+      var v = el.dataset.bool ? el.checked : el.dataset.num ? Number(el.value) : el.value;
+      setAt(ED.q, el.dataset.p, v);
+    });
+  }
+  function changes() {
+    var out = [];
+    $("#editor").querySelectorAll("[data-p]").forEach(function (el) {
+      var a = getAt(ED.orig, el.dataset.p), b = getAt(ED.q, el.dataset.p);
+      if (JSON.stringify(a) !== JSON.stringify(b)) out.push([el.dataset.p.slice(1), a, b]);
+    });
+    return out;
+  }
+  function diffHTML() {
+    var c = changes();
+    return c.length ? "<h3>מה ישתנה</h3>" + c.map(function (x) { return '<div class="ed-ch"><b>' + esc(x[0].split(".").map(function (k) { return LABELS[k] || (/^\d+$/.test(k) ? Number(k) + 1 : k); }).join(" › ")) + '</b><del>' + esc(x[1]) + "</del><ins>" + esc(x[2]) + "</ins></div>"; }).join("") : '<p class="note">אין שינויים.</p>';
+  }
+  function save() {
+    collect(); var c = changes(), btn = $("#ed-save");
+    if (!c.length) { $("#ed-diff").innerHTML = diffHTML(); return; }
+    btn.disabled = true; btn.textContent = "שומר…";
+    var body = ED.oneLine ? JSON.stringify(ED.data) : JSON.stringify(ED.data, null, 1);
+    var text = ED.pre + body + ED.post;
+    var note = ($("#ed-note").value || "").trim() || ("תיקנתי: " + c.map(function (x) { return x[0]; }).join(", "));
+    putFile(ED.r.site, ED.bank.path, text, ED.file.sha, "Fix " + (ED.r.qlabel || ED.r.qid) + " (report " + ED.r.id + ")\n\n" + note)
+      .then(function (res) { return setStatus(ED.r, "fixed", note, { commit: res.commit && res.commit.html_url }); })
+      .then(function () { $("#editor").close(); load(); })
+      .catch(function (e) { btn.disabled = false; btn.textContent = "שמירה ופרסום"; $("#ed-diff").innerHTML = '<p class="err">השמירה נכשלה: ' + esc(e.message) + (e.status === 409 ? " (הקובץ השתנה בינתיים. סגרו ופתחו שוב את העורך.)" : "") + "</p>"; });
+  }
 
+  if (token) api("/user").then(function (u) { if (u.login.toLowerCase() === OWNER.toLowerCase()) me = u.login; else token = ""; drawConn(); load(); }).catch(function () { token = ""; drawConn(); draw(); });
+  drawConn(); draw();
   /* ======================= usage (GoatCounter) ======================= */
   var GC = "https://eliorch.goatcounter.com/api/v0", GK = "mta-gc-token", days = 30, gtoken = "";
   try { gtoken = localStorage.getItem(GK) || ""; } catch (e) {}
@@ -329,6 +460,7 @@
   }
   $("#range").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; days = +b.dataset.d; drawG(); loadG(); });
   $("#greload").onclick = loadG;
+
 
   /* ---- tabs ---- */
   var gLoaded = false;

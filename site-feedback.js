@@ -9,6 +9,10 @@
   var REPO = (me && me.dataset.repo) || "";
   var COURSE = (me && me.dataset.course) || document.title;
   var ISSUES = "https://github.com/EliorCh/" + REPO + "/issues/new";
+  /* where reports are sent: the relay (Google Apps Script) that files them into the private ops inbox.
+     One place to change for every site. Empty = not set up yet (the panel then offers copy + email). */
+  var RELAY = "";
+  var DECORATE = !(me && me.dataset.decorate === "0");
   var CARD = ".practice-question";
   var SKIP = "#view-exam, #view-results";
 
@@ -54,15 +58,45 @@
     return out.join("\n\n");
   }
 
+  function saved(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
+  var YEARS = ["", "שנה א׳", "שנה ב׳", "שנה ג׳", "שנה ד׳", "תואר שני", "אחר"];
+  function reportPanel() {
+    var yr = saved("mta-year");
+    return '<div class="mta-fb" data-k="report"><h4>דיווח על בעיה בשאלה</h4>' +
+      '<label>מה לא בסדר? (טעות בפתרון, נתון חסר, ניסוח לא ברור...)<textarea rows="3" class="mta-fbt"></textarea></label>' +
+      '<div class="mta-fb-who"><span class="mta-fb-opt">פרטים לחזרה אליך (לא חובה)</span>' +
+      '<label>שם<input class="mta-fbname" value="' + esc(saved("mta-name")) + '" autocomplete="name"></label>' +
+      '<label>מייל<input class="mta-fbmail" type="email" dir="ltr" value="' + esc(saved("mta-email")) + '" autocomplete="email"></label>' +
+      '<label>שנה<select class="mta-fbyear">' + YEARS.map(function (y) { return '<option value="' + y + '"' + (y === yr ? " selected" : "") + ">" + (y || "—") + "</option>"; }).join("") + "</select></label></div>" +
+      '<input class="mta-hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<div class="mta-fb-row"><button type="button" class="mta-fb-btn" data-fb="send">שליחת הדיווח</button>' +
+      '<button type="button" class="mta-fb-btn ghost" data-fb="close">סגירה</button></div>' +
+      '<p class="mta-fb-hint">הדיווח מגיע ישירות אליי. הפרטים האישיים נשמרים רק אצלי ולא מתפרסמים.</p>' +
+      '<div class="mta-fb-msg"></div></div>';
+  }
+  /* send one report; used by this panel and by sites with their own question cards (window.MTAReport.send) */
+  function sendReport(rep, box) {
+    var msg = box.querySelector(".mta-fb-msg"), btn = box.querySelector('[data-fb="send"]');
+    if (!rep.problem) { msg.innerHTML = '<span class="mta-fb-err">כתבו בקצרה מה לא בסדר.</span>'; return; }
+    try { localStorage.setItem("mta-name", rep.name || ""); localStorage.setItem("mta-email", rep.email || ""); localStorage.setItem("mta-year", rep.year || ""); } catch (e) {}
+    var hp = box.querySelector(".mta-hp"); if (hp && hp.value) { msg.textContent = "תודה! הדיווח נשלח ✓"; return; }
+    function fallback(why) {
+      var text = "דיווח על " + rep.qlabel + " · " + rep.course + "\n\nהבעיה:\n" + rep.problem + "\n\nקישור: " + rep.url + "\n\nהשאלה:\n" + rep.question +
+        (rep.name || rep.email ? "\n\nמאת: " + [rep.name, rep.email, rep.year].filter(Boolean).join(" · ") : "");
+      msg.innerHTML = '<span class="mta-fb-err">' + why + '</span> אפשר לשלוח במייל ל־<a dir="ltr" href="mailto:eliorchen@gmail.com?subject=' +
+        encodeURIComponent("דיווח: " + rep.qlabel) + "&body=" + encodeURIComponent(text) + '">eliorchen@gmail.com</a> (ההודעה כבר מוכנה).';
+    }
+    if (!RELAY) { fallback("השליחה הישירה עוד לא הופעלה."); return; }
+    btn.disabled = true; btn.textContent = "שולח…";
+    fetch(RELAY, { method: "POST", body: JSON.stringify(rep) })   /* text/plain: no preflight */
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || "error"); msg.textContent = "תודה! הדיווח נשלח ✓"; btn.textContent = "נשלח"; })
+      .catch(function () { btn.disabled = false; btn.textContent = "שליחת הדיווח"; fallback("השליחה לא הצליחה."); });
+  }
+  window.MTAReport = { panel: reportPanel, send: sendReport, relay: function () { return RELAY; } };
+
   function panel(kind) {
-    if (kind === "report")
-      return '<div class="mta-fb" data-k="report"><h4>דיווח על בעיה בשאלה</h4>' +
-        '<label>מה לא בסדר? (טעות בפתרון, נתון חסר, ניסוח לא ברור...)<textarea rows="3" class="mta-fbt"></textarea></label>' +
-        '<div class="mta-fb-row"><a class="mta-fb-btn" data-fb="gh" target="_blank" rel="noopener" href="#">שליחה דרך GitHub</a>' +
-        '<button type="button" class="mta-fb-btn ghost" data-fb="copy">העתקת הדיווח</button>' +
-        '<button type="button" class="mta-fb-btn ghost" data-fb="close">סגירה</button></div>' +
-        '<p class="mta-fb-hint">השליחה פותחת דיווח חדש (issue) ב־GitHub, עם פרטי השאלה כבר בפנים, ואני מקבל עליו התראה. צריך חשבון GitHub. אפשר גם להעתיק את הדיווח ולשלוח אותו במייל ל־<a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a>.</p>' +
-        '<div class="mta-fb-msg"></div></div>';
+    if (kind === "report") return reportPanel();
     var name = ""; try { name = localStorage.getItem("mta-name") || ""; } catch (e) {}
     return '<div class="mta-fb" data-k="ask"><h4>הודעה למרצה על השאלה</h4>' +
       '<label>מה תרצה לשאול?<textarea rows="3" class="mta-fbt" placeholder="למשל: לא הבנתי למה התשובה היא ב׳ ולא ג׳"></textarea></label>' +
@@ -76,6 +110,13 @@
       '<div class="mta-fb-msg"></div></div>';
   }
 
+  function reportData(card) {
+    var box = card.querySelector(".mta-fb"), p = parts(card);
+    return { site: REPO, course: COURSE, qid: idOf(card), qlabel: name(card), kind: kindOf(card),
+      url: location.href.split("#")[0] + (card.id ? "#" + card.id : ""), problem: box.querySelector(".mta-fbt").value.trim(),
+      question: qText(p), solution: p.sol, name: box.querySelector(".mta-fbname").value.trim(),
+      email: box.querySelector(".mta-fbmail").value.trim(), year: box.querySelector(".mta-fbyear").value };
+  }
   function message(card) {
     var box = card.querySelector(".mta-fb"), k = box.getAttribute("data-k");
     var t = box.querySelector(".mta-fbt").value.trim(), p = parts(card);
@@ -143,6 +184,7 @@
     }
     var act = b.getAttribute("data-fb");
     if (act === "close") { e.preventDefault(); slot.innerHTML = ""; return; }
+    if (act === "send") { e.preventDefault(); sendReport(reportData(card), card.querySelector(".mta-fb")); return; }
     if (act === "copy") { e.preventDefault(); copy(message(card), card.querySelector(".mta-fb-msg")); return; }
     if (act === "gh") {
       var t = card.querySelector(".mta-fbt").value.trim(), body = message(card), full = body;
@@ -170,6 +212,6 @@
     if (card && e.target.closest(".mta-fb[data-k='ask']")) preview(card);
   });
 
-  function boot() { scan(); new MutationObserver(function () { scan(); }).observe(document.body, { childList: true, subtree: true }); }
+  function boot() { if (!DECORATE) return; scan(); new MutationObserver(function () { scan(); }).observe(document.body, { childList: true, subtree: true }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();
