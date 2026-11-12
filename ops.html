@@ -534,8 +534,8 @@
       });
     }
     Promise.all([
-      gapi("/stats/total?" + q + "&group=day"),
-      gapi("/stats/total?start=" + iso(pstart) + "&end=" + iso(start) + "&group=day").catch(function () { return null; }),
+      gapi("/stats/total?" + q),
+      gapi("/stats/total?start=" + iso(pstart) + "&end=" + iso(start)).catch(function () { return null; }),
       page([])
     ]).then(function (res) { renderG(res[0], res[1], hits); $("#gstatus").textContent = "עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }); })
       .catch(function (e) { gfail($("#gstatus"), e); });
