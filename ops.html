@@ -367,20 +367,40 @@
   var GC = "https://eliorch.goatcounter.com/api/v0", GK = "mta-gc-token", days = 30, gtoken = "";
   try { gtoken = localStorage.getItem(GK) || ""; } catch (e) {}
   var SITE_OF = {}; SITES.forEach(function (s) { SITE_OF[s[0]] = s; });
-  function gapi(path) {
+  /* GoatCounter allows 4 API requests a second, and the browser adds a pre-check (OPTIONS) before each call,
+     so calls go one at a time, ~0.7 s apart, with a retry when one is turned away. */
+  var gq = Promise.resolve(), GAP = 700;
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function gonce(path) {
     return fetch(GC + path, { headers: { "Authorization": "Bearer " + gtoken } })
-      .catch(function () {
-        throw new Error("הדפדפן לא הצליח להגיע ל־GoatCounter. הסיבה הנפוצה: חוסם פרסומות או מעקב (uBlock, AdBlock, Brave וכו׳) שחוסם את goatcounter.com. כדאי לאשר את העמוד הזה בחוסם ולרענן. ");
-      })
       .then(function (r) {
         if (r.ok) return r.json();
         return r.text().then(function (body) {
           var m = ""; try { m = JSON.parse(body).error || ""; } catch (e) {}
-          if (r.status === 401 || r.status === 403) throw new Error("GoatCounter דחה את המפתח" + (m ? " (" + m + ")" : "") + ". צריך מפתח עם הרשאת Read statistics.");
-          if (r.status === 429) throw new Error("יותר מדי בקשות ל־GoatCounter. לנסות שוב בעוד דקה.");
-          throw new Error("שגיאה מ־GoatCounter: " + r.status + (m ? " · " + m : ""));
+          var err;
+          if (r.status === 401 || r.status === 403) err = new Error("GoatCounter דחה את המפתח" + (m ? " (" + m + ")" : "") + ". צריך מפתח עם הרשאת Read statistics.");
+          else if (r.status === 429) { err = new Error("GoatCounter מגביל את קצב הבקשות. לנסות שוב בעוד דקה."); err.retry = true; }
+          else err = new Error("שגיאה מ־GoatCounter: " + r.status + (m ? " · " + m : ""));
+          throw err;
         });
+      }, function () {
+        var err = new Error("לא התקבלה תשובה מ־GoatCounter (חסימה של הדפדפן או עומס רגעי). אם יש חוסם פרסומות, כדאי לכבות אותו לאתר הזה ולרענן.");
+        err.retry = true; throw err;
       });
+  }
+  function gapi(path) {
+    var run = gq.then(function () {
+      var tries = 0;
+      function attempt() {
+        return gonce(path).catch(function (e) {
+          if (!e.retry || ++tries > 3) throw e;
+          return wait(1200 * tries).then(attempt);
+        });
+      }
+      return attempt();
+    });
+    gq = run.then(function () { return wait(GAP); }, function () { return wait(GAP); });
+    return run;
   }
   function gfail(el, e) {
     el.innerHTML = '<span class="err">' + esc(e.message) + '</span> <a href="https://eliorch.goatcounter.com" target="_blank" rel="noopener">לדשבורד של GoatCounter ↗</a>';
