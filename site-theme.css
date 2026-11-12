@@ -284,3 +284,6 @@ html.mta-has-menu[data-fam="cr"] main{max-width:1100px;margin-inline:auto}
 .mta-hp{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;margin:-1px!important;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);opacity:0}
 .mta-fb-err{color:#b91c1c}
 @media (max-width:640px){.mta-fb-who{grid-template-columns:1fr}}
+
+/* narrow tables sit in the middle of the column (in RTL they used to stick to the right edge) */
+html:is([data-fam="ind"],[data-fam="rail"],[data-fam="os"],[data-fam="db"],[data-fam="cr"]) main table{margin-inline:auto}

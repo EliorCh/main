@@ -338,12 +338,19 @@
     if (!it) return [];
     var scope = it[1].charAt(0) === "#" ? document.querySelector(it[1]) : (document.querySelector("main") || document.body);
     if (!scope) return [];
-    var out = [];
-    scope.querySelectorAll("h2[id]").forEach(function (h) {
-      if (h.closest(".mta-menu, .mta-hero") || h.offsetParent === null && it[1].charAt(0) !== "#") return;
-      var t = h.textContent.replace(/\s+/g, " ").trim(); if (t) out.push([t, "#" + h.id]);
-    });
-    return out;
+    function pick(sel) {
+      var out = [];
+      scope.querySelectorAll(sel).forEach(function (h) {
+        if (h.closest(".mta-menu, .mta-hero, .box, details") || h.offsetParent === null && it[1].charAt(0) !== "#") return;
+        var c = h.cloneNode(true);   /* "4.1" + "Title" → "4.1 Title" */
+        c.querySelectorAll(".num, .sec").forEach(function (s) { s.textContent = s.textContent.trim() + " "; });
+        var t = c.textContent.replace(/\s+/g, " ").trim(); if (t) out.push([t, "#" + h.id]);
+      });
+      return out;
+    }
+    /* sections are the h2s; a page whose only h2 is its chapter title (cryptosum) keeps its sections in h3 */
+    var out = pick("h2[id]:not(.chapter)");
+    return out.length ? out : pick("h3[id]");
   }
   var SUMMARY_FAMS = { ind: 1, rail: 1, os: 1, db: 1, cr: 1 };   /* the side menu belongs to summary sites only */
   function buildMenu() {
