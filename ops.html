@@ -94,6 +94,10 @@
   .card .notes details summary{cursor:pointer;color:var(--muted);font-size:13px;list-style-position:inside}
   .card .notes details ul{list-style:none;margin:6px 0 0;padding:0}
   .card .notes details li{padding-top:6px;margin-top:6px;border-top:1px dashed var(--border)}
+  body:not(.authed) :is(.tabs,#view-usage,#view-issues > :not(#conn)){display:none!important}
+  body:not(.authed) #view-issues{display:block!important}
+  body.checking #conn{visibility:hidden}
+  .gate-lock{font-size:15px;color:var(--soft);margin:0 0 10px}
   .steps{margin:8px 0 6px;padding-inline-start:22px;line-height:1.7}
   .tag.done{background:#E3F1EB;color:#2F6B57}
   .card .who{font-size:13.5px;color:var(--muted);margin:0 0 6px}
@@ -120,7 +124,7 @@
 <body>
 <div class="wrap">
   <h1>תפעול</h1>
-  <p class="sub">הדיווחים של הסטודנטים, תיקון השאלות, והשימוש באתרים, במקום אחד.</p>
+  <p class="sub">עמוד פרטי. התוכן נפתח רק אחרי התחברות.</p>
   <nav class="tabs" role="tablist">
     <a href="#issues" role="tab" id="tab-issues">דיווחים</a>
     <a href="#usage" role="tab" id="tab-usage">שימוש באתרים</a>
@@ -191,13 +195,16 @@
   /* ---------- connection ---------- */
   function drawConn() {
     var c = $("#conn");
+    document.body.classList.toggle("authed", !!me);
+    if (me) $(".sub").textContent = "הדיווחים של הסטודנטים, תיקון השאלות, והשימוש באתרים, במקום אחד.";
+    if (me) setTimeout(route, 0);
     if (me) {
       c.innerHTML = '<span class="ok">מחובר כ־' + esc(me) + '</span> · אפשר לטפל בדיווחים ולתקן שאלות מכאן. <button class="btn" id="logout" type="button">ניתוק</button>';
       $("#logout").onclick = function () { try { localStorage.removeItem(TK); } catch (e) {} token = ""; me = null; all = []; drawConn(); draw(); };
     } else {
       var url = "https://github.com/settings/personal-access-tokens/new?name=" + encodeURIComponent("תפעול אתרי הלימוד") +
         "&description=" + encodeURIComponent("ops.html: reading reports and fixing questions") + "&target_name=" + OWNER + "&expires_in=366&contents=write";
-      c.innerHTML = '<b>חיבור חד־פעמי לדפדפן הזה.</b> גם אם אתה מחובר ל־GitHub, העמוד הזה לא יכול להשתמש בחיבור שלך: דפדפנים לא מעבירים התחברות מאתר לאתר, אחרת כל אתר היה יכול לפעול בשמך. לכן נותנים לעמוד "מפתח" אישי, פעם אחת, והוא נשמר רק כאן.' +
+      c.innerHTML = '<p class="gate-lock">🔒 העמוד הזה פתוח רק לבעלים של האתרים, אחרי התחברות עם מפתח GitHub אישי.</p><b>חיבור חד־פעמי לדפדפן הזה.</b> גם אם אתה מחובר ל־GitHub, העמוד הזה לא יכול להשתמש בחיבור שלך: דפדפנים לא מעבירים התחברות מאתר לאתר, אחרת כל אתר היה יכול לפעול בשמך. לכן נותנים לעמוד "מפתח" אישי, פעם אחת, והוא נשמר רק כאן.' +
         '<ol class="steps"><li><a href="' + url + '" target="_blank" rel="noopener">יצירת מפתח ב־GitHub ↗</a> (הטופס כבר ממולא).</li>' +
         '<li>בחלק <bdi>Repository access</bdi> לבחור <b><bdi>Only select repositories</bdi></b> ולסמן את: <bdi dir="ltr">ops-inbox, comque, mlque, osque, computque</bdi>. ההרשאה <bdi dir="ltr">Contents: Read and write</bdi> כבר מסומנת.</li>' +
         '<li>ללחוץ <bdi>Generate token</bdi>, להעתיק ולהדביק כאן:</li></ol>' +
@@ -433,7 +440,8 @@
       .catch(function (e) { btn.disabled = false; btn.textContent = "שמירה ופרסום"; $("#ed-diff").innerHTML = '<p class="err">השמירה נכשלה: ' + esc(e.message) + (e.status === 409 ? " (הקובץ השתנה בינתיים. סגרו ופתחו שוב את העורך.)" : "") + "</p>"; });
   }
 
-  if (token) api("/user").then(function (u) { if (u.login.toLowerCase() === OWNER.toLowerCase()) me = u.login; else token = ""; drawConn(); load(); }).catch(function () { token = ""; drawConn(); draw(); });
+  if (token) document.body.classList.add("checking");
+  if (token) api("/user").finally(function () { document.body.classList.remove("checking"); }).then(function (u) { if (u.login.toLowerCase() === OWNER.toLowerCase()) me = u.login; else token = ""; drawConn(); load(); }).catch(function () { token = ""; drawConn(); draw(); });
   drawConn(); draw();
   /* ======================= usage (GoatCounter) ======================= */
   var GC = "https://eliorch.goatcounter.com/api/v0", GK = "mta-gc-token", days = 30, gtoken = "";
@@ -603,7 +611,7 @@
   /* ---- tabs ---- */
   var gLoaded = false;
   function route() {
-    var u = location.hash === "#usage";
+    var u = location.hash === "#usage" && !!me;
     $("#view-issues").hidden = u; $("#view-usage").hidden = !u;
     $("#tab-issues").setAttribute("aria-selected", String(!u)); $("#tab-usage").setAttribute("aria-selected", String(u));
     if (u && !gLoaded) { gLoaded = true; drawG(); loadG(); }
