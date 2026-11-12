@@ -287,3 +287,7 @@ html.mta-has-menu[data-fam="cr"] main{max-width:1100px;margin-inline:auto}
 
 /* narrow tables sit in the middle of the column (in RTL they used to stick to the right edge) */
 html:is([data-fam="ind"],[data-fam="rail"],[data-fam="os"],[data-fam="db"],[data-fam="cr"]) main table{margin-inline:auto}
+/* ossum: bit strips (virtual-address breakdowns) and their captions sit in the middle, like the formulas around them */
+html[data-fam="os"] .bits{margin-inline:auto}
+html[data-fam="os"] .bcap{text-align:center}
+html[data-fam="os"] :is(.pt-row,.fl-chain){justify-content:center}
