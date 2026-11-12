@@ -21,6 +21,14 @@ html[data-course="crypto"],.mta-c-crypto{--mta-acc:#475569;--mta-acc-soft:#f1f5f
 html[data-course="home"],.mta-c-home{--mta-acc:#44403c;--mta-acc-soft:#f5f5f4;--mta-acc-ink:#292524;--mta-side1:#1c1917;--mta-side2:#292524}
 
 /* ---------- 2. Reading themes (chosen by the student, saved across all sites) ---------- */
+/* dark = recolored by site-theme.js from what is on screen (Material dark-theme guidance: #121212-like page, off-white text, desaturated accents).
+   Until that first pass finishes the page stays hidden for a moment, so there is no white flash. */
+html[data-mta-theme="dark"]{background:#141312;color-scheme:dark}
+html[data-mta-theme="dark"]:not(.mta-dark-ready) body{opacity:0;animation:mtaShow 0s linear 1.2s forwards}
+@keyframes mtaShow{to{opacity:1}}
+html[data-mta-theme="dark"] .mta-theme{background:#26241f;border-color:rgba(255,255,255,.14)}
+html[data-mta-theme="dark"] .mta-theme button{color:#d6d3d1}
+html[data-mta-theme="dark"] .mta-theme button:hover{background:rgba(255,255,255,.08)}
 /* sepia = warmer paper only. No filter: text keeps the crisp dark ink of the light theme */
 html[data-mta-theme="sepia"],html[data-mta-theme="sepia"][data-fam]{
   --bg:#f4ecd9;--bg-soft:#ece2cb;--bg-paper:#fbf6ea;--paper:#fbf6ea;--surface:#fbf6ea;--card:#fbf6ea;--bg-card:#fbf6ea;--sunk:#efe6d2;
@@ -29,10 +37,6 @@ html[data-mta-theme="sepia"],html[data-mta-theme="sepia"][data-fam]{
 html[data-mta-theme="sepia"][data-fam="os"]{--ink:var(--mta-acc)}
 html[data-mta-theme="sepia"] body{background-color:#f4ecd9}
 html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
-html[data-mta-theme="dark"]{filter:invert(1) hue-rotate(180deg) contrast(.86);background:#fbf9f3}
-/* things that are already dark, or are pictures, are flipped back so they keep their real colors */
-html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep){filter:invert(1) hue-rotate(180deg)}
-html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep) :is(img,video,canvas,picture,iframe,.mta-keep){filter:none}
 
 /* ---------- 3. Footer and theme switcher ---------- */
 .mta-foot{direction:rtl;text-align:center;margin:56px auto 24px;padding:20px 16px 8px;max-width:760px;
@@ -62,7 +66,6 @@ html[data-fam="ind"] .sidebar{background:linear-gradient(180deg,var(--mta-side1)
 html[data-fam="ind"] .sidebar :is(.brand-sub,.nav-list a){color:rgba(255,255,255,.78)}
 html[data-fam="ind"] .sidebar :is(.brand-meta,.nav-label){color:rgba(255,255,255,.55)}
 html[data-fam="ind"] .sidebar .nav-list a:hover,html[data-fam="ind"] .sidebar .nav-list a.active{color:#fff}
-html[data-fam="ind"][data-mta-theme="dark"] :is(.sidebar,pre,.code-label){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* 4b. Computability summary (computsum) */
 html[data-fam="rail"] body{--accent:var(--mta-acc);--accent-soft:var(--mta-acc-soft)}
@@ -70,13 +73,11 @@ html[data-fam="rail"] .rail{background:linear-gradient(180deg,var(--mta-side1) 0
 html[data-fam="rail"] .rail :is(a.ch,.brand small){color:rgba(255,255,255,.8)}
 html[data-fam="rail"] .rail :is(.secs a,.brand-meta,.nav-label){color:rgba(255,255,255,.58)}
 html[data-fam="rail"] .rail :is(a.ch:hover,a.ch.active,.secs a.on,.secs a:hover){color:#fff}
-html[data-fam="rail"][data-mta-theme="dark"] :is(.rail,pre,.menu-btn,#nilv,.nil-float){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* 4c. Operating-systems summary (ossum) */
 html[data-fam="os"]{--ink:var(--mta-acc);--rail-1:var(--mta-side1);--rail-2:var(--mta-side2)}
 html[data-fam="os"] nav.side :is(.sub,a.sec){color:rgba(255,255,255,.62)}
 html[data-fam="os"] nav.side a.ch{color:rgba(255,255,255,.85)}
-html[data-fam="os"][data-mta-theme="dark"] :is(nav.side,pre){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* shared building blocks the restyled families use */
 html[data-fam="db"],html[data-fam="cr"]{--mta-serif:"Frank Ruhl Libre",Georgia,serif;--mta-sans:"Assistant",-apple-system,sans-serif}
@@ -97,7 +98,6 @@ html[data-fam="db"] nav.side a:hover{background:rgba(255,255,255,.08);color:#fff
 html[data-fam="db"] nav.side :is(a.active,ol.pages a[aria-current="page"]){background:rgba(255,255,255,.12);color:#fff;box-shadow:inset -3px 0 0 var(--mta-hi)}
 html[data-fam="db"] .menubtn{background:var(--mta-side2);color:#fff;border-color:var(--mta-side2)}
 html[data-fam="db"] table{border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06)}
-html[data-fam="db"][data-mta-theme="dark"] :is(nav.side,.menubtn){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* 4e. Cryptography summary (cryptosum) */
 html[data-fam="cr"]{--bg:#fbf9f3;--paper:#fffefa;--ink:#1c1917;--muted:#6f6863;--line:#e7e5e0;--side:var(--mta-side1);--accent:var(--mta-acc)}
@@ -112,7 +112,6 @@ html[data-fam="cr"] .cover{background:linear-gradient(135deg,var(--mta-side1),va
 html[data-fam="cr"] th{background:#f1f5f9}
 html[data-fam="cr"] code{background:#f5f5f4;border:1px solid #e7e5e4;color:#be185d}
 html[data-fam="cr"] .box{border-radius:14px;box-shadow:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06)}
-html[data-fam="cr"][data-mta-theme="dark"] :is(nav.side,pre,.cover){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* 4f. Practice sites built on the pastel quiz app (comque, mlque, computque) */
 html[data-fam="que"] .course-code{background:var(--mta-acc-soft);color:var(--mta-acc-ink);border-color:color-mix(in srgb,var(--mta-acc) 30%,transparent)}
@@ -124,7 +123,6 @@ html[data-fam="que"] .mta-topbar{display:flex;gap:6px 14px;align-items:center;ju
   background:linear-gradient(90deg,var(--mta-side1),var(--mta-side2));color:#fff;font-size:14px;font-weight:600}
 html[data-fam="que"] .mta-topbar a{color:#fff;text-decoration:none;opacity:.85;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 12px}
 html[data-fam="que"] .mta-topbar a:hover{opacity:1;background:rgba(255,255,255,.12)}
-html[data-fam="que"][data-mta-theme="dark"] :is(.mta-topbar,pre.wh){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* 4g. Operating-systems practice (osque) */
 html[data-fam="osq"]{--accent:var(--mta-acc);--accent-soft:var(--mta-acc-soft)}
@@ -134,7 +132,6 @@ html[data-fam="osq"] header.top nav.tabs a{color:rgba(255,255,255,.82)}
 html[data-fam="osq"] header.top nav.tabs a:hover{color:#fff;background:rgba(255,255,255,.1)}
 html[data-fam="osq"] header.top nav.tabs a[aria-current="page"]{background:#fff;color:var(--mta-acc-ink)}
 html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6);color:#fff}
-html[data-fam="osq"][data-mta-theme="dark"] :is(header.top,pre){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 
 /* ---------- 5. Report / ask-the-lecturer panel (practice sites) ---------- */
 .mta-fb-acts{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;margin-inline-start:auto;direction:rtl}
@@ -208,7 +205,6 @@ html.mta-has-menu[data-fam="db"] .layout{grid-template-columns:minmax(0,1fr)!imp
 html.mta-has-menu[data-fam="db"] main{padding-top:36px!important}
 html.mta-has-menu .wrap{max-width:none}
 html.mta-has-menu[data-fam="ind"] .wrap{max-width:1100px}
-html[data-mta-theme="dark"] :is(.mta-menu,.mta-menu-btn){filter:invert(1) hue-rotate(180deg) brightness(1.07)}
 @media (max-width:900px){
   html.mta-has-menu body{padding-right:0!important}
   .mta-menu{width:min(320px,86vw);transform:translateX(105%);transition:transform .22s ease;box-shadow:0 0 30px rgba(0,0,0,.3)}
@@ -248,9 +244,9 @@ html[data-fam="db"] header.chap .seg2{margin-inline:0}
 /* lead paragraph under the title */
 html:is([data-fam="os"],[data-fam="rail"],[data-fam="cr"]) main .hook,html[data-fam="db"] main .lede{font-size:19px;line-height:1.6;color:#44403c}
 /* section headings */
-html:is([data-fam="os"],[data-fam="rail"],[data-fam="db"]) main h2,html[data-fam="cr"] main h3{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:30px;
+html:is([data-fam="os"],[data-fam="rail"],[data-fam="db"]) main h2:not(a h2):not(.card h2),html[data-fam="cr"] main h3:not(a h3){font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:30px;
   letter-spacing:-.015em;line-height:1.25;color:#1c1917;margin:52px 0 18px;position:relative;padding-inline-start:20px;border:0}
-html:is([data-fam="os"],[data-fam="rail"],[data-fam="db"]) main h2::before,html[data-fam="cr"] main h3::before{content:"";position:absolute;inset-inline-start:0;top:.3em;bottom:.3em;width:4px;border-radius:2px;background:var(--mta-acc)}
+html:is([data-fam="os"],[data-fam="rail"],[data-fam="db"]) main h2:not(a h2):not(.card h2)::before,html[data-fam="cr"] main h3:not(a h3)::before{content:"";position:absolute;inset-inline-start:0;top:.3em;bottom:.3em;width:4px;border-radius:2px;background:var(--mta-acc)}
 html[data-fam="cr"] main h3 .sec{font-family:"Assistant",sans-serif;font-size:16px;font-weight:800;color:var(--mta-acc)}
 html:is([data-fam="os"],[data-fam="rail"],[data-fam="db"]) main h3,html[data-fam="cr"] main h4{font-family:"Assistant",sans-serif;font-weight:700;font-size:21px;color:#1c1917;margin:30px 0 10px}
 /* boxes: rounded card with a colored header bar */

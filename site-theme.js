@@ -105,6 +105,7 @@
   function set(t) {
     root.setAttribute("data-mta-theme", t);
     root.setAttribute("data-theme", "light"); /* keeps older built-in dark modes off; dark is handled here */
+    if (typeof applyDark === "function" && document.body) { if (t !== "dark") darkOff(); else setTimeout(function () { darkOn(); }, 0); }
     try { localStorage.setItem(KEY, t); } catch (e) {}
     var bs = document.querySelectorAll("[data-mta-theme]");
     for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", bs[i].getAttribute("data-mta-theme") === t ? "true" : "false");
@@ -157,6 +158,108 @@
     document.body.insertBefore(b, document.body.firstChild);
   }
 
+
+  /* ---- dark theme: recolor what is actually on screen into a calm dark palette ----
+     Follows Material's dark-theme guidance: a dark grey page (not black), off-white text,
+     desaturated light accents. Works from the computed colors, so it also handles colors
+     that are written directly into a site's pages, and keeps code, pictures and the menus as they are. */
+  var DK = { on: false, list: [], seen: new WeakSet(), obs: null, busy: false };
+  var SKIP_DARK = ".mta-menu, .mta-menu-btn, .mta-topbar, .mta-theme, .mta-keep, svg, img, video, canvas, picture, iframe, header.top, #nilv, .nil-float, script, style";
+  function rgbOf(s) {
+    var k = /color\(srgb\s+([\d.e-]+)\s+([\d.e-]+)\s+([\d.e-]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/.exec(s || "");
+    if (k) return [+k[1], +k[2], +k[3], k[4] === undefined ? 1 : (k[4].slice(-1) === "%" ? parseFloat(k[4]) / 100 : +k[4])];
+    var m = /rgba?\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)/.exec(s || "");
+    if (!m) return null;
+    var a = m[4] === undefined ? 1 : (m[4].slice(-1) === "%" ? parseFloat(m[4]) / 100 : +m[4]);
+    return [+m[1] / 255, +m[2] / 255, +m[3] / 255, a];
+  }
+  function lum(c) { var f = function (v) { return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+  function hsl(c) {
+    var r = c[0], g = c[1], b = c[2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, s = 0, d = mx - mn;
+    if (d) { s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h /= 6; }
+    return [h, s, l];
+  }
+  function css(h, s, l, a) { return "hsla(" + Math.round(h * 360) + "," + Math.round(s * 100) + "%," + Math.round(l * 100) + "%," + (a === undefined ? 1 : a) + ")"; }
+  function darkBg(c, page) { var x = hsl(c); return css(x[0], x[1] * (x[2] > 0.95 ? 0.15 : 0.45), page ? 0.075 : Math.min(0.2, 0.105 + (1 - x[2]) * 0.9), c[3]); }
+  function lightFg(c) { var x = hsl(c); return css(x[0], x[1] * 0.7, Math.max(0.7, Math.min(0.9, 1 - x[2] * 0.55)), c[3]); }
+  function darkLine(c) { var x = hsl(c); return css(x[0], x[1] * 0.4, 0.24, c[3]); }
+  function fixGradient(g) {
+    return g.replace(/rgba?\([^)]*\)|color\(srgb[^)]*\)/g, function (m) { var c = rgbOf(m); return c && lum(c) > 0.45 ? darkBg(c) : m; });
+  }
+  function paint(el) {
+    if (DK.seen.has(el)) return;
+    DK.seen.add(el);
+    if (el.closest(SKIP_DARK)) {
+      if (el.tagName === "svg" || el.tagName === "SVG") svgCard(el);
+      return;
+    }
+    var cs = getComputedStyle(el), set = {};
+    var bg = rgbOf(cs.backgroundColor);
+    if (bg && bg[3] > 0.05 && lum(bg) > 0.42) set["background-color"] = darkBg(bg, el === document.body || el === root);
+    var bi = cs.backgroundImage;
+    if (bi && bi.indexOf("gradient") >= 0) { var nb = fixGradient(bi); if (nb !== bi) set["background-image"] = nb; }
+    var fg = rgbOf(cs.color);
+    if (fg && lum(fg) < 0.3) set.color = lightFg(fg);
+    ["top", "right", "bottom", "left"].forEach(function (sd) {
+      if (parseFloat(cs["border-" + sd + "-width"]) > 0) { var bc = rgbOf(cs["border-" + sd + "-color"]); if (bc && bc[3] > 0 && lum(bc) > 0.45) set["border-" + sd + "-color"] = darkLine(bc); }
+    });
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT") set["caret-color"] = "#e7e5e2";
+    var keys = Object.keys(set); if (!keys.length) return;
+    var orig = {}; keys.forEach(function (k) { orig[k] = [el.style.getPropertyValue(k), el.style.getPropertyPriority(k)]; el.style.setProperty(k, set[k], "important"); });
+    DK.list.push([el, orig]);
+  }
+  function svgCard(el) {
+    if (el.closest(".mta-menu, .mta-theme, .mta-topbar, header.top, button, a")) return;
+    if (el.ownerSVGElement || !el.getAttribute("viewBox")) return;
+    var w = parseFloat(el.getAttribute("width") || "0"); if (w && w < 48) return;
+    var orig = { "background-color": [el.style.backgroundColor, ""], "border-radius": [el.style.borderRadius, ""] };
+    el.style.setProperty("background-color", "#ebe7df", "important"); el.style.setProperty("border-radius", "10px", "important");
+    DK.list.push([el, orig]);
+  }
+  function unpaint(el) {
+    for (var i = DK.list.length - 1; i >= 0; i--) if (DK.list[i][0] === el) {
+      var o = DK.list[i][1]; Object.keys(o).forEach(function (k) { if (o[k][0]) el.style.setProperty(k, o[k][0], o[k][1]); else el.style.removeProperty(k); });
+      DK.list.splice(i, 1);
+    }
+    DK.seen.delete(el);
+  }
+  function paintTree(node) {
+    if (node.nodeType !== 1) return;
+    paint(node);
+    var all = node.getElementsByTagName("*");
+    for (var i = 0; i < all.length; i++) paint(all[i]);
+  }
+  var pending = [];
+  function flush() {
+    DK.busy = false; var p = pending; pending = [];
+    p.forEach(function (n) { if (n.isConnected) paintTree(n); });
+  }
+  function darkOn() {
+    if (DK.on) return; DK.on = true;
+    root.style.colorScheme = "dark";
+    paint(root); paintTree(document.body);
+    root.classList.add("mta-dark-ready");
+    DK.obs = new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        if (m.type === "attributes") { var el = m.target; if (el.nodeType === 1 && !el.closest(SKIP_DARK)) { unpaint(el); pending.push(el); } }
+        else m.addedNodes.forEach(function (n) { if (n.nodeType === 1) pending.push(n); });
+      });
+      if (pending.length && !DK.busy) { DK.busy = true; requestAnimationFrame(flush); }
+    });
+    DK.obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "aria-pressed", "open", "hidden"] });
+  }
+  function darkOff() {
+    if (!DK.on) return; DK.on = false;
+    if (DK.obs) DK.obs.disconnect();
+    DK.list.slice().forEach(function (e) { unpaint(e[0]); });
+    DK.list = []; DK.seen = new WeakSet(); root.style.colorScheme = ""; root.classList.remove("mta-dark-ready");
+  }
+  function applyDark(t) {
+    if (t === "dark") { if (document.body) darkOn(); }
+    else darkOff();
+  }
+
   var C = COURSES[cfg.course];
 
   /* shared header for every site's home page */
@@ -206,8 +309,9 @@
     });
     return out;
   }
+  var SUMMARY_FAMS = { ind: 1, rail: 1, os: 1, db: 1, cr: 1 };   /* the side menu belongs to summary sites only */
   function buildMenu() {
-    var menu = MENUS[cfg.course];
+    var menu = SUMMARY_FAMS[cfg.fam] && MENUS[cfg.course];
     if (!menu || !C) return;
     var nav = document.querySelector(".mta-menu");
     if (!nav) {
@@ -258,7 +362,7 @@
     host.appendChild(a);
   }
   function hideOld() {
-    var sel = OLD_MENU[cfg.fam]; if (!sel || !MENUS[cfg.course]) return;
+    var sel = OLD_MENU[cfg.fam]; if (!sel || !SUMMARY_FAMS[cfg.fam] || !MENUS[cfg.course]) return;
     document.querySelectorAll(sel).forEach(function (e) { e.classList.add("mta-old-menu"); });
   }
   var WKEY = "mta-side-w";
