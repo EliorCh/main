@@ -21,7 +21,14 @@ html[data-course="crypto"],.mta-c-crypto{--mta-acc:#475569;--mta-acc-soft:#f1f5f
 html[data-course="home"],.mta-c-home{--mta-acc:#44403c;--mta-acc-soft:#f5f5f4;--mta-acc-ink:#292524;--mta-side1:#1c1917;--mta-side2:#292524}
 
 /* ---------- 2. Reading themes (chosen by the student, saved across all sites) ---------- */
-html[data-mta-theme="sepia"]{filter:sepia(.32) brightness(.97) contrast(.97)}
+/* sepia = warmer paper only. No filter: text keeps the crisp dark ink of the light theme */
+html[data-mta-theme="sepia"],html[data-mta-theme="sepia"][data-fam]{
+  --bg:#f4ecd9;--bg-soft:#ece2cb;--bg-paper:#fbf6ea;--paper:#fbf6ea;--surface:#fbf6ea;--card:#fbf6ea;--bg-card:#fbf6ea;--sunk:#efe6d2;
+  --rule:#e3d8bf;--rule-soft:#ece3cf;--line:#e3d8bf;--border:#e3d8bf;--grid:#efe6d2;
+  --ink:#1c1917;--fg:#1c1917;--ink-soft:#3b3530;--ink-2:#3b3530;--ink-mute:#5c544c;--muted:#5c544c}
+html[data-mta-theme="sepia"][data-fam="os"]{--ink:var(--mta-acc)}
+html[data-mta-theme="sepia"] body{background-color:#f4ecd9}
+html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
 html[data-mta-theme="dark"]{filter:invert(1) hue-rotate(180deg) contrast(.86);background:#fbf9f3}
 /* things that are already dark, or are pictures, are flipped back so they keep their real colors */
 html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep){filter:invert(1) hue-rotate(180deg)}
@@ -50,7 +57,7 @@ html[data-mta-theme="dark"] :is(img,video,canvas,picture,iframe,.mta-keep) :is(i
 /* ---------- 4. Family hooks: map the course color into each site family ---------- */
 
 /* 4a. Summary sites with the indigo sidebar (comsum, algosum, statsum, mlsum) */
-html[data-fam="ind"]{--indigo-9:var(--mta-side2);--indigo-7:var(--mta-acc);--indigo-3:var(--mta-acc-soft);--indigo-1:var(--mta-acc-soft)}
+html[data-fam="ind"]{--indigo-9:var(--mta-side2);--indigo-7:var(--mta-acc);--indigo-3:color-mix(in srgb,var(--mta-acc) 40%,#fff);--indigo-1:var(--mta-acc-soft)}
 html[data-fam="ind"] .sidebar{background:linear-gradient(180deg,var(--mta-side1) 0%,var(--mta-side2) 100%)}
 html[data-fam="ind"] .sidebar :is(.brand-sub,.nav-list a){color:rgba(255,255,255,.78)}
 html[data-fam="ind"] .sidebar :is(.brand-meta,.nav-label){color:rgba(255,255,255,.55)}
@@ -146,3 +153,62 @@ html[data-fam="osq"][data-mta-theme="dark"] :is(header.top,pre){filter:invert(1)
 .mta-fb-msg{font-size:13px;color:#15803d;margin-top:4px}
 .mta-fb-msg textarea{direction:rtl}
 .mta-fb-prev{max-height:220px;overflow:auto;font-size:13px;line-height:1.55;background:#f5f5f4;border-radius:8px;padding:8px 12px;margin:6px 0;color:#44403c;white-space:pre-wrap}
+
+/* ---------- 6. Shared home-page header (replaces each site's own) ---------- */
+.mta-hidden{display:none!important}
+.mta-hero{direction:rtl;text-align:right;margin:8px 0 40px;padding:0 0 28px;border-bottom:1px solid rgba(0,0,0,.08);font-family:"Assistant",-apple-system,sans-serif}
+.mta-hero-pill{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--mta-acc-ink);background:var(--mta-acc-soft);border:1px solid color-mix(in srgb,var(--mta-acc) 25%,transparent);padding:5px 14px;border-radius:999px;margin-bottom:16px}
+.mta-hero h1{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:clamp(36px,5.4vw,56px);line-height:1.1;letter-spacing:-.02em;margin:0 0 10px;color:#1c1917;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mta-hero-icon{display:inline-grid;place-items:center;width:1.25em;height:1.25em;font-size:.82em;border-radius:18px;background:var(--mta-acc-soft);border:1px solid color-mix(in srgb,var(--mta-acc) 22%,transparent)}
+.mta-hero-who{font-size:16px;font-weight:600;color:var(--mta-acc-ink);margin:0 0 12px}
+.mta-hero-desc{font-size:19px;line-height:1.6;color:#44403c;max-width:760px;margin:0 0 20px}
+.mta-hero-btns{display:flex;flex-wrap:wrap;gap:10px}
+.mta-hero-btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:15px;border-radius:10px;padding:9px 18px;background:var(--mta-acc);color:#fff;border:1.5px solid var(--mta-acc)}
+.mta-hero-btn.ghost{background:transparent;color:var(--mta-acc-ink)}
+.mta-hero-btn:hover{filter:brightness(1.08)}
+
+/* ---------- 7. Side menus: icon, course name as a home link, "all courses", resizable width ---------- */
+.mta-brand{color:inherit!important;text-decoration:none!important;display:inline-flex!important;align-items:center;gap:8px;font-size:inherit!important;font-weight:inherit;
+  background:none!important;border-radius:0!important;margin:0!important;border:0;border-bottom:2px solid var(--mta-hi)!important;padding:0 0 3px!important;transition:color .15s}
+.mta-brand:hover{color:var(--mta-hi)!important}
+.mta-brand-icon{font-size:.95em;line-height:1}
+header.top .brand .mta-brand-icon{margin-inline-end:6px}
+.mta-side-home{display:flex!important;align-items:center;justify-content:center;gap:6px;margin:22px 8px 6px!important;padding:9px 12px!important;border-radius:10px!important;
+  border:1.5px solid rgba(255,255,255,.35)!important;color:#fff!important;text-decoration:none!important;font-weight:700!important;font-size:14.5px!important;background:rgba(255,255,255,.06)!important}
+.mta-side-home:hover{background:rgba(255,255,255,.14)!important;border-color:var(--mta-hi)!important}
+.mta-resize{position:fixed;width:8px;cursor:col-resize;z-index:80;touch-action:none}
+.mta-resize::after{content:"";position:absolute;inset-block:0;left:3px;width:2px;background:transparent;transition:background .15s}
+.mta-resize:hover::after,.mta-resize:focus-visible::after,html.mta-resizing .mta-resize::after{background:var(--mta-acc)}
+html.mta-resizing{cursor:col-resize;user-select:none}
+@media (min-width:901px){
+  html[data-fam="ind"] .app{grid-template-columns:var(--mta-side-w,320px) minmax(0,1fr)}
+  html[data-fam="rail"] .rail{width:var(--mta-side-w,320px)}
+  html[data-fam="os"] nav.side{flex:0 0 var(--mta-side-w,250px)}
+  html[data-fam="cr"] nav.side{flex:0 0 var(--mta-side-w,290px);width:var(--mta-side-w,290px)}
+  /* databases: a permanent side menu like the other sites, instead of a pop-out drawer */
+  html[data-fam="db"] .layout{display:grid;grid-template-columns:var(--mta-side-w,270px) minmax(0,1fr)!important;max-width:1560px}
+  html[data-fam="db"] nav.side{position:sticky!important;top:0;transform:none!important;width:auto!important;height:100vh!important;
+    padding:28px 18px 24px!important;z-index:5;overflow:auto;border:0!important}
+  html[data-fam="db"] nav.side :is(ol,.sub){display:block!important}
+  html[data-fam="db"] :is(.menubtn,.scrim){display:none!important}
+  html[data-fam="db"] main{padding-top:40px!important}
+}
+
+/* databases menu: same look as the other dark side menus */
+html[data-fam="db"] nav.side .brand{font-size:1.3rem;margin:0 6px 18px}
+html[data-fam="db"] nav.side ol.chaptree :is(li.home a,summary,a.leaf){color:rgba(255,255,255,.86)!important;background:transparent}
+html[data-fam="db"] nav.side ol.chaptree :is(li.home.cur a,li.chap.cur>details>summary){background:rgba(255,255,255,.12)!important;color:#fff!important;box-shadow:inset -3px 0 0 var(--mta-hi)}
+html[data-fam="db"] nav.side ol.chaptree :is(summary,li.home a,a.leaf):hover{background:rgba(255,255,255,.08)!important;color:#fff!important}
+html[data-fam="db"] nav.side ol.chaptree .cn{background:rgba(255,255,255,.12);color:rgba(255,255,255,.85)}
+html[data-fam="db"] nav.side ol.chaptree li.cur .cn{background:var(--mta-hi);color:var(--mta-side1)}
+html[data-fam="db"] nav.side ol.chaptree details>summary::after{color:rgba(255,255,255,.5)}
+html[data-fam="db"] nav.side ol.chaptree .tree{border-inline-start-color:rgba(255,255,255,.15)}
+html[data-fam="db"] nav.side ol.chaptree a.leaf.ex{color:#fcd34d!important}
+html[data-fam="db"] nav.side ol.chaptree :is(a.leaf.here,a[aria-current="page"]){background:rgba(255,255,255,.16)!important;color:#fff!important;border-color:transparent!important;box-shadow:inset -3px 0 0 var(--mta-hi)}
+html[data-fam="db"] nav.side ol.chaptree :is(ol.secs a,ol.local a){color:rgba(255,255,255,.6)!important;background:transparent!important}
+html[data-fam="db"] nav.side ol.chaptree :is(ol.secs a,ol.local a):hover,html[data-fam="db"] nav.side ol.chaptree :is(ol.secs,ol.local) a.on{color:#fff!important;background:rgba(255,255,255,.08)!important}
+html[data-fam="db"] nav.side ol.chaptree .kids a{background:transparent;border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.8)}
+html[data-fam="db"] nav.side ol.chaptree li.chap.cur{background:transparent!important}
+html[data-fam="db"] nav.side .brand{font-size:1.35rem!important;line-height:1.25}
+.mta-brand{flex-wrap:wrap}
+.mta-brand small{flex-basis:100%;margin-top:2px}
