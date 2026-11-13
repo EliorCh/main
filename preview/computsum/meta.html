@@ -1,0 +1,577 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta name="robots" content="noindex,nofollow"><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><!-- mta-theme --><link rel="stylesheet" href="/main/site-theme.css"><script src="/main/site-theme.js" data-course="comp" data-fam="rail" data-footer="body"></script><!-- /mta-theme -->
+</head><body>
+<title>חישוביות — משוואות מטה-תוכניות</title>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  /* palette shared with the other summary sites (algosum / statsum / mlsum / comsum) */
+  --bg:#fbf9f3; --paper:#fffefa; --fg:#1c1917; --ink-soft:#44403c; --muted:#78716c; --line:#e7e5e0; --rule-soft:#f1efe9;
+  --accent:#4f46e5; --accent-soft:#eef2ff; --indigo-9:#312e81; --nil:#b45309;
+  --theory:#1d4ed8; --theory-bg:#eff6ff; --theory-edge:#bfdbfe;
+  --formula:#b45309; --formula-bg:#fef9e7; --formula-edge:#fcd34d;
+  --example:#047857; --example-bg:#ecfdf5; --example-edge:#a7f3d0;
+  --warn:#be123c; --warn-bg:#fff1f2; --warn-edge:#fecdd3;
+  --ex:#6d28d9; --ex-bg:#f5f3ff; --ex-edge:#ddd6fe;
+  --sum:#334155; --sum-bg:#f1f5f9; --sum-edge:#cbd5e1;
+  --code-bg:#f5f5f4; --pre-bg:#0f172a; --pre-bg-2:#1e293b; --pre-ink:#e2e8f0;
+  --kw:#93c5fd; --op:#f0abfc; --cst:#fcd34d; --cmt:#94a3b8;
+  --shadow-sm:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06);
+  --shadow:0 4px 12px rgba(28,25,23,.05),0 1px 3px rgba(28,25,23,.04);
+  --f-display:"Frank Ruhl Libre",Georgia,serif;
+  --f-body:"Assistant",-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono","Courier New",monospace;
+  --rail:320px;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.7;margin:0}
+.wrap{display:flex;gap:0;min-height:100vh}
+.rail{width:var(--rail);flex:none;position:sticky;top:env(safe-area-inset-top,0px);align-self:flex-start;height:100vh;overflow-y:auto;
+  background:var(--paper);border-inline-start:0;border-inline-end:1px solid var(--line);padding-block:22px;padding-inline:18px 14px}
+.rail .brand{font-family:var(--f-display);font-weight:900;font-size:26px;line-height:1.1;color:var(--fg);text-decoration:none;display:block}
+.rail .brand small{display:block;font-family:var(--f-body);font-weight:600;font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
+.rail nav{margin-top:18px;display:flex;flex-direction:column;gap:2px}
+.rail a.ch{display:flex;gap:10px;align-items:baseline;padding:7px 10px;border-radius:7px;color:var(--fg);text-decoration:none;font-weight:600;font-size:15.5px}
+.rail a.ch .n{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-width:1.4em}
+.rail a.ch:hover{background:var(--accent-soft)}
+.rail a.ch.active{background:var(--accent);color:var(--paper)}
+.rail a.ch.active .n{color:var(--paper)}
+.rail .secs{display:flex;flex-direction:column;margin-block:4px 8px;padding-inline-start:30px}
+.rail .secs a{color:var(--muted);text-decoration:none;font-size:14px;padding:3px 6px;border-radius:5px;line-height:1.35}
+.rail .secs a:hover,.rail .secs a.on{color:var(--accent);background:var(--accent-soft)}
+.rail .tools{margin-top:18px;border-top:1px solid var(--line);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font-family:var(--f-body);font-weight:600;font-size:14.5px;border:1px solid var(--line);background:var(--paper);color:var(--fg);
+  padding:6px 12px;border-radius:7px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button.primary:hover{color:var(--paper);filter:brightness(1.08)}
+main{flex:1;min-width:0;padding-block:34px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.col{max-width:860px;margin-inline:auto}
+.chapter{display:none}
+.chapter.show{display:block}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.08em;color:var(--accent);text-transform:uppercase}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(30px,4.2vw,44px);line-height:1.15;margin:.15em 0 .3em;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.25;margin:2.2em 0 .5em;text-wrap:balance;scroll-margin-top:20px}
+h3{font-family:var(--f-body);font-weight:700;font-size:20px;margin:1.6em 0 .4em}
+.hook{font-size:19px;color:var(--muted);margin-bottom:1.2em}
+main p,main li,.box-body p,.box-body li{direction:rtl;unicode-bidi:isolate;text-align:right}
+main p,main li,.box-body p,.box-body li,.hook{text-wrap:pretty;hyphens:none}
+
+main strong{margin-inline-end:.15em}
+.ltr,.term{direction:ltr;unicode-bidi:isolate}
+.nw{white-space:nowrap}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:0 .3em;direction:ltr;unicode-bidi:isolate}
+.f{display:block;direction:ltr;unicode-bidi:isolate;text-align:center;font-family:var(--f-mono);font-size:15.5px;background:var(--formula-bg);
+  border-radius:7px;padding:9px 14px;margin:10px 0;overflow-x:auto;white-space:pre-wrap;color:var(--fg)}
+.f .s{color:var(--formula);font-weight:600}
+pre{direction:ltr;text-align:left;font-family:var(--f-mono);font-size:14.5px;line-height:1.55;background:var(--code-bg);border:1px solid var(--line);
+  border-radius:8px;padding:12px 16px;overflow-x:auto;margin:10px 0}
+pre .kw{color:var(--kw);font-weight:600} pre .op{color:var(--op)} pre .cst{color:var(--cst)} pre .cmt{color:var(--cmt);font-style:italic} pre .lbl{color:var(--muted)}
+.box{border-radius:10px;margin:18px 0;background:var(--paper);border:1px solid var(--line);overflow:hidden}
+.box>.box-h{display:flex;gap:8px;align-items:center;font-weight:700;font-size:15px;padding:7px 14px;letter-spacing:.01em}
+.box>.box-h .ht{flex:1;min-width:0}
+.box>.box-h .tag{flex:none;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;padding:1px 7px;border-radius:4px;border:1px solid currentColor}
+.box>.box-body{padding:4px 16px 12px}
+.box.theory>.box-h{background:var(--theory-bg);color:var(--theory)}
+.box.formula>.box-h{background:var(--formula-bg);color:var(--formula)}
+.box.example>.box-h{background:var(--example-bg);color:var(--example)}
+.box.warn>.box-h{background:var(--warn-bg);color:var(--warn)}
+.box.exercise>.box-h{background:var(--ex-bg);color:var(--ex)}
+.box.summary>.box-h{background:var(--sum-bg);color:var(--sum)}
+.keypoint{border-inline-start:4px solid var(--accent);background:var(--accent-soft);padding:9px 14px;border-radius:0 8px 8px 0;margin:16px 0;font-weight:600}
+details.sol{margin:8px 0;border:1px dashed var(--ex);border-radius:8px;padding:6px 12px;background:var(--ex-bg)}
+details.sol summary{cursor:pointer;font-weight:700;color:var(--ex)}
+details.sol[open] summary{margin-bottom:6px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15.5px;background:var(--paper)}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:right;vertical-align:top}
+th{background:var(--sum-bg);font-weight:700}
+td.mono,th.mono{direction:ltr;unicode-bidi:isolate;text-align:left;font-family:var(--f-mono);font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+td.c{text-align:center}
+figure{margin:16px 0;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto}
+figure svg,.treebox svg,.box svg{direction:ltr;unicode-bidi:isolate}
+figure svg{display:block;margin-inline:auto;max-width:100%}
+figcaption{font-size:14px;color:var(--muted);text-align:center;margin-top:6px}
+svg .ink{stroke:var(--fg);fill:none} svg .txt{fill:var(--fg);font-family:var(--f-body)} svg .mtxt{fill:var(--fg);font-family:var(--f-mono)}
+svg .acc{stroke:var(--accent);fill:none} svg .accf{fill:var(--accent)} svg .soft{fill:var(--accent-soft);stroke:var(--accent)}
+svg .nilf{fill:var(--nil)} svg .mut{fill:var(--muted);font-family:var(--f-body)} svg .pap{fill:var(--paper);stroke:var(--fg)}
+svg .exf{fill:var(--example-bg);stroke:var(--example)} svg .wf{fill:var(--warn-bg);stroke:var(--warn)} svg .ff{fill:var(--formula-bg);stroke:var(--formula)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:20px 0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--fg);display:flex;flex-direction:column;gap:4px}
+.card:hover{border-color:var(--accent)}
+.card .n{font-family:var(--f-mono);color:var(--accent);font-size:13px}
+.card b{font-family:var(--f-display);font-size:20px}
+.card span{color:var(--muted);font-size:14.5px}
+/* widgets */
+.widget{background:var(--paper);border:1px solid var(--accent);border-radius:10px;padding:14px;margin:18px 0}
+.widget h4{margin:0 0 8px;font-size:16px;color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{min-width:0}
+textarea,input[type=text],select{font-family:var(--f-mono);font-size:14px;background:var(--code-bg);color:var(--fg);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
+textarea{width:100%;min-height:170px;direction:ltr;text-align:left;resize:vertical;line-height:1.5}
+input[type=text]{direction:ltr;text-align:left;flex:1;min-width:140px}
+select{font-family:var(--f-body)}
+.out{font-family:var(--f-mono);font-size:14px;direction:ltr;text-align:left;background:var(--code-bg);border-radius:7px;padding:8px 10px;margin-top:8px;white-space:pre-wrap;word-break:break-word}
+.out>div{text-align:start}
+mark.old{background:var(--warn-bg);color:var(--fg);outline:1.5px solid var(--warn);border-radius:3px;padding:0 1px}
+mark.new{background:var(--example-bg);color:var(--fg);outline:1.5px solid var(--example);border-radius:3px;padding:0 1px}
+#stepper .f{font-size:16px;text-align:center}
+.out>div:dir(rtl){font-family:var(--f-body);font-size:15px}
+.trace td.lab{direction:ltr;unicode-bidi:plaintext;text-align:start;white-space:nowrap}
+.trace td.lab:dir(rtl){font-family:var(--f-body);font-size:14px}
+.tm-tape{display:flex;direction:ltr;overflow-x:auto;padding:4px 2px 26px;margin-top:8px;gap:0}
+.tm-cell{position:relative;flex:0 0 34px;height:38px;border:1px solid var(--fg);margin-left:-1px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:16px;background:var(--bg)}
+.tm-cell.blank span{color:var(--muted)}
+.tm-cell.head{background:var(--code-bg);outline:2px solid var(--accent);z-index:1}
+.tm-q{position:absolute;top:40px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--accent);white-space:nowrap;font-family:var(--f-mono)}
+.part{border-top:1px dashed var(--line);margin-top:16px;padding-top:12px}
+.part>.ph{font-weight:700;margin:0 0 6px}
+.f.fl{text-align:left;padding-inline-start:28px}
+.treebox svg{margin-inline:auto;display:block}
+.out.err{color:var(--warn)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.stat{background:var(--accent-soft);border-radius:7px;padding:4px 10px;font-size:14.5px}
+.stat b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.trace{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:7px}
+.trace table{font-size:13px} .trace td{font-family:var(--f-mono);direction:ltr;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.trace tr.chg td.v{background:var(--example-bg)}
+.treebox{overflow-x:auto;margin-top:8px}
+.foot{margin-top:60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:40px;flex-wrap:wrap}
+.pager a{color:var(--accent);font-weight:700;text-decoration:none}
+.menu-btn{display:none}
+@media (max-width:900px){
+  .wrap{display:block}
+  .rail{position:fixed;inset-block:0;inset-inline-start:0;z-index:20;transform:translateX(100%);transition:transform .2s;width:min(300px,86vw);height:100%;
+    padding-top:calc(22px + env(safe-area-inset-top,0px));box-shadow:0 0 30px rgba(0,0,0,.25)}
+  .rail.open{transform:none}
+  .menu-btn{display:inline-block;position:fixed;top:calc(10px + env(safe-area-inset-top,0px));inset-inline-start:calc(10px + env(safe-area-inset-right,0px));z-index:21}
+  main{padding-top:56px}
+  h2{font-size:24px;scroll-margin-top:64px}
+  pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12.5px;padding:10px 12px}
+  .f{font-size:13.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== shared summary-site language (matches algosum / statsum / mlsum / comsum) ===== */
+body{line-height:1.75;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 20% 0%,rgba(99,102,241,.035),transparent 40%),radial-gradient(circle at 80% 100%,rgba(245,158,11,.035),transparent 40%);background-attachment:fixed}
+.wrap{max-width:1480px;margin-inline:auto}
+.rail{background:linear-gradient(180deg,#1e1b4b 0%,#312e81 100%);color:#e0e7ff;border:0;border-inline-end:1px solid rgba(255,255,255,.06);padding:32px 24px}
+.rail::-webkit-scrollbar{width:6px}.rail::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+.rail .brand{font-family:var(--f-display);font-size:24px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.2}
+.rail .brand:hover{color:#fbbf24}
+.rail .brand small{color:#c7d2fe;font-family:var(--f-body);font-size:13px;font-weight:500;margin-top:6px;letter-spacing:0}
+.rail .brand-meta{font-size:11px;color:#a5b4fc;text-transform:uppercase;letter-spacing:.1em;margin:14px 0 0;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.rail nav{margin-top:6px;gap:2px}
+.rail .nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#818cf8;font-weight:700;margin:22px 0 8px;padding-inline-start:8px}
+.rail a.ch{align-items:center;padding:8px 12px;border-radius:8px;color:#c7d2fe;font-size:14.5px;font-weight:500;transition:all .15s ease}
+.rail a.ch:hover{background:rgba(255,255,255,.06);color:#fff}
+.rail a.ch .n{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;background:rgba(255,255,255,.08);border-radius:6px;font-size:11px;font-weight:700;color:#c7d2fe}
+.rail a.ch.active{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 3px 0 0 #fbbf24}
+.rail a.ch.active .n{background:#fbbf24;color:#1e1b4b}
+.rail .secs{padding-inline-start:44px;margin-block:4px 10px}
+.rail .secs a{color:#a5b4fc;font-size:13.5px}
+.rail .secs a:hover,.rail .secs a.on{color:#fff;background:rgba(255,255,255,.08)}
+.rail .tools{border-top:1px solid rgba(255,255,255,.08);margin-top:24px;padding-top:16px}
+.rail .tools button{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:#e0e7ff}
+.rail .tools button:hover{background:rgba(255,255,255,.14);color:#fff;border-color:#fbbf24}
+main{padding-block:56px 120px;padding-inline:max(24px,env(safe-area-inset-left,0px)) max(24px,env(safe-area-inset-right,0px))}
+.col{max-width:900px;margin-inline:64px auto}
+.eyebrow{display:inline-block;font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.15em;background:var(--accent-soft);padding:6px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,4.4vw,48px);line-height:1.15;letter-spacing:-.02em;margin:0 0 14px;color:var(--fg)}
+.hook{font-size:19px;color:var(--ink-soft);line-height:1.6;margin-bottom:40px}
+h2{font-size:32px;letter-spacing:-.015em;margin:56px 0 20px;position:relative;padding-inline-start:20px}
+h2::before{content:"";position:absolute;inset-inline-start:0;top:12px;bottom:12px;width:4px;background:var(--accent);border-radius:2px}
+h3{font-size:22px;margin:32px 0 12px;letter-spacing:-.005em}
+main p,main li{color:var(--ink-soft)} main p strong,main li strong{color:var(--fg)}
+code{background:#f5f5f4;border-color:#e7e5e4;color:#be185d;border-radius:5px;padding:1px 6px}
+.f{background:var(--formula-bg);border:1px solid var(--formula-edge);border-radius:10px;color:#78350f;padding:10px 16px}
+.f .s{color:var(--formula)}
+pre{background:var(--pre-bg);border:1px solid var(--pre-bg-2);color:var(--pre-ink);border-radius:12px;padding:16px 20px;line-height:1.7;box-shadow:var(--shadow)}
+pre .lbl{color:#94a3b8}
+.box{border-radius:14px;margin:24px 0;box-shadow:var(--shadow-sm);border:1px solid var(--line);background:var(--paper)}
+.box>.box-h{padding:12px 18px;gap:10px;font-size:15px;border-bottom:1px solid var(--line)}
+.box>.box-h .tag{border:0;color:#fff;font-family:var(--f-body);font-size:12px;font-weight:700;letter-spacing:.02em;padding:3px 10px;border-radius:8px;background:currentColor}
+.box>.box-h .tag{background:var(--hc);color:#fff}
+.box>.box-body{padding:16px 22px 14px}
+.box.theory{border-color:var(--theory-edge);--hc:var(--theory)} .box.theory>.box-h{background:var(--theory-bg);color:var(--theory)}
+.box.formula{border-color:var(--formula-edge);background:var(--formula-bg);--hc:var(--formula)} .box.formula>.box-h{background:transparent;color:var(--formula);border-bottom-color:rgba(180,83,9,.18)}
+.box.example{border-color:var(--example-edge);--hc:var(--example)} .box.example>.box-h{background:var(--example-bg);color:var(--example)}
+.box.warn{border-color:var(--warn-edge);--hc:var(--warn)} .box.warn>.box-h{background:var(--warn-bg);color:var(--warn)}
+.box.exercise{border-color:var(--ex-edge);--hc:var(--ex)} .box.exercise>.box-h{background:var(--ex-bg);color:var(--ex)}
+.box.summary{border-color:var(--sum-edge);--hc:var(--sum)} .box.summary>.box-h{background:var(--sum-bg);color:var(--sum)}
+.keypoint{background:linear-gradient(270deg,var(--formula-bg) 0%,transparent 100%);border:0;border-inline-start:3px solid var(--formula);border-radius:8px;padding:14px 18px;font-weight:500;color:var(--ink-soft)}
+.keypoint::before{content:"💡 ";font-size:18px}
+details.sol{border:1px solid var(--ex-edge);border-radius:10px;padding:0;background:#fff;overflow:hidden;margin:12px 0}
+details.sol>summary{list-style:none;background:var(--ex-bg);color:var(--ex);padding:11px 14px;font-size:14px;text-align:center;transition:background .15s ease}
+details.sol>summary::-webkit-details-marker{display:none}
+details.sol>summary::before{content:"▼ ";font-size:10px}
+details.sol[open]>summary::before{content:"▲ "}
+details.sol>summary:hover{background:#ede9fe}
+details.sol[open]>summary{margin:0;border-bottom:1px solid var(--example-edge)}
+details.sol>:not(summary){margin-inline:20px}
+details.sol[open]{background:var(--example-bg)}
+details.sol[open]>:last-child{margin-bottom:16px}
+details.sol[open]>summary+*{margin-top:14px}
+table{background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);font-size:15px}
+th,td{border:0;border-bottom:1px solid var(--rule-soft);border-inline-start:1px solid var(--rule-soft);padding:10px 14px}
+th{background:var(--sum-bg);color:var(--sum)}
+tr:last-child td{border-bottom:0}
+figure{border-radius:12px;box-shadow:var(--shadow-sm);padding:18px}
+figcaption{font-style:italic}
+.card{background:var(--paper);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .n{display:inline-block;width:fit-content;font-family:var(--f-body);font-weight:700;font-size:11.5px;letter-spacing:.08em;color:var(--accent);background:var(--accent-soft);padding:2px 10px;border-radius:99px}
+.card b{font-weight:700;margin-top:4px}
+.widget{border:1px solid var(--accent);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm)}
+.widget h4{color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent)}
+textarea,input[type=text],select{background:#fff}
+.out{background:#f5f5f4;border:1px solid var(--line)}
+.stat{background:var(--accent-soft)}
+.pager a{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 16px;box-shadow:var(--shadow-sm)}
+.pager a:hover{border-color:var(--accent)}
+@media (max-width:1100px){.col{margin-inline:auto}}
+@media (max-width:900px){
+  .rail{transform:translateX(100%);padding:calc(28px + env(safe-area-inset-top,0px)) 20px 24px}
+  .menu-btn{background:#312e81;color:#fff;border-color:#312e81}
+  main{padding-top:calc(72px + env(safe-area-inset-top,0px))}
+  .chapter{scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+  h1{font-size:34px} h2{font-size:26px}
+}
+.rail .xlink{display:block;margin-top:14px;text-align:center;font-weight:700;font-size:14px;text-decoration:none;color:#fbbf24;border:1.5px solid #fbbf24;border-radius:10px;padding:7px 10px}
+.rail .xlink:hover{background:#fbbf24;color:#1e1b4b}
+#nilv{position:fixed;inset:0;z-index:100;background:#000;cursor:pointer;overflow:hidden}
+#nilv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#nilv .nil-exit{position:absolute;inset-inline:0;margin-inline:auto;width:fit-content;max-width:calc(100% - 32px);background:rgba(0,0,0,.85);border:1px solid #1f6f35;border-radius:8px;padding:6px 14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));text-align:center;color:#7CFF9B;font:600 15px var(--f-mono);opacity:0;transition:opacity .6s;text-shadow:0 0 6px #0f0}
+#nilv .nil-exit.on{opacity:.85}
+#nil-btn{border-color:#2a2a2a;background:#0b0b0b;color:#7CFF9B;font-family:var(--f-mono)}
+.nil-float{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:calc(12px + env(safe-area-inset-left,0px));z-index:30;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.nil-word{position:relative;top:0}
+.nil-word.drip{animation:nilDrip var(--d,1.4s) cubic-bezier(.55,0,.85,.35) var(--w,0s) forwards}
+@keyframes nilDrip{0%{top:0;opacity:1;filter:none}
+ 12%{top:-3px}
+ 35%{color:#22ff66;text-shadow:0 0 6px #22ff66;filter:blur(0)}
+ 100%{top:110vh;opacity:0;color:#22ff66;filter:blur(2px)}}
+.nil-fall{animation:nilFall var(--d,1.4s) cubic-bezier(.55,0,.85,.35) var(--w,0s) forwards;transform-origin:50% 0}
+@keyframes nilFall{0%{transform:none;opacity:1}
+ 15%{transform:translateY(-4px) rotate(0deg)}
+ 100%{transform:translateY(110vh) rotate(var(--r,8deg));opacity:0}}
+body.nil-melting .box,body.nil-melting .widget,body.nil-melting figure,body.nil-melting .card,body.nil-melting table,body.nil-melting th,body.nil-melting td,
+body.nil-melting .box>.box-h,body.nil-melting details.sol,body.nil-melting .keypoint,body.nil-melting .rail,body.nil-melting .stat,body.nil-melting .out,body.nil-melting .tag,body.nil-melting code,body.nil-melting mark,body.nil-melting .rail a.ch.active{
+ transition:background-color 1.2s ease .5s,border-color 1.2s ease .5s,box-shadow 1.2s ease .5s;background-color:transparent!important;border-color:transparent!important;box-shadow:none!important}
+#nilv{transition:opacity .9s ease}
+
+#nil-btn:hover{color:#b6ffc6;border-color:#7CFF9B}
+table.ref td{vertical-align:middle}
+@media (min-width:700px){table.ref td.mono{white-space:nowrap;font-size:12.5px}}
+table.ref td,table.ref th{padding:6px 8px}
+table.ref td:last-child{min-width:160px}
+table.ref code{white-space:nowrap}
+table.ref svg{display:inline-block;vertical-align:middle;max-width:none}
+</style>
+
+<button class="menu-btn" id="menu-btn" aria-label="תפריט">☰ פרקים</button>
+<style>
+.f.fl{white-space:pre-wrap;overflow-wrap:anywhere}
+.mh{margin:6px 0 18px}.mh-k{font-weight:700;color:var(--formula,#b45309);font-size:13px;letter-spacing:.02em}
+.mh h1{margin:4px 0 8px}.mh-hook{font-size:16.5px;line-height:1.7;max-width:62ch}
+.mono-eq{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-size:13px;white-space:nowrap}
+table.m-cmp td:first-child{font-weight:700;white-space:nowrap}
+.unp{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:14px 0;background:var(--card-bg,transparent)}
+.unp-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.unp-h b{font-size:15.5px}.unp-h .ctr{margin-inline-start:auto;font-size:12.5px;opacity:.75}
+.unp-eq{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;text-align:center;font-size:16px;line-height:2.1;padding:10px;border-radius:9px;background:var(--formula-bg);border:1px solid var(--formula-edge,var(--line));overflow-x:auto;white-space:nowrap}
+.unp-eq .hl{background:var(--example-bg);outline:2px solid var(--example);border-radius:4px;padding:1px 2px}
+.unp-eq .nm{background:var(--warn-bg);outline:1.5px dashed var(--warn);border-radius:4px;padding:1px 3px;font-weight:700}
+.unp-eq .dim{opacity:.38}
+.unp-x{margin:10px 2px 6px;line-height:1.75;min-height:3.4em}
+.unp-b{display:flex;gap:8px;justify-content:center}
+.unp-b button{min-width:84px}
+.unp-dots{display:flex;gap:5px;justify-content:center;margin-top:8px}.unp-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.unp-dots i.on{background:var(--example)}
+#bld .row label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:13.5px}
+#bld-out .f{font-size:16px;margin:12px 0 6px;white-space:normal}
+#bld-out .say{line-height:1.75}
+#bld-out ul{margin:6px 0}
+.unp-x [dir=ltr],#bld-out [dir=ltr],.unp-eq [dir=ltr]{unicode-bidi:isolate}
+#bld-out .lang{font-family:var(--f-mono);font-weight:700}
+</style>
+<div class="wrap" dir="rtl" lang="he">
+<aside class="rail" aria-label="ניווט"><a class="brand" href="https://eliorch.github.io/computsum/index.html" target="_blank">חישוביות<small>פרופ׳ עופר אריאלי</small></a></aside>
+<main><div class="col">
+<section class="chapter show" id="meta">
+<div class="mh">
+  <div class="mh-k">עמוד עזר · פרקים 3–4</div>
+  <h1>המשוואות של מטה-תוכניות, לאט</h1>
+  <p class="mh-hook">קומפיילר, מפרש, מקבע ומצמצם מוגדרים כל אחד בשורה אחת – ושם בדיוק הקושי: כל שורה דחוסה. העמוד הזה מפרק את השורות האלה צעד אחר צעד, מלמד לכתוב אותן בעצמכם, ומראה איך משתמשים בהן בהוכחות של המבחן.</p>
+</div>
+
+<h2 id="m-read">איך קוראים <span class="ltr" dir="ltr">⟦p⟧<sup>L</sup> d</span></h2>
+<div class="box theory"><div class="box-h"><span class="tag">הכלל היחיד</span> <span class="ht">מה הסוגריים אומרים</span></div><div class="box-body">
+<div class="f ltr">⟦p⟧<sup>L</sup> d</div>
+<p>קוראים: <strong>"הפלט של הרצת <bdi dir="ltr">p</bdi> כתוכנית בשפה <bdi dir="ltr">L</bdi> על הקלט <bdi dir="ltr">d</bdi>"</strong>. שלושה חלקים, ולכל אחד תפקיד:</p>
+<div class="tbl"><table>
+<tr><th>חלק</th><th>מה הוא</th><th>מה חייב להתקיים</th></tr>
+<tr><td class="mono">p</td><td>מה שבתוך הסוגריים: <strong>התוכנית שמריצים</strong></td><td><bdi dir="ltr">p ∈ L-prog</bdi></td></tr>
+<tr><td class="mono">L</td><td>הכתב העילי: <strong>באיזו שפה מריצים</strong></td><td>—</td></tr>
+<tr><td class="mono">d</td><td>מה שאחרי הסוגריים: <strong>הקלט</strong></td><td><bdi dir="ltr">d ∈ L-data</bdi></td></tr>
+</table></div>
+<p>התוצאה היא <strong>נתון</strong> (או <span class="ltr" dir="ltr">⊥</span> אם <bdi dir="ltr">p</bdi> לא עוצרת). וזה המפתח לכל הפרק: <strong>תוכנית היא גם נתון</strong>. לכן התוצאה של הרצה אחת יכולה להיות תוכנית, שמריצים אותה שוב – וכך נוצרים סוגריים בתוך סוגריים.</p>
+<p>בלי <bdi dir="ltr">d</bdi>, <span class="ltr" dir="ltr">⟦p⟧<sup>L</sup></span> לבדו הוא <strong>הפונקציה</strong> ש-<bdi dir="ltr">p</bdi> מחשבת. <span class="ltr" dir="ltr">⟦p⟧ = ⟦q⟧</span> אומר: לכל קלט, אותו פלט.</p>
+</div></div>
+<p><strong>איך פורקים משוואה:</strong> מבפנים החוצה. מוצאים את הסוגריים הפנימיים ביותר, מחליטים מה התוכנית, באיזו שפה ומה הקלט, ונותנים שם לתוצאה. אז מחליפים את כל הסוגריים הפנימיים בשם הזה, וממשיכים החוצה. לחצו <strong>הבא</strong> כדי לפרק כל אחת מארבע ההגדרות:</p>
+<div class="unp" data-eq="comp"></div>
+<div class="unp" data-eq="int"></div>
+<div class="unp" data-eq="fix"></div>
+<div class="unp" data-eq="spec"></div>
+
+<h2 id="m-four">ארבע מטה-תוכניות בטבלה אחת</h2>
+<div class="tbl"><table class="m-cmp">
+<tr><th></th><th>קומפיילר <bdi dir="ltr">comp</bdi></th><th>מפרש <bdi dir="ltr">int</bdi></th><th>מקבע <bdi dir="ltr">fix</bdi></th><th>מצמצם <bdi dir="ltr">spec</bdi></th></tr>
+<tr><td>קלט</td><td>תוכנית <bdi dir="ltr">p ∈ S</bdi></td><td>זוג <span class="ltr" dir="ltr">(p . d)</span></td><td>זוג <span class="ltr" dir="ltr">(p . d)</span></td><td>זוג <span class="ltr" dir="ltr">(p . s)</span></td></tr>
+<tr><td>פלט</td><td>תוכנית ב-<bdi dir="ltr">T</bdi></td><td><strong>נתון</strong>: <span class="ltr" dir="ltr">⟦p⟧d</span></td><td>תוכנית שמתעלמת מהקלט שלה</td><td>תוכנית שמחכה לחצי השני של הקלט</td></tr>
+<tr><td>מריץ את <bdi dir="ltr">p</bdi>?</td><td>לא, רק מתרגם</td><td><strong>כן</strong></td><td>לא, רק משנה תחביר</td><td>לא, רק משנה תחביר</td></tr>
+<tr><td>עוצר תמיד?</td><td>כן</td><td>רק אם <bdi dir="ltr">p</bdi> עוצרת על <bdi dir="ltr">d</bdi></td><td>כן (גם כש-<bdi dir="ltr">p</bdi> לא עוצרת)</td><td>כן</td></tr>
+<tr><td>סוגריים כפולים?</td><td>כן – הפלט מורץ</td><td>לא – הפלט כבר תשובה</td><td>כן</td><td>כן</td></tr>
+</table></div>
+<div class="box theory"><div class="box-h"><span class="tag">דרך לזכור</span> <span class="ht">סוגריים כפולים = הפלט הוא תוכנית</span></div><div class="box-body">
+<p>מטה-תוכנית שמחזירה <strong>תוכנית</strong> מופיעה בתוך סוגריים כפולים, כי את הפלט שלה צריך להריץ כדי לדבר על המשמעות שלו. המפרש היחיד מחזיר <strong>תשובה</strong>, ולכן אצלו יש רק שכבה אחת. אם כתבתם משוואה לקומפיילר עם שכבה אחת – משהו חסר.</p>
+</div></div>
+
+<h2 id="m-calc">מחשבים עם המשוואות</h2>
+<p>הדרך לבדוק שהבנתם משוואה: להציב בה תוכניות אמיתיות ולחשב. בדוגמאות: <bdi dir="ltr">add</bdi> מחברת זוג מספרים, <span class="ltr" dir="ltr">⟦add⟧(a . b) = a + b</span>; <bdi dir="ltr">len</bdi> מחזירה את אורך הרשימה; <bdi dir="ltr">rev</bdi> הופכת רשימה. מספר <bdi dir="ltr">n</bdi> הוא <span class="ltr" dir="ltr">nil<sup>n</sup></span>, רשימה של <bdi dir="ltr">n</bdi> פעמים <bdi dir="ltr">nil</bdi>.</p>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ חישוב 1</span> <span class="ht">מצמצם</span></div><div class="box-body">
+<div class="f ltr">⟦ ⟦spec⟧ (add . 3) ⟧ 4 = ?</div>
+<details class="sol"><summary>פתרון</summary>
+<div class="f ltr fl">⟦ ⟦spec⟧ (add . 3) ⟧ 4 = ⟦add⟧ (3 . 4)     (spec, with p = add, s = 3, d = 4)
+                       = 3 + 4 = 7</div>
+<p>לא צריך לדעת <strong>איך</strong> נראית התוכנית ש-<bdi dir="ltr">spec</bdi> מחזירה. המשוואה אומרת מה היא עושה, וזה מספיק.</p>
+</details></div></div>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ חישוב 2</span> <span class="ht">מקבע</span></div><div class="box-body">
+<div class="f ltr">⟦ ⟦fix⟧ (rev . (1 2 3)) ⟧ (7 7) = ?</div>
+<details class="sol"><summary>פתרון</summary>
+<div class="f ltr fl">⟦ ⟦fix⟧ (rev . (1 2 3)) ⟧ (7 7) = ⟦rev⟧ (1 2 3)     (fix, with p = rev, d = (1 2 3), x = (7 7))
+                              = (3 2 1)</div>
+<p>הקלט <span class="ltr" dir="ltr">(7 7)</span> לא משחק שום תפקיד: התוכנית שהמקבע מחזיר מתעלמת מהקלט שלה.</p>
+</details></div></div>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ חישוב 3</span> <span class="ht">מפרש בתוך מצמצם</span></div><div class="box-body">
+<p><bdi dir="ltr">int</bdi> הוא מפרש ל-<bdi dir="ltr">GOTO</bdi> שכתוב ב-<bdi dir="ltr">WHILE</bdi>, ו-<bdi dir="ltr">g</bdi> תוכנית <bdi dir="ltr">GOTO</bdi> שמחשבת אורך רשימה. <bdi dir="ltr">spec</bdi> הוא מצמצם ל-<bdi dir="ltr">WHILE</bdi>.</p>
+<div class="f ltr">⟦ ⟦spec⟧<sup>WHILE</sup> (int . g) ⟧<sup>WHILE</sup> (5 6) = ?</div>
+<details class="sol"><summary>פתרון</summary>
+<div class="f ltr fl">⟦ ⟦spec⟧ (int . g) ⟧<sup>WHILE</sup> (5 6) = ⟦int⟧<sup>WHILE</sup> (g . (5 6))     (spec: p = int, s = g, d = (5 6))
+                                 = ⟦g⟧<sup>GOTO</sup> (5 6)              (int)
+                                 = 2</div>
+<p>שימו לב מה קיבלנו בדרך: <span class="ltr" dir="ltr">⟦spec⟧(int . g)</span> היא תוכנית <bdi dir="ltr">WHILE</bdi> שמחשבת בדיוק מה ש-<bdi dir="ltr">g</bdi> מחשבת – תרגום של <bdi dir="ltr">g</bdi> ל-<bdi dir="ltr">WHILE</bdi>, בלי שאיש כתב קומפיילר. זו הטלת פוטמורה הראשונה (<a href="#m-proof">למטה</a>).</p>
+</details></div></div>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ חישוב 4</span> <span class="ht">מצמצם שמצומצם</span></div><div class="box-body">
+<div class="f ltr">r = ⟦spec⟧ (spec . add)          ⟦ ⟦r⟧ 10 ⟧ 5 = ?</div>
+<details class="sol"><summary>פתרון</summary>
+<p>שתי שכבות. קודם <span class="ltr" dir="ltr">⟦r⟧ 10</span>: מפעילים את האפיון של <bdi dir="ltr">spec</bdi>, כשהתוכנית המצומצמת היא <bdi dir="ltr">spec</bdi> עצמה והקלט הסטטי הוא <bdi dir="ltr">add</bdi>:</p>
+<div class="f ltr fl">⟦r⟧ 10 = ⟦ ⟦spec⟧ (spec . add) ⟧ 10 = ⟦spec⟧ (add . 10)     (spec: p = spec, s = add, d = 10)</div>
+<p>כלומר <bdi dir="ltr">r</bdi> היא תוכנית שמקבלת מספר <bdi dir="ltr">s</bdi> ומחזירה את "<bdi dir="ltr">add</bdi> מצומצמת ב-<bdi dir="ltr">s</bdi>". עכשיו מריצים את התוכנית הזו על 5:</p>
+<div class="f ltr fl">⟦ ⟦spec⟧ (add . 10) ⟧ 5 = ⟦add⟧ (10 . 5) = 15     (spec again)</div>
+<p>זה בדיוק המבנה של הטלה <bdi dir="ltr">II</bdi>: כשמחליפים את <bdi dir="ltr">add</bdi> במפרש, <bdi dir="ltr">r</bdi> הופך לקומפיילר.</p>
+</details></div></div>
+
+<h2 id="m-write">לכתוב משוואה בעצמכם</h2>
+<p>במבחן מבקשים לפעמים "כתבו משוואה סמנטית המתארת קומפיילר מ-<bdi dir="ltr">X</bdi> ל-<bdi dir="ltr">Y</bdi> הממומש ב-<bdi dir="ltr">Z</bdi>". זה נראה כמו שאלת זיכרון, אבל רוב הנקודות הולכות על הפרטים: איפה כל שפה, ואיזה כמת. השיטה:</p>
+<ol>
+<li><strong>מה הקלט ומה הפלט?</strong> לפי הטבלה למעלה. זה קובע אם יש שכבה אחת או שתיים.</li>
+<li><strong>באיזו שפה כל תוכנית רצה?</strong> המטה-תוכנית רצה בשפת המימוש. תוכנית שהיא <strong>מחזירה</strong> רצה בשפת היעד. התוכנית המקורית רצה בשפת המקור.</li>
+<li><strong>כמתים:</strong> "לכל תוכנית בשפת המקור", ולכל נתון שמופיע.</li>
+<li><strong>בדיקת טיפוסים:</strong> לכל <span class="ltr" dir="ltr">⟦X⟧<sup>L</sup></span> לשאול: האם <bdi dir="ltr">X</bdi> בטוח תוכנית ב-<bdi dir="ltr">L</bdi>?</li>
+</ol>
+<div class="widget" id="bld">
+<h4>בונה משוואות</h4>
+<div class="row">
+ <label>מטה-תוכנית <select id="bld-r"><option value="comp">קומפיילר</option><option value="int">מפרש</option><option value="fix">מקבע</option><option value="spec">מצמצם</option><option value="self">מפרש עצמי</option><option value="opt">ממטב</option></select></label>
+ <label><span id="bld-sl">שפת מקור</span> <select id="bld-s"></select></label>
+ <label id="bld-tw">שפת יעד <select id="bld-t"></select></label>
+ <label>כתוב ב- <select id="bld-i"></select></label>
+</div>
+<div id="bld-out"></div>
+</div>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ תרגיל</span> <span class="ht">ארבע משוואות</span></div><div class="box-body">
+<p>כתבו משוואה סמנטית, עם כמתים, לכל אחד מאלה. אחר כך בדקו בבונה.</p>
+<ol>
+<li>קומפיילר <bdi dir="ltr">c</bdi> משפת <bdi dir="ltr">FOR</bdi> לשפת <bdi dir="ltr">GOTO</bdi>, הממומש ב-<bdi dir="ltr">WHILE</bdi>.</li>
+<li>מפרש <bdi dir="ltr">u</bdi> למכונות טיורינג, הממומש ב-<bdi dir="ltr">GOTO</bdi>.</li>
+<li>מצמצם <bdi dir="ltr">m</bdi> לשפת <bdi dir="ltr">F</bdi>, הממומש ב-<bdi dir="ltr">WHILE</bdi>.</li>
+<li>מפרש עצמי <bdi dir="ltr">sint</bdi> ל-<bdi dir="ltr">WHILE</bdi>.</li>
+</ol>
+<details class="sol"><summary>פתרון</summary>
+<div class="f ltr fl">1.  ∀ p ∈ FOR-prog  ∀ d ∈ D :  ⟦ ⟦c⟧<sup>WHILE</sup> p ⟧<sup>GOTO</sup> d = ⟦p⟧<sup>FOR</sup> d
+2.  ∀ p ∈ TM-prog   ∀ d ∈ TM-data :  ⟦u⟧<sup>GOTO</sup> (p . d) = ⟦p⟧<sup>TM</sup> d
+3.  ∀ p ∈ F-prog  ∀ s, d ∈ D :  ⟦ ⟦m⟧<sup>WHILE</sup> (p . s) ⟧<sup>F</sup> d = ⟦p⟧<sup>F</sup> (s . d)
+4.  ∀ p ∈ WHILE-prog  ∀ d ∈ D :  ⟦sint⟧<sup>WHILE</sup> (p . d) = ⟦p⟧<sup>WHILE</sup> d</div>
+<ul>
+<li>ב-1, הפלט של <bdi dir="ltr">c</bdi> מורץ ב-<bdi dir="ltr">GOTO</bdi> – לא ב-<bdi dir="ltr">WHILE</bdi>, שבה <bdi dir="ltr">c</bdi> עצמו כתוב.</li>
+<li>ב-2, לפני שמכונה וקלט נכנסים לזוג, צריך לקודד אותם כעצים. בשאלות של הקורס מניחים קידוד קבוע כזה, ולכן כותבים את הזוג כמו בכל מפרש.</li>
+<li>ב-3, הפלט של <bdi dir="ltr">m</bdi> הוא תוכנית <bdi dir="ltr">F</bdi>, ולכן מריצים אותו ב-<bdi dir="ltr">F</bdi>.</li>
+<li>ב-4, "עצמי" = שפת המימוש היא אותה שפה שמפרשים.</li>
+</ul>
+</details></div></div>
+
+<h2 id="m-errors">טעויות נפוצות</h2>
+<div class="tbl"><table>
+<tr><th>כתבו</th><th>מה לא בסדר</th><th>נכון</th></tr>
+<tr><td class="ltr mono-eq">⟦comp⟧ p = ⟦p⟧</td><td>משמאל תוכנית (הפלט של <bdi dir="ltr">comp</bdi>), מימין פונקציה. משווים שני דברים מסוגים שונים. חסרה השכבה החיצונית שמריצה את התרגום.</td><td class="ltr mono-eq">⟦⟦comp⟧ p⟧ = ⟦p⟧</td></tr>
+<tr><td class="ltr mono-eq">⟦⟦comp⟧<sup>T</sup> p⟧<sup>I</sup> = ⟦p⟧<sup>S</sup></td><td>השפות הפוכות: <bdi dir="ltr">comp</bdi> רץ בשפת המימוש, והתרגום רץ בשפת היעד.</td><td class="ltr mono-eq">⟦⟦comp⟧<sup>I</sup> p⟧<sup>T</sup> = ⟦p⟧<sup>S</sup></td></tr>
+<tr><td class="ltr mono-eq">⟦⟦int⟧ (p . d)⟧ = ⟦p⟧ d</td><td>מפרש מחזיר <strong>תשובה</strong>, לא תוכנית. אין מה להריץ.</td><td class="ltr mono-eq">⟦int⟧ (p . d) = ⟦p⟧ d</td></tr>
+<tr><td class="ltr mono-eq">⟦⟦spec⟧ (p . s)⟧ d = ⟦p⟧ (d . s)</td><td>הסדר בזוג הפוך: החלק הסטטי <bdi dir="ltr">s</bdi> הוא <strong>הראשון</strong>, כמו שהוא נכנס ל-<bdi dir="ltr">spec</bdi>.</td><td class="ltr mono-eq">⟦⟦spec⟧ (p . s)⟧ d = ⟦p⟧ (s . d)</td></tr>
+<tr><td class="ltr mono-eq">⟦⟦fix⟧ (p . d)⟧ x = ⟦p⟧ x</td><td>זה בדיוק מה שהמקבע <strong>לא</strong> עושה: התוכנית שהוא מחזיר מתעלמת מ-<bdi dir="ltr">x</bdi> ומריצה את <bdi dir="ltr">p</bdi> על <bdi dir="ltr">d</bdi>.</td><td class="ltr mono-eq">⟦⟦fix⟧ (p . d)⟧ x = ⟦p⟧ d</td></tr>
+<tr><td>בלי כמתים</td><td>משוואה בלי "לכל <bdi dir="ltr">p</bdi>" מתארת תוכנית אחת, לא קומפיילר. במבחן זה מוריד נקודות.</td><td><span class="ltr" dir="ltr">∀ p ∈ S-prog ∀ d</span> …</td></tr>
+<tr><td>"הקומפיילר מריץ את <bdi dir="ltr">p</bdi> ובודק"</td><td>קומפיילר, מקבע ומצמצם לא מריצים את <bdi dir="ltr">p</bdi>. אם היו מריצים, הם לא היו עוצרים כש-<bdi dir="ltr">p</bdi> לא עוצרת.</td><td>מניפולציה תחבירית בלבד</td></tr>
+</table></div>
+
+<h2 id="m-proof">הוכחות בשרשרת שוויונות</h2>
+<p>כמעט כל ההוכחות בפרק 4 הן אותה תבנית: מתחילים מהצד השמאלי, ובכל שורה מפעילים <strong>הגדרה אחת</strong> – וכותבים איזו. ההגדרה מופעלת כ"חוק החלפה": מוצאים בביטוי משהו שנראה כמו הצד השמאלי שלה, ומחליפים אותו בצד הימני. לחצו <strong>הבא</strong> כדי לראות כל החלפה בנפרד:</p>
+<div class="unp" data-eq="fut1"></div>
+<div class="unp" data-eq="fut2"></div>
+<div class="unp" data-eq="fut3"></div>
+<div class="box theory"><div class="box-h"><span class="tag">התבנית</span> <span class="ht">איך כותבים את זה במבחן</span></div><div class="box-body">
+<ol>
+<li>אומרים <strong>מה מוכיחים</strong> ומה נתון (לרוב: יש <bdi dir="ltr">spec</bdi>, יש <bdi dir="ltr">int</bdi>).</li>
+<li><strong>מגדירים</strong> את התוכנית שבונים, בשורה אחת: <span class="ltr" dir="ltr">q = ⟦spec⟧(int . p)</span>. בלי ההגדרה הזו אין מה להוכיח.</li>
+<li>מוכיחים ש-<bdi dir="ltr">q</bdi> בשפה הנכונה (היא פלט של מצמצם ל-<bdi dir="ltr">L</bdi>, ולכן ב-<bdi dir="ltr">L</bdi>).</li>
+<li><strong>שרשרת:</strong> "לכל <bdi dir="ltr">d</bdi>:" ואז שורה לכל הגדרה, עם שם ההגדרה בסוגריים.</li>
+<li><strong>מסקנה</strong> שחוזרת לניסוח השאלה: "לכן לכל תוכנית <bdi dir="ltr">M</bdi> יש תוכנית <bdi dir="ltr">L</bdi> שקולה, כלומר <span class="ltr" dir="ltr">L ⪰ M</span>".</li>
+</ol>
+</div></div>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ תרגיל</span> <span class="ht">קומפיילר מוכיח כוח</span></div><div class="box-body">
+<p>הוכיחו בשרשרת: אם קיים קומפיילר מ-<bdi dir="ltr">S</bdi> ל-<bdi dir="ltr">T</bdi> (בשפה כלשהי <bdi dir="ltr">I</bdi>), אז <span class="ltr" dir="ltr">T ⪰ S</span>.</p>
+<details class="sol"><summary>פתרון</summary>
+<p>תהי <bdi dir="ltr">p ∈ S-prog</bdi>. נגדיר <span class="ltr" dir="ltr">q = ⟦comp⟧<sup>I</sup> p</span>. לפי האפיון של קומפיילר, <bdi dir="ltr">q ∈ T-prog</bdi>, ולכל <bdi dir="ltr">d</bdi>:</p>
+<div class="f ltr fl">⟦q⟧<sup>T</sup> d = ⟦ ⟦comp⟧<sup>I</sup> p ⟧<sup>T</sup> d     (definition of q)
+       = ⟦p⟧<sup>S</sup> d                 (comp)</div>
+<p>לכל תוכנית ב-<bdi dir="ltr">S</bdi> מצאנו תוכנית שקולה ב-<bdi dir="ltr">T</bdi>, ולכן <span class="ltr" dir="ltr">T ⪰ S</span>. ∎ שימו לב ש-<bdi dir="ltr">I</bdi> לא הופיעה במסקנה: שפת המימוש של הקומפיילר לא משנה.</p>
+</details></div></div>
+
+<h2 id="m-tiny">שפות זעירות: האם קיימת מטה-תוכנית?</h2>
+<p>סוג שאלה שחוזר: שפות שיש בהן תוכנית אחת או שתיים, ושואלים אם קיים, למשל, מקבע ל-<bdi dir="ltr">La</bdi> שכתוב ב-<bdi dir="ltr">Lb</bdi>. השיטה:</p>
+<ol>
+<li>לכל תוכנית: <strong>איזו פונקציה</strong> היא מחשבת (זהות, <bdi dir="ltr">hd</bdi>, <bdi dir="ltr">tl</bdi>, <span class="ltr" dir="ltr">⊥</span>…).</li>
+<li>המטה-תוכנית צריכה לעבוד רק על התוכניות של <bdi dir="ltr">La</bdi> – ויש מעט מאוד. כותבים <strong>מה הקלט</strong> שלה ו<strong>מה הפלט הנדרש</strong>.</li>
+<li>בודקים אם אחת מהתוכניות של <bdi dir="ltr">Lb</bdi> מחשבת בדיוק את המעבר הזה.</li>
+</ol>
+<div class="box exercise"><div class="box-h"><span class="tag">✍ תרגיל</span> <span class="ht">ארבע שפות זעירות</span></div><div class="box-body">
+<div class="tbl"><table>
+<tr><th>שפה</th><th>התוכניות בה</th><th>מה כל אחת מחשבת</th></tr>
+<tr><td class="mono">La</td><td class="mono">pid</td><td>הזהות: <span class="ltr" dir="ltr">x ↦ x</span></td></tr>
+<tr><td class="mono">Lb</td><td class="mono">phd</td><td><span class="ltr" dir="ltr">x ↦ hd x</span></td></tr>
+<tr><td class="mono">Lc</td><td class="mono">ploop</td><td><span class="ltr" dir="ltr">⊥</span> לכל קלט (לא עוצרת)</td></tr>
+<tr><td class="mono">Ld</td><td class="mono">ptl, ploop</td><td><span class="ltr" dir="ltr">x ↦ tl x</span>, ו-<span class="ltr" dir="ltr">⊥</span></td></tr>
+</table></div>
+<p>לכל משפט, קבעו אם הוא נכון ונמקו:</p>
+<ol>
+<li>קיים מקבע ל-<bdi dir="ltr">Lc</bdi> הממומש ב-<bdi dir="ltr">Lb</bdi>.</li>
+<li>קיים מפרש ל-<bdi dir="ltr">La</bdi> הממומש ב-<bdi dir="ltr">Ld</bdi>.</li>
+<li>קיים קומפיילר מ-<bdi dir="ltr">Lc</bdi> ל-<bdi dir="ltr">Ld</bdi> הממומש ב-<bdi dir="ltr">La</bdi>.</li>
+<li>קיים מצמצם ל-<bdi dir="ltr">La</bdi> הממומש ב-<bdi dir="ltr">La</bdi>.</li>
+</ol>
+<details class="sol"><summary>פתרון</summary>
+<ol>
+<li><strong>נכון.</strong> הקלט היחיד האפשרי: <span class="ltr" dir="ltr">(ploop . d)</span>. הפלט הנדרש: תוכנית ב-<bdi dir="ltr">Lc</bdi> שעל כל <bdi dir="ltr">x</bdi> מחזירה <span class="ltr" dir="ltr">⟦ploop⟧ d = ⊥</span> – וזו <bdi dir="ltr">ploop</bdi> עצמה. <bdi dir="ltr">phd</bdi> מחזירה בדיוק אותה: <span class="ltr" dir="ltr">hd (ploop . d) = ploop</span>.</li>
+<li><strong>נכון.</strong> הקלט: <span class="ltr" dir="ltr">(pid . d)</span>. הפלט הנדרש: <span class="ltr" dir="ltr">⟦pid⟧ d = d</span>. <bdi dir="ltr">ptl</bdi> מחזירה <span class="ltr" dir="ltr">tl (pid . d) = d</span>.</li>
+<li><strong>נכון.</strong> הקלט היחיד: <bdi dir="ltr">ploop</bdi>. הפלט הנדרש: תוכנית ב-<bdi dir="ltr">Ld</bdi> שקולה לה. <bdi dir="ltr">ploop</bdi> עצמה שייכת גם ל-<bdi dir="ltr">Ld</bdi>, ולכן הזהות – <bdi dir="ltr">pid</bdi> – היא קומפיילר.</li>
+<li><strong>לא נכון.</strong> הקלט: <span class="ltr" dir="ltr">(pid . s)</span>. הפלט הנדרש: תוכנית ב-<bdi dir="ltr">La</bdi> שעל כל <bdi dir="ltr">d</bdi> מחזירה <span class="ltr" dir="ltr">⟦pid⟧(s . d) = (s . d)</span>. התוכנית היחידה ב-<bdi dir="ltr">La</bdi> היא <bdi dir="ltr">pid</bdi>, והיא מחזירה <bdi dir="ltr">d</bdi> ולא <span class="ltr" dir="ltr">(s . d)</span>. אין פלט נכון, אז אין מצמצם, וזה לא תלוי בשפת המימוש.</li>
+</ol>
+</details></div></div>
+</section>
+</div></main>
+</div>
+<script>
+(function(){
+const S=(t)=>`<sup>${t}</sup>`;
+const L=(a)=>`⟦${a}⟧`;
+/* each step: e = equation html, x = explanation (rtl html) */
+const EQ={
+comp:{t:'קומפיילר',steps:[
+ {e:`∀p∈S-prog ∀d:  ⟦ ⟦comp⟧${S('I')} p ⟧${S('T')} d = ⟦p⟧${S('S')} d`,x:'ההגדרה המלאה של קומפיילר מ-<b dir=ltr>S</b> ל-<b dir=ltr>T</b> הכתוב ב-<b dir=ltr>I</b>. נפרק מבפנים החוצה.'},
+ {e:`∀p∈S-prog ∀d:  ⟦ <span class=hl>⟦comp⟧${S('I')} p</span> ⟧${S('T')} d = ⟦p⟧${S('S')} d`,x:'הסוגריים הפנימיים: מריצים את <b dir=ltr>comp</b>, בשפה <b dir=ltr>I</b>, על הקלט <b dir=ltr>p</b>. כלומר: נותנים לקומפיילר את קוד המקור.'},
+ {e:`∀p∈S-prog ∀d:  ⟦ <span class=nm>q</span> ⟧${S('T')} d = ⟦p⟧${S('S')} d`,x:'נותנים לתוצאה שם, <b dir=ltr>q</b>. זו <b>תוכנית</b> (התרגום). הקומפיילר עצר והחזיר אותה – הוא לא הריץ את <b dir=ltr>p</b>.'},
+ {e:`∀p∈S-prog ∀d:  <span class=hl>⟦ q ⟧${S('T')} d</span> = ⟦p⟧${S('S')} d`,x:'השכבה החיצונית: מריצים את <b dir=ltr>q</b> – בשפה <b dir=ltr>T</b>, כי זה מה שקומפיילר ל-<b dir=ltr>T</b> מייצר – על קלט כלשהו <b dir=ltr>d</b>.'},
+ {e:`∀p∈S-prog ∀d:  <span class=dim>⟦ q ⟧${S('T')} d</span> = <span class=hl>⟦p⟧${S('S')} d</span>`,x:'הצד הימני: מה שהמקור עצמו היה מחזיר בשפה שלו. השוויון אומר: <b>התרגום מתנהג בדיוק כמו המקור, על כל קלט</b>. זה כל מה ש"קומפיילר נכון" אומר.'}]},
+int:{t:'מפרש',steps:[
+ {e:`∀p∈S-prog ∀d:  ⟦int⟧${S('I')} (p . d) = ⟦p⟧${S('S')} d`,x:'מפרש לשפה <b dir=ltr>S</b> הכתוב ב-<b dir=ltr>I</b>. שכבה אחת בלבד בצד שמאל – כבר סימן שהפלט הוא תשובה, לא תוכנית.'},
+ {e:`∀p∈S-prog ∀d:  ⟦int⟧${S('I')} <span class=hl>(p . d)</span> = ⟦p⟧${S('S')} d`,x:'הקלט של המפרש הוא <b>זוג</b>: התוכנית (כנתון) והקלט שלה. שני הדברים שצריך כדי לדעת מה התוכנית תחזיר.'},
+ {e:`∀p∈S-prog ∀d:  <span class=hl>⟦int⟧${S('I')}</span> (p . d) = ⟦p⟧${S('S')} d`,x:'מריצים את <b dir=ltr>int</b> ב-<b dir=ltr>I</b>. בתוך הריצה הוא מבצע את <b dir=ltr>p</b> צעד אחר צעד – ולכן אם <b dir=ltr>p</b> לא עוצרת על <b dir=ltr>d</b>, גם המפרש לא עוצר (<span dir=ltr>⊥ = ⊥</span>).'},
+ {e:`∀p∈S-prog ∀d:  <span class=nm>⟦p⟧${S('S')} d</span>`,x:'התוצאה היא <b>נתון</b>: הפלט של <b dir=ltr>p</b> על <b dir=ltr>d</b>. אין תוכנית חדשה שצריך להריץ, ולכן אין סוגריים כפולים.'}]},
+fix:{t:'מקבע',steps:[
+ {e:`∀p∈L-prog ∀d,x:  ⟦ ⟦fix⟧${S('I')} (p . d) ⟧${S('L')} x = ⟦p⟧${S('L')} d`,x:'מקבע לשפה <b dir=ltr>L</b>. שני משתנים של קלט: <b dir=ltr>d</b> שנכנס למקבע, ו-<b dir=ltr>x</b> שנכנס לתוכנית שהוא מייצר.'},
+ {e:`∀p∈L-prog ∀d,x:  ⟦ <span class=hl>⟦fix⟧${S('I')} (p . d)</span> ⟧${S('L')} x = ⟦p⟧${S('L')} d`,x:'פנימה: מריצים את <b dir=ltr>fix</b> על <span dir=ltr>(p . d)</span>. הוא <b>לא</b> מריץ את <b dir=ltr>p</b>; הוא כותב קוד חדש: "הצב <b dir=ltr>d</b> במשתנה הקלט, ואז קוד של <b dir=ltr>p</b>".'},
+ {e:`∀p∈L-prog ∀d,x:  ⟦ <span class=nm>q</span> ⟧${S('L')} x = ⟦p⟧${S('L')} d`,x:'קוראים לתוצאה <b dir=ltr>q</b>. היא תוכנית ב-<b dir=ltr>L</b> – אותה שפה של <b dir=ltr>p</b>.'},
+ {e:`∀p∈L-prog ∀d,x:  ⟦ q ⟧${S('L')} <span class=hl>x</span> = ⟦p⟧${S('L')} <span class=hl>d</span>`,x:'השוואת הקלטים: משמאל <b dir=ltr>x</b>, מימין <b dir=ltr>d</b>. <b dir=ltr>x</b> לא מופיע מימין בכלל – כלומר <b dir=ltr>q</b> <b>מתעלמת</b> מהקלט שלה ותמיד עושה את מה ש-<b dir=ltr>p</b> עושה על <b dir=ltr>d</b>.'}]},
+spec:{t:'מצמצם',steps:[
+ {e:`∀p∈L-prog ∀s,d:  ⟦ ⟦spec⟧${S('I')} (p . s) ⟧${S('L')} d = ⟦p⟧${S('L')} (s . d)`,x:'מצמצם לשפה <b dir=ltr>L</b>. התוכנית <b dir=ltr>p</b> מקבלת זוג; את החצי הראשון, <b dir=ltr>s</b> ("סטטי"), יודעים כבר עכשיו.'},
+ {e:`∀p∈L-prog ∀s,d:  ⟦ <span class=hl>⟦spec⟧${S('I')} (p . s)</span> ⟧${S('L')} d = ⟦p⟧${S('L')} (s . d)`,x:'פנימה: <b dir=ltr>spec</b> מקבל את התוכנית ואת החלק הידוע של הקלט.'},
+ {e:`∀p∈L-prog ∀s,d:  ⟦ <span class=nm>p<sub>s</sub></span> ⟧${S('L')} d = ⟦p⟧${S('L')} (s . d)`,x:'התוצאה, <b dir=ltr>p<sub>s</sub></b>: תוכנית ב-<b dir=ltr>L</b> ש"<b dir=ltr>s</b> כבר בתוכה". אפשר לחשוב עליה כגרסה של <b dir=ltr>p</b> שבה כל מה שתלוי רק ב-<b dir=ltr>s</b> כבר חושב.'},
+ {e:`∀p∈L-prog ∀s,d:  ⟦ p<sub>s</sub> ⟧${S('L')} <span class=hl>d</span> = ⟦p⟧${S('L')} (s . <span class=hl>d</span>)`,x:'מריצים אותה על החצי השני, <b dir=ltr>d</b>, ומקבלים מה ש-<b dir=ltr>p</b> הייתה מחזירה על הזוג המלא. ההבדל מהמקבע: כאן הקלט של התוכנית החדשה <b>משמש</b>.'}]},
+fut1:{t:'הטלה I: מצמצם + מפרש = מתרגם תוכנית',steps:[
+ {e:`target = ⟦spec⟧${S('L')} (int . p)`,x:'נתונים: מפרש <b dir=ltr>int</b> לשפה <b dir=ltr>S</b> הכתוב ב-<b dir=ltr>L</b>, ומצמצם <b dir=ltr>spec</b> ל-<b dir=ltr>L</b>. תוכנית <b dir=ltr>p ∈ S</b>. <b>מגדירים</b> את <b dir=ltr>target</b> – צמצום של המפרש לפי <b dir=ltr>p</b>. רוצים להראות: <span dir=ltr>⟦target⟧<sup>L</sup> = ⟦p⟧<sup>S</sup></span>.'},
+ {e:`⟦target⟧${S('L')} d`,x:'מתחילים מצד שמאל, עם <b dir=ltr>d</b> כלשהו.'},
+ {e:`⟦<span class=hl>target</span>⟧${S('L')} d = ⟦ <span class=hl>⟦spec⟧${S('L')} (int . p)</span> ⟧${S('L')} d`,x:'<b>(הגדרת target)</b> – מחליפים את השם בהגדרה שלו.'},
+ {e:`⟦ ⟦spec⟧ (<span class=hl>int</span> . <span class=hl>p</span>) ⟧${S('L')} <span class=hl>d</span> = ⟦int⟧${S('L')} (p . d)`,x:'<b>(spec)</b> – זה בדיוק הצד השמאלי של הגדרת המצמצם, כאשר התוכנית המצומצמת היא <b dir=ltr>int</b>, החלק הסטטי הוא <b dir=ltr>p</b>, והדינמי <b dir=ltr>d</b>. מחליפים בצד הימני: <span dir=ltr>⟦int⟧ (p . d)</span>.'},
+ {e:`<span class=hl>⟦int⟧${S('L')} (p . d)</span> = ⟦p⟧${S('S')} d`,x:'<b>(int)</b> – הגדרת המפרש. סיימנו: <b dir=ltr>target</b> היא תוכנית ב-<b dir=ltr>L</b> שקולה ל-<b dir=ltr>p</b>. מסקנה: <span dir=ltr>L ⪰ S</span>.'}]},
+fut2:{t:'הטלה II: מצמצם שמצמצם את עצמו = קומפיילר',steps:[
+ {e:`comp = ⟦spec⟧${S('L')} (spec . int)`,x:'מגדירים את <b dir=ltr>comp</b>. צריך להראות: לכל <b dir=ltr>p</b>, <span dir=ltr>⟦comp⟧ p</span> היא תוכנית שקולה ל-<b dir=ltr>p</b> – כלומר <span dir=ltr>⟦⟦comp⟧ p⟧ = ⟦p⟧</span>.'},
+ {e:`⟦comp⟧${S('L')} p = ⟦ <span class=hl>⟦spec⟧ (spec . int)</span> ⟧${S('L')} p`,x:'<b>(הגדרת comp)</b>. שימו לב: כאן <b dir=ltr>p</b> הוא ה<b>קלט</b> של התוכנית החיצונית.'},
+ {e:`⟦ ⟦spec⟧ (<span class=hl>spec</span> . <span class=hl>int</span>) ⟧ <span class=hl>p</span> = ⟦spec⟧${S('L')} (int . p)`,x:'<b>(spec)</b> – אותו כלל בדיוק, הפעם התוכנית המצומצמת היא <b dir=ltr>spec</b> עצמה, הסטטי הוא <b dir=ltr>int</b>, והדינמי <b dir=ltr>p</b>. מקבלים <span dir=ltr>⟦spec⟧ (int . p)</span>.'},
+ {e:`⟦comp⟧${S('L')} p = <span class=nm>⟦spec⟧${S('L')} (int . p)</span> = target`,x:'זו בדיוק ה-<b dir=ltr>target</b> מהטלה I! כלומר <b dir=ltr>comp</b> מקבל <b dir=ltr>p</b> ומחזיר את התרגום שלה.'},
+ {e:`⟦ ⟦comp⟧ p ⟧${S('L')} d = ⟦target⟧${S('L')} d = ⟦p⟧${S('S')} d`,x:'<b>(הטלה I)</b> – וזו הגדרת קומפיילר מ-<b dir=ltr>S</b> ל-<b dir=ltr>L</b>, הכתוב ב-<b dir=ltr>L</b>. הטריק: מותר להשתמש בתוצאה שכבר הוכחה כשלב בשרשרת.'}]},
+fut3:{t:'הטלה III: מחולל קומפיילרים',steps:[
+ {e:`cogen = ⟦spec⟧${S('L')} (spec . spec)`,x:'מגדירים את <b dir=ltr>cogen</b>. טענה: לכל מפרש <b dir=ltr>int</b>, <span dir=ltr>⟦cogen⟧ int</span> הוא קומפיילר.'},
+ {e:`⟦cogen⟧${S('L')} int = ⟦ <span class=hl>⟦spec⟧ (spec . spec)</span> ⟧ int`,x:'<b>(הגדרת cogen)</b>.'},
+ {e:`⟦ ⟦spec⟧ (<span class=hl>spec</span> . <span class=hl>spec</span>) ⟧ <span class=hl>int</span> = ⟦spec⟧${S('L')} (spec . int)`,x:'<b>(spec)</b> – תוכנית מצומצמת: <b dir=ltr>spec</b>; סטטי: <b dir=ltr>spec</b>; דינמי: <b dir=ltr>int</b>.'},
+ {e:`⟦cogen⟧${S('L')} int = <span class=nm>⟦spec⟧ (spec . int)</span> = comp`,x:'זה ה-<b dir=ltr>comp</b> מהטלה II, שכבר הוכחנו שהוא קומפיילר. אז <b dir=ltr>cogen</b> הופך כל מפרש לקומפיילר. <b>הדפוס בשלוש ההטלות:</b> בכל אחת מפעילים את <b dir=ltr>spec</b> פעם אחת, ומקבלים את התוצאה של ההטלה הקודמת.'}]}
+};
+document.querySelectorAll('.unp').forEach(box=>{
+ const D=EQ[box.dataset.eq]; if(!D) return; let i=0;
+ box.innerHTML=`<div class="unp-h"><b>${D.t}</b><span class="ctr"></span></div><div class="unp-eq"></div><div class="unp-x"></div><div class="unp-b"><button type="button" data-d="-1">הקודם ›</button><button type="button" class="primary" data-d="1">‹ הבא</button></div><div class="unp-dots">${D.steps.map(()=>'<i></i>').join('')}</div>`;
+ const eq=box.querySelector('.unp-eq'),x=box.querySelector('.unp-x'),c=box.querySelector('.ctr'),dots=[...box.querySelectorAll('.unp-dots i')],bs=box.querySelectorAll('.unp-b button');
+ function draw(){const s=D.steps[i];eq.innerHTML=s.e;x.innerHTML=s.x;c.textContent=`שלב ${i+1} מתוך ${D.steps.length}`;dots.forEach((d,k)=>d.classList.toggle('on',k<=i));bs[0].disabled=i===0;bs[1].disabled=i===D.steps.length-1;}
+ bs.forEach(b=>b.onclick=()=>{i=Math.max(0,Math.min(D.steps.length-1,i+ +b.dataset.d));draw();});
+ draw();
+});
+/* builder */
+const LANGS=['WHILE','GOTO','FOR','TM','CM','F'];
+const r=document.getElementById('bld-r'); if(!r) return;
+const s=document.getElementById('bld-s'),t=document.getElementById('bld-t'),im=document.getElementById('bld-i'),out=document.getElementById('bld-out'),tw=document.getElementById('bld-tw'),sl=document.getElementById('bld-sl');
+[s,t,im].forEach((el,k)=>{el.innerHTML=LANGS.map(l=>`<option>${l}</option>`).join('');el.value=['FOR','GOTO','WHILE'][k];});
+const B=x=>`<bdi class="lang" dir="ltr">${x}</bdi>`;
+function build(){
+ const R=r.value,A=s.value,T=t.value,I=R==='self'?A:im.value;
+ tw.style.display=(R==='comp')?'':'none';
+ im.disabled=R==='self'; if(R==='self') im.value=A;
+ sl.textContent=(R==='comp')?'שפת מקור':'השפה';
+ let eq,say,notes=[];
+ const dat=A==='TM'?'TM-data':'D';
+ if(R==='comp'){eq=`∀p∈${A}-prog ∀d∈${dat}:  ⟦ ⟦comp⟧${S(I)} p ⟧${S(T)} d = ⟦p⟧${S(A)} d`;
+  say=`"לכל תוכנית ${B(A)} ולכל קלט: מריצים את הקומפיילר ב-${B(I)} על התוכנית, את מה שיצא מריצים ב-${B(T)}, ומקבלים מה שהתוכנית המקורית מחזירה ב-${B(A)}."`;
+  if(A===T) notes.push(`מקור ויעד זהים: קומפיילר כזה תמיד קיים – הזהות (תוכנית שמחזירה את הקלט שלה כמו שהוא).`);
+  notes.push(`${B(I)} מופיעה רק פעם אחת – על <bdi dir=ltr>comp</bdi> עצמו. ${B(T)} היא שפת הריצה של הפלט.`);}
+ else if(R==='int'||R==='self'){eq=`∀p∈${A}-prog ∀d∈${dat}:  ⟦int⟧${S(I)} (p . d) = ⟦p⟧${S(A)} d`;
+  say=`"לכל תוכנית ${B(A)} ולכל קלט: הרצת המפרש ב-${B(I)} על הזוג (תוכנית . קלט) נותנת את הפלט של התוכנית."`;
+  if(R==='self') notes.push('מפרש עצמי: שפת המימוש היא השפה המפורשת. ל-<bdi dir=ltr>WHILE</bdi> יש כזה – זה הבסיס להוכחות האלכסון בפרק 5.');
+  if(A==='TM'||A==='CM') notes.push(`תוכניות ${B(A)} אינן עצים מטבען; מניחים קידוד קבוע שלהן (ושל הקלט) כנתונים.`);
+  notes.push('שכבה אחת בלבד: הפלט של מפרש הוא תשובה, לא תוכנית.');}
+ else if(R==='fix'){eq=`∀p∈${A}-prog ∀d,x∈${dat}:  ⟦ ⟦fix⟧${S(I)} (p . d) ⟧${S(A)} x = ⟦p⟧${S(A)} d`;
+  say=`"התוכנית שהמקבע מחזיר, כשמריצים אותה ב-${B(A)} על כל קלט <bdi dir=ltr>x</bdi>, מחזירה מה ש-<bdi dir=ltr>p</bdi> מחזירה על <bdi dir=ltr>d</bdi>."`;
+  notes.push(`המקבע מייצר תוכנית באותה שפה של <bdi dir=ltr>p</bdi>, ולכן ${B(A)} מופיעה פעמיים.`);}
+ else if(R==='spec'){eq=`∀p∈${A}-prog ∀s,d∈${dat}:  ⟦ ⟦spec⟧${S(I)} (p . s) ⟧${S(A)} d = ⟦p⟧${S(A)} (s . d)`;
+  say=`"התוכנית שהמצמצם מחזיר, כשמריצים אותה ב-${B(A)} על <bdi dir=ltr>d</bdi>, מחזירה מה ש-<bdi dir=ltr>p</bdi> מחזירה על הזוג <bdi dir=ltr>(s . d)</bdi>."`;
+  notes.push('הסדר בזוג: החלק הסטטי <bdi dir=ltr>s</bdi> ראשון.');}
+ else {eq=`∀p∈${A}-prog:  ⟦ ⟦opt⟧${S(I)} p ⟧${S(A)} = ⟦p⟧${S(A)}   ∧   time( ⟦opt⟧${S(I)} p ) ≤ time(p)`;
+  say='"הממטב מחזיר תוכנית באותה שפה, שמחשבת אותה פונקציה – ולא רצה לאט יותר." החלק הראשון זה קומפיילר משפה לעצמה; החלק השני הוא מה שהופך אותו לממטב.';
+  notes.push('בלי <bdi dir=ltr>d</bdi>: השוויון הוא בין פונקציות, כלומר לכל קלט.');}
+ if(R!=='comp'&&R!=='self'&&A!==I) notes.push(`${B(I)} – שפת המימוש – לא משפיעה על הצד הימני. זה נכון לכל המטה-תוכניות.`);
+ out.innerHTML=`<div class="f">${eq}</div><p class="say">${say}</p><ul>${notes.map(n=>`<li>${n}</li>`).join('')}</ul>`;
+}
+[r,s,t,im].forEach(e=>e.onchange=build); build();
+})();
+</script>
+</body></html>

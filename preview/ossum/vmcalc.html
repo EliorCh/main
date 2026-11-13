@@ -1,0 +1,1437 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+
+<!-- mta-theme --><link rel="stylesheet" href="/main/site-theme.css"><script src="/main/site-theme.js" data-course="os" data-fam="os" data-footer="body"></script><!-- /mta-theme -->
+</head>
+<body>
+<!doctype html>
+<html lang="he" dir="rtl">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>חישובי זיכרון וירטואלי · מערכות הפעלה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: right-side sticky chapter rail (like a man-page index) + one reading column; boxes are color-coded by role. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --sunk:#eceff3; --fg:#1b2430; --muted:#5b6676; --line:#d6dbe2;
+  --ink:#1d5f8f;           /* course blue, from the slides */
+  --amber:#b86a00;         /* highlight / keypoint */
+  --theory:#1d5f8f; --theory-bg:#e8f1f8;
+  --formula:#6b3fa0; --formula-bg:#f1ebf8;
+  --example:#1f7a4d; --example-bg:#e7f4ed;
+  --warn:#b3261e; --warn-bg:#fbebea;
+  --exercise:#8a5a00; --exercise-bg:#fbf2df;
+  --summary:#3c4757; --summary-bg:#eef0f3;
+  --code-bg:#f2f4f7; --code-fg:#1b2430;
+  --hl-kw:#a4237a; --hl-str:#1f7a4d; --hl-num:#b86a00; --hl-com:#7a8494; --hl-fn:#1d5f8f; --hl-type:#6b3fa0;
+  --f-display:"Secular One","IBM Plex Sans Hebrew",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Hebrew",system-ui,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#171e27; --sunk:#1f2833; --fg:#e3e8ef; --muted:#9aa5b4; --line:#2c3744;
+  --ink:#6db3e6; --amber:#f0a83c;
+  --theory:#6db3e6; --theory-bg:#16283a; --formula:#b892ea; --formula-bg:#241b36;
+  --example:#5ccb93; --example-bg:#13291f; --warn:#f08079; --warn-bg:#331816;
+  --exercise:#e8b04f; --exercise-bg:#2e2412; --summary:#b6c0cd; --summary-bg:#1e2630;
+  --code-bg:#0d1218; --code-fg:#dde3ea;
+  --hl-kw:#e48ac6; --hl-str:#7fd6a6; --hl-num:#f0b45c; --hl-com:#7d8898; --hl-fn:#7cc0ef; --hl-type:#c3a3f0;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#171e27; --sunk:#1f2833; --fg:#e3e8ef; --muted:#9aa5b4; --line:#2c3744;
+  --ink:#6db3e6; --amber:#f0a83c;
+  --theory:#6db3e6; --theory-bg:#16283a; --formula:#b892ea; --formula-bg:#241b36;
+  --example:#5ccb93; --example-bg:#13291f; --warn:#f08079; --warn-bg:#331816;
+  --exercise:#e8b04f; --exercise-bg:#2e2412; --summary:#b6c0cd; --summary-bg:#1e2630;
+  --code-bg:#0d1218; --code-fg:#dde3ea;
+  --hl-kw:#e48ac6; --hl-str:#7fd6a6; --hl-num:#f0b45c; --hl-com:#7d8898; --hl-fn:#7cc0ef; --hl-type:#c3a3f0;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{direction:rtl;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16.5px;line-height:1.75;margin:0}
+.wrap{display:flex;gap:32px;max-width:1240px;margin:0 auto;padding-block:24px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.side{flex:0 0 250px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:flex-start;
+  max-height:calc(100vh - 32px);overflow-y:auto;font-size:14.5px;padding-inline-end:8px}
+nav.side .brand{font-family:var(--f-display);font-size:22px;color:var(--ink);line-height:1.3;margin-bottom:4px}
+nav.side .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+nav.side a{display:block;color:var(--fg);text-decoration:none;padding:3px 10px;border-inline-start:2px solid transparent}
+nav.side a:hover{color:var(--ink)}
+nav.side a.ch{font-weight:700;margin-top:14px}
+nav.side a.xlink{margin:26px 0 8px;border:1.5px solid var(--theory);border-radius:8px;padding:6px 10px;color:var(--theory);font-weight:600}
+nav.side a.sec{color:var(--muted);font-size:13.5px}
+nav.side a.active{border-inline-start-color:var(--ink);color:var(--ink)}
+main{flex:1;min-width:0;max-width:820px}
+main p, main li, .box-body p, .box-body li{direction:rtl;unicode-bidi:isolate;text-align:right}
+main strong, .box-body strong{margin-inline-end:.15em}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.3}
+.chapter{margin-top:56px;padding-top:8px}
+.chapter:first-of-type{margin-top:8px}
+.ch-head{border-bottom:2px solid var(--line);padding-bottom:14px;margin-bottom:8px}
+.ch-num{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+h1{font-size:34px;margin:4px 0 6px;color:var(--fg)}
+.hook{color:var(--muted);margin:0}
+h2{font-size:24px;margin:40px 0 10px;color:var(--ink)}
+h3{font-size:19px;margin:26px 0 6px}
+.t,.ltr{direction:ltr;unicode-bidi:isolate}
+code{direction:ltr;unicode-bidi:isolate}
+main :not(pre) > code{white-space:nowrap}
+svg{direction:ltr}
+code,.t{font-family:var(--f-mono);font-size:.9em}
+p code, li code, td code, .box-body code{background:var(--sunk);padding:1px 5px;border-radius:4px;direction:ltr;unicode-bidi:isolate}
+pre{direction:ltr;text-align:left;background:var(--code-bg);color:var(--code-fg);border:1px solid var(--line);
+  border-radius:8px;padding:14px 16px;overflow-x:auto;font-family:var(--f-mono);font-size:14px;line-height:1.6;margin:12px 0}
+main pre code, .box-body pre code{background:none;padding:0;font-size:inherit;border-radius:0}
+.hljs-keyword,.hljs-built_in{color:var(--hl-kw)} .hljs-string{color:var(--hl-str)} .hljs-number,.hljs-literal{color:var(--hl-num)}
+.hljs-comment{color:var(--hl-com);font-style:italic} .hljs-title,.hljs-function .hljs-title{color:var(--hl-fn)} .hljs-type,.hljs-meta{color:var(--hl-type)}
+.hljs-variable,.hljs-params{color:inherit}
+
+/* boxes */
+.box{border:1px solid var(--line);border-inline-start:4px solid var(--c);background:var(--cb);border-radius:6px;padding:12px 16px;margin:16px 0}
+.box-title{font-weight:700;color:var(--c);font-size:14px;letter-spacing:.02em;margin-bottom:4px}
+.box-body > :first-child{margin-top:0} .box-body > :last-child{margin-bottom:0}
+.theory{--c:var(--theory);--cb:var(--theory-bg)} .formula{--c:var(--formula);--cb:var(--formula-bg)}
+.example{--c:var(--example);--cb:var(--example-bg)} .warn{--c:var(--warn);--cb:var(--warn-bg)}
+.exercise{--c:var(--exercise);--cb:var(--exercise-bg)} .summary{--c:var(--summary);--cb:var(--summary-bg)}
+.keypoint{background:linear-gradient(transparent 60%, color-mix(in srgb,var(--amber) 28%, transparent) 60%);font-weight:500}
+.fline{display:block;direction:ltr;unicode-bidi:isolate;text-align:center;font-family:var(--f-mono);font-size:15px;margin:8px 0;padding:6px;background:var(--surface);border-radius:4px}
+
+/* function cards */
+.fn{border:1px solid var(--line);background:var(--surface);border-radius:8px;margin:14px 0;overflow:hidden}
+.fn-sig{direction:ltr;text-align:left;font-family:var(--f-mono);font-size:14.5px;background:var(--sunk);padding:8px 14px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+.fn-body{padding:10px 14px}
+.fn-body dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.fn-body dt{color:var(--muted);font-size:14px;font-weight:700}
+.fn-body dd{margin:0;min-width:0}
+
+/* tables */
+.tbl{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;vertical-align:top}
+th{background:var(--sunk);font-weight:700}
+td.mono,td.num{direction:ltr;unicode-bidi:isolate;text-align:center;font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+
+/* figures */
+figure{margin:18px 0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+figure svg{display:block;margin:0 auto;max-width:100%}
+figcaption{color:var(--muted);font-size:14px;text-align:center;margin-top:6px}
+svg text{font-family:var(--f-body)}
+svg .mono{font-family:var(--f-mono)}
+
+/* reveal */
+details.sol{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+details.sol summary{cursor:pointer;color:var(--exercise);font-weight:700;list-style:none}
+details.sol summary::before{content:"◂ ";display:inline-block;transition:transform .15s}
+details.sol[open] summary::before{transform:rotate(-90deg)}
+details.sol summary:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:18px 0}
+.sim-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+.sim label{font-size:14px;color:var(--muted)}
+.sim select,.sim input,.sim button{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.sim input[type=number]{width:64px;direction:ltr}
+.sim button{cursor:pointer;background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.sim button.ghost{background:transparent;color:var(--ink)}
+.jobs{display:flex;flex-wrap:wrap;gap:8px}
+.job{display:flex;gap:6px;align-items:center;background:var(--sunk);padding:4px 8px;border-radius:6px;font-family:var(--f-mono);font-size:13px}
+.gantt{overflow-x:auto}
+.legend{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sim .chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer}
+
+
+/* dry-run tracer */
+.trace{border:1px solid var(--line);background:var(--surface);border-radius:10px;margin:18px 0;overflow:hidden}
+.trace:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tr-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--sunk);border-bottom:1px solid var(--line)}
+.tr-title{font-family:var(--f-display);color:var(--ink);font-size:17px}
+.tr-vars{display:flex;flex-wrap:wrap;gap:6px}
+.trace .chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer;font-family:var(--f-body)}
+.trace .chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tr-body{display:flex;flex-direction:column}
+.tr-vis{min-width:0}
+.tr-note{padding:12px 14px;background:var(--theory-bg);border-top:1px solid var(--line);direction:rtl;unicode-bidi:isolate;text-align:right;line-height:1.7}
+.tr-grid{display:flex;flex-wrap:wrap;gap:14px;padding:12px 14px}
+.tr-code{flex:1 1 330px;min-width:0}
+.tr-side{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.tr-pre{margin:0;padding:8px 0;font-size:13.5px;overflow-x:auto}
+.tr-pre > code{display:block;min-width:max-content}
+.tr-ln{display:flex;gap:10px;align-items:center;padding:1px 10px;min-height:1.7em}
+.tr-ln.act{background:color-mix(in srgb,var(--amber) 18%,transparent)}
+.tr-num{color:var(--muted);min-width:1.6em;text-align:right;user-select:none}
+.tr-src{flex:1;white-space:pre}
+.tr-mk{display:flex;gap:4px}
+.tr-pid{font-size:11px;font-weight:600;border:1.5px solid var(--pc);color:var(--pc);border-radius:999px;padding:0 6px;line-height:1.5;background:var(--surface)}
+.tr-pid.on{background:var(--pc);color:var(--surface)}
+.tr-table{font-size:13.5px}
+.tr-table th,.tr-table td{padding:4px 8px}
+.tr-table tr.act td{background:color-mix(in srgb,var(--amber) 14%,var(--surface))}
+.tr-table tr.st-reaped td{color:var(--muted);text-decoration:line-through}
+.tr-table tr.st-zombie .tr-st{color:var(--warn);font-weight:700}
+.tr-table tr.st-blocked .tr-st{color:var(--exercise);font-weight:700}
+.tr-table tr.st-running .tr-st,.tr-table tr.st-kernel .tr-st{color:var(--example);font-weight:700}
+.tr-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pc);margin-inline-end:6px;vertical-align:middle}
+.tr-buf{white-space:pre-wrap;font-size:12.5px;min-width:11em}
+.tr-table td.num{white-space:nowrap}
+.tr-tree{overflow-x:auto}
+.tr-tree svg{display:block;margin:0 auto}
+.tr-outwrap{padding:0 14px 10px}
+.tr-label{font-size:13px;color:var(--muted);margin-bottom:4px}
+.tr-out{margin:0;min-height:2.4em;white-space:pre-wrap}
+.tr-o{color:var(--pc);font-weight:600}
+.tr-o.new{background:color-mix(in srgb,var(--pc) 16%,transparent)}
+.tr-empty{color:var(--muted);font-family:var(--f-body);direction:rtl;unicode-bidi:isolate}
+.tr-ctrl{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);background:var(--sunk)}
+.tr-ctrl button{font:inherit;font-size:14px;padding:6px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.tr-ctrl button.ghost{background:transparent;color:var(--ink)}
+.tr-ctrl button:disabled{opacity:.4;cursor:default}
+.tr-count{font-size:13px;color:var(--muted);margin-inline:auto}
+
+@media (max-width:860px){
+  .wrap{flex-direction:column;gap:8px}
+  nav.side{position:static;max-height:none;flex:none;border-bottom:1px solid var(--line);padding-bottom:12px}
+  nav.side a.sec{display:none}
+  h1{font-size:28px}
+}
+
+/* ---- wide screens: the page widens, prose keeps its reading width, dry runs sit side by side ---- */
+@media (min-width:1400px){
+  .wrap{max-width:1700px}
+  main{max-width:none}
+  main > section > *, main .box, main details > *{max-width:820px}
+  main > section > .trace, main .box:has(.trace), main details:has(.trace) > *, main .box .trace, main > section > .sim{max-width:none}
+  main .box:has(.trace) > .box-body > :not(details):not(.trace){max-width:788px}
+  .tr-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);grid-template-areas:"vis note";align-items:stretch}
+  .tr-vis{grid-area:vis}
+  .tr-note{grid-area:note;border-top:none;border-inline-start:1px solid var(--line);font-size:16px}
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+nav.side a.brand{display:block;font-family:var(--f-display);font-size:22px;color:var(--ink);line-height:1.3;margin-bottom:4px;padding:0;border:0;text-decoration:none}
+nav.side a.ch.here{color:var(--ink);border-inline-start-color:var(--ink)}
+.pager{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:56px;padding-top:18px;border-top:2px solid var(--line)}
+.pager a{flex:1 1 220px;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:12px 16px}
+.pager a:hover{border-color:var(--ink)}
+.pager a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.pager .dir{font-size:13px;color:var(--muted)}
+.pager .nm{font-family:var(--f-display);font-size:19px;color:var(--ink)}
+.pager a.next{text-align:left}
+a.drill{display:flex;flex-direction:column;gap:2px;margin-top:48px;text-decoration:none;border:1.5px solid var(--theory);background:var(--theory-bg);border-radius:10px;padding:14px 18px}
+a.drill .dir{font-size:13px;color:var(--muted)}
+a.drill .nm{font-family:var(--f-display);font-size:19px;color:var(--theory)}
+a.drill:hover{filter:brightness(.97)}
+a.drill+.pager{margin-top:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;margin:24px 0}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(6,minmax(0,1fr))}.card{grid-column:span 2}.card:nth-child(4){grid-column:2 / span 2}}
+main bdi, .tr-note bdi{white-space:nowrap}
+.card{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card:hover{border-color:var(--ink)}
+.card:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.card .num{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.card h2{margin:0;font-size:22px;color:var(--ink)}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card ul{margin:4px 0 0;padding-inline-start:18px;font-size:14px;color:var(--fg)}
+.card .tag{font-size:12.5px;color:var(--exercise);font-weight:700;margin-top:auto;padding-top:6px}
+.hero{padding:8px 0 4px;border-bottom:2px solid var(--line)}
+.hero h1{font-size:38px;margin:4px 0 8px}
+</style>
+
+
+<style id="theme2">
+/* ===== theme v2 — warm paper, indigo rail, vivid role colours (after the comsum summary site) ===== */
+:root{
+  --bg:#fbf9f3; --surface:#fffefa; --sunk:#f3f0e8; --fg:#1c1917; --muted:#6f6863; --line:#e7e5e0;
+  --ink:#4338ca; --amber:#b45309;
+  --theory:#1d4ed8; --theory-bg:#eff6ff; --theory-edge:#bfdbfe;
+  --formula:#6d28d9; --formula-bg:#f5f3ff; --formula-edge:#ddd6fe;
+  --example:#047857; --example-bg:#ecfdf5; --example-edge:#a7f3d0;
+  --warn:#be123c; --warn-bg:#fff1f2; --warn-edge:#fecdd3;
+  --exercise:#b45309; --exercise-bg:#fef9e7; --exercise-edge:#fcd34d;
+  --summary:#334155; --summary-bg:#f1f5f9; --summary-edge:#cbd5e1;
+  --code-bg:#f5f3ee; --code-fg:#1c1917;
+  --chip-fg:#be185d; --chip-bg:#f5f5f4; --chip-edge:#e7e5e4;
+  --rail-1:#1e1b4b; --rail-2:#312e81; --rail-fg:#c7d2fe; --rail-hi:#fbbf24;
+  --shadow-sm:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06);
+  --f-display:"Frank Ruhl Libre",Georgia,serif;
+  --f-body:"Assistant","IBM Plex Sans Hebrew",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15131d; --surface:#1c1a26; --sunk:#24212f; --fg:#ece9f4; --muted:#a29db3; --line:#34304a;
+  --ink:#a5b4fc; --amber:#fbbf24;
+  --theory:#93c5fd; --theory-bg:#16213a; --theory-edge:#2a4373;
+  --formula:#c4b5fd; --formula-bg:#221b3b; --formula-edge:#40346b;
+  --example:#6ee7b7; --example-bg:#0f2a23; --example-edge:#1f5646;
+  --warn:#fda4af; --warn-bg:#33151d; --warn-edge:#6b2535;
+  --exercise:#fcd34d; --exercise-bg:#2c230f; --exercise-edge:#5d4815;
+  --summary:#cbd5e1; --summary-bg:#1f2431; --summary-edge:#3b4357;
+  --code-bg:#100e17; --code-fg:#e6e3ee;
+  --chip-fg:#f9a8d4; --chip-bg:#2a2236; --chip-edge:#46395a;
+  --rail-1:#12102b; --rail-2:#1f1b4d; --shadow-sm:none;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#15131d; --surface:#1c1a26; --sunk:#24212f; --fg:#ece9f4; --muted:#a29db3; --line:#34304a;
+  --ink:#a5b4fc; --amber:#fbbf24;
+  --theory:#93c5fd; --theory-bg:#16213a; --theory-edge:#2a4373;
+  --formula:#c4b5fd; --formula-bg:#221b3b; --formula-edge:#40346b;
+  --example:#6ee7b7; --example-bg:#0f2a23; --example-edge:#1f5646;
+  --warn:#fda4af; --warn-bg:#33151d; --warn-edge:#6b2535;
+  --exercise:#fcd34d; --exercise-bg:#2c230f; --exercise-edge:#5d4815;
+  --summary:#cbd5e1; --summary-bg:#1f2431; --summary-edge:#3b4357;
+  --code-bg:#100e17; --code-fg:#e6e3ee;
+  --chip-fg:#f9a8d4; --chip-bg:#2a2236; --chip-edge:#46395a;
+  --rail-1:#12102b; --rail-2:#1f1b4d; --shadow-sm:none;
+  color-scheme:dark }
+body{font-size:17px;background-image:radial-gradient(circle at 20% 0%,rgba(99,102,241,.05),transparent 40%),radial-gradient(circle at 80% 100%,rgba(245,158,11,.05),transparent 40%);background-attachment:fixed}
+/* indigo side rail */
+nav.side{background:linear-gradient(180deg,var(--rail-1),var(--rail-2));color:var(--rail-fg);border-radius:16px;padding:22px 14px 18px;box-shadow:0 6px 24px rgba(30,27,75,.18);max-height:calc(100vh - 32px)}
+nav.side a{color:var(--rail-fg);border-radius:7px;border-inline-start:3px solid transparent}
+nav.side a:hover{background:rgba(255,255,255,.07);color:#fff}
+nav.side a.brand,nav.side .brand{color:#fff;font-weight:700;padding:0 10px}
+nav.side .sub{color:#a5b4fc;padding:0 10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:14px}
+nav.side a.ch{color:#e0e7ff}
+nav.side a.ch.here,nav.side a.active{color:#fff;background:rgba(255,255,255,.12);border-inline-start-color:var(--rail-hi)}
+nav.side a.sec{color:#a5b4fc}
+nav.side a.xlink{border:1.5px solid var(--rail-hi);color:var(--rail-hi);text-align:center}
+nav.side a.xlink:hover{background:var(--rail-hi);color:var(--rail-1)}
+nav.side::-webkit-scrollbar{width:6px} nav.side::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+/* headings */
+h1,h2,h3{font-family:var(--f-display);font-weight:700}
+h1{font-size:44px;letter-spacing:-.02em;line-height:1.15}
+h2{font-size:29px;color:var(--fg);position:relative;padding-inline-start:18px}
+h2::before{content:"";position:absolute;inset-inline-start:0;top:.32em;bottom:.32em;width:4px;border-radius:2px;background:var(--ink)}
+h3{font-family:var(--f-body);font-weight:700;font-size:20px}
+.ch-num{display:inline-block;font-family:var(--f-body);font-weight:700;font-size:12px;letter-spacing:.12em;color:var(--ink);background:color-mix(in srgb,var(--ink) 12%,var(--surface));padding:5px 12px;border-radius:99px}
+.ch-head{border-bottom:1px solid var(--line)}
+.hook{font-size:18.5px}
+/* role boxes: full coloured edge, tinted paper, strong title */
+.theory{--ce:var(--theory-edge)} .formula{--ce:var(--formula-edge)} .example{--ce:var(--example-edge)}
+.warn{--ce:var(--warn-edge)} .exercise{--ce:var(--exercise-edge)} .summary{--ce:var(--summary-edge)}
+.box{border:1px solid var(--ce,var(--line));border-inline-start:5px solid var(--c);border-radius:10px;box-shadow:var(--shadow-sm);padding:14px 18px}
+.box-title{font-size:15px;letter-spacing:0;font-weight:800}
+/* inline code as a coloured chip */
+:not(pre)>code{color:var(--chip-fg);background:var(--chip-bg);border:1px solid var(--chip-edge);border-radius:5px;padding:0 6px}
+/* glossary tooltips */
+.gloss{border-bottom:1.5px dashed color-mix(in srgb,var(--ink) 55%,transparent);cursor:help;text-decoration:none}
+code.gloss{border-bottom-style:dashed}
+.gloss:hover,.gloss:focus{background:color-mix(in srgb,var(--ink) 10%,transparent);outline:none;border-radius:3px}
+#gloss-tip{position:fixed;z-index:9999;max-width:340px;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:9px;font:400 13.5px/1.6 var(--f-body);direction:rtl;text-align:right;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .12s}
+#gloss-tip.show{opacity:1}
+#gloss-tip b{display:block;font-size:14px;margin-bottom:2px;color:var(--rail-hi);unicode-bidi:isolate;text-align:right}
+#gloss-tip bdi{unicode-bidi:isolate;font-weight:600}
+#gloss-tip .arrow{position:absolute;width:0;height:0;border:6px solid transparent}
+#gloss-tip.above .arrow{top:100%;border-top-color:var(--fg)}
+#gloss-tip.below .arrow{bottom:100%;border-bottom-color:var(--fg)}
+@media (max-width:860px){nav.side{border-radius:12px;max-height:none}}
+@media (max-width:600px){h1{font-size:34px} h2{font-size:24px} h1 bdi,h2 bdi,h3 bdi{white-space:normal}}
+</style>
+<style>
+.vmw{border:1px solid var(--line);background:var(--surface);border-radius:10px;margin:18px 0;overflow:hidden}
+.vmw.charts{padding:12px 14px}
+.vmw .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.vmw .chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer;font-family:var(--f-body)}
+.vmw .chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.vmw .chip:focus-visible,.vmw button:focus-visible,.vmw input:focus-visible,.vmw select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.bits-wrap{overflow-x:auto;margin:8px 0;padding-bottom:2px}
+.bits{display:flex;gap:6px;direction:ltr;width:max-content}
+.bgrp{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bcells{display:flex;border:1.5px solid var(--gc);border-radius:5px;overflow:hidden}
+.bit{font-family:var(--f-mono);font-size:13px;min-width:21px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--gb);color:var(--fg);border-inline-end:1px solid color-mix(in srgb,var(--gc) 35%,transparent)}
+.bit:last-child{border-inline-end:none}
+.blab{font-family:var(--f-mono);font-size:12px;color:var(--gc);white-space:nowrap}
+.bval{font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--gc)}
+.bcap{font-family:var(--f-mono);font-size:12px;color:var(--muted);direction:ltr;text-align:left;margin-top:4px}
+.g-vpn{--gc:var(--theory);--gb:var(--theory-bg)}.g-off{--gc:var(--exercise);--gb:var(--exercise-bg)}.g-pfn{--gc:var(--example);--gb:var(--example-bg)}.g-pd{--gc:var(--formula);--gb:var(--formula-bg)}
+.vmw .btn{font:inherit;font-size:14px;padding:6px 12px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.vmw .btn.ghost{background:transparent;color:var(--ink)}
+.vmw .btn:disabled{opacity:.4;cursor:default}
+.vmc-ctrl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.vmc-ctrl label{display:inline-flex;gap:6px;align-items:center;font-size:14px}
+.vmc-ctrl input{font-family:var(--f-mono);font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+#repl-s{width:260px}#repl-f{width:60px}
+.vmc-ctrl .btn{font:inherit;font-size:14px;padding:6px 12px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.vmc-ctrl .btn.ghost{background:transparent;color:var(--ink)}
+.vmc-repl{margin:0;padding:10px 14px}
+.vmc-repl table{font-size:14px}
+.vmc-repl td,.vmc-repl th{text-align:center!important;padding:5px 8px!important}
+.vmc-repl td:first-child{white-space:nowrap;font-weight:600;text-align:start!important}
+.vmc-repl td.nw{background:var(--theory-bg);font-weight:700}
+.vmc-repl td.ok{color:var(--example)} .vmc-repl td.bad{color:var(--warn);font-weight:700} .vmc-repl td.muted{color:var(--muted)}
+.vmc-sum{padding:0 14px 12px;font-size:14px}
+.vmc-sum .cur{font-weight:700;color:var(--ink)}
+.vmc-q{padding:14px;font-size:16px}
+.vmc-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px;padding:0 14px 12px}
+.vmc-fields label{display:flex;flex-direction:column;gap:4px;font-size:14px;position:relative}
+.vmc-fields input{font-family:var(--f-mono);font-size:15px;padding:6px 32px 6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.vmc-fields i{position:absolute;left:10px;bottom:7px;font-style:normal;font-weight:700}
+.vmc-fields i.ok{color:var(--example)} .vmc-fields i.bad{color:var(--warn)}
+.vmc-out{padding:4px 14px 14px;font-size:15px}
+#prac-type .chip.on,#repl-alg .chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap" dir="rtl" lang="he">
+<nav class="side" aria-label="תוכן העניינים"><a class="brand" href="https://eliorch.github.io/ossum/index.html" target="_blank">מערכות הפעלה</a></nav>
+<main>
+<section class="chapter" id="vmc" style="margin-top:8px">
+<div class="ch-head">
+  <div class="ch-num">Virtual Memory · Calculations</div>
+  <h1>חישובי זיכרון וירטואלי</h1>
+  <p class="hook">כל סוגי החישובים של פרק 7, צעד אחר צעד: מה נתון, מה מחשבים, ולמה כל צעד נכון. בסוף – מחולל תרגילים עם מספרים חדשים בכל פעם, ובדיקה של התשובה.</p>
+</div>
+<p>הדוגמאות כאן עם מספרים משלי, כדי לא לחזור על שאלות המבחן שכבר פתורות ב<a href="https://eliorch.github.io/ossum/vmem.html#vm-size" target="_blank">פרק 7</a>. כל מספר בעמוד חושב בקוד ונבדק.</p>
+
+<h2 id="vmc-tools">ארגז כלים: חזקות של 2</h2>
+<p>כמעט כל חישוב בפרק הוא חיבור וחיסור של מעריכים. במקום לחשב 4,294,967,296 / 4,096 כותבים <code>2^32 / 2^12 = 2^20</code>. לכן הצעד הראשון בכל שאלה: להפוך כל גודל לחזקה של 2.</p>
+<div class="tbl"><table>
+<tr><th>יחידה</th><th>חזקה</th><th>דוגמאות</th></tr>
+<tr><td class="mono">1KB</td><td class="num"><bdi dir="ltr">2^10</bdi></td><td class="mono">4KB = 2^12 · 16KB = 2^14 · 512B = 2^9</td></tr>
+<tr><td class="mono">1MB</td><td class="num"><bdi dir="ltr">2^20</bdi></td><td class="mono">4MB = 2^22 · 256MB = 2^28</td></tr>
+<tr><td class="mono">1GB</td><td class="num"><bdi dir="ltr">2^30</bdi></td><td class="mono">4GB = 2^32 · 16GB = 2^34</td></tr>
+<tr><td class="mono">1TB</td><td class="num"><bdi dir="ltr">2^40</bdi></td><td class="mono">8TB = 2^43</td></tr>
+</table></div>
+<ul>
+<li><strong>כפל = חיבור מעריכים, חילוק = חיסור:</strong> <code>2^20 × 4B = 2^20 × 2^2 = 2^22 = 4MB</code>.</li>
+<li><strong>מספר ביטים לגודל:</strong> כדי לבחור אחד מתוך <code>2^n</code> דברים צריך <code>n</code> ביטים. לכן "כמה ביטים" = <bdi dir="ltr">log₂</bdi> של הגודל.</li>
+<li><strong>ביט מול בית:</strong> <bdi dir="ltr">b</bdi> קטנה = ביט, <bdi dir="ltr">B</bdi> גדולה = בית = 8 ביטים. <bdi dir="ltr">PTE</bdi> של 20 ביט צריך 3 בתים לפחות.</li>
+<li><strong>ספרה הקסדצימלית = 4 ביטים.</strong> היסט של 12 ביט = 3 הספרות האחרונות בכתובת הקסה. זה מקצר מאוד תרגומים (בהמשך).</li>
+</ul>
+
+<h2 id="vmc-map">המפה: איך כל הגדלים קשורים</h2>
+<p>כל שאלה בפרק היא מסלול על המפה הזו: נותנים כמה ערכים, וצריך להגיע לאחרים. כדאי לסמן על המפה מה נתון, ואז ללכת לאורך הקווים.</p>
+<figure>
+<svg viewBox="0 0 720 330" width="720" role="img" aria-label="הקשרים בין גדלי הכתובות והטבלאות">
+<defs><marker id="vmc-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+<g font-family="var(--f-mono)" font-size="13" text-anchor="middle">
+ <g stroke="var(--line)" stroke-width="1.5" fill="none" marker-end="url(#vmc-ar)">
+  <path d="M118 62 V92"/><path d="M360 62 V92"/><path d="M602 62 V92"/>
+  <path d="M190 112 H285"/><path d="M530 112 H435"/>
+  <path d="M118 132 V178"/><path d="M602 132 V178"/>
+  <path d="M190 198 H285"/><path d="M530 198 H435"/>
+  <path d="M360 218 V250"/>
+ </g>
+ <g>
+  <rect x="38" y="30" width="160" height="32" rx="7" fill="var(--theory-bg)" stroke="var(--theory)"/><text x="118" y="51" fill="var(--fg)">virtual memory size</text>
+  <rect x="280" y="30" width="160" height="32" rx="7" fill="var(--exercise-bg)" stroke="var(--exercise)"/><text x="360" y="51" fill="var(--fg)">page size</text>
+  <rect x="522" y="30" width="160" height="32" rx="7" fill="var(--example-bg)" stroke="var(--example)"/><text x="602" y="51" fill="var(--fg)">physical memory size</text>
+  <rect x="38" y="92" width="160" height="40" rx="7" fill="var(--surface)" stroke="var(--theory)"/><text x="118" y="110" fill="var(--fg)">VA bits</text><text x="118" y="125" font-size="11" fill="var(--muted)">log2(VM)</text>
+  <rect x="285" y="92" width="150" height="40" rx="7" fill="var(--surface)" stroke="var(--exercise)"/><text x="360" y="110" fill="var(--fg)">offset bits</text><text x="360" y="125" font-size="11" fill="var(--muted)">log2(page)</text>
+  <rect x="522" y="92" width="160" height="40" rx="7" fill="var(--surface)" stroke="var(--example)"/><text x="602" y="110" fill="var(--fg)">PA bits</text><text x="602" y="125" font-size="11" fill="var(--muted)">log2(PM)</text>
+  <rect x="38" y="178" width="160" height="40" rx="7" fill="var(--surface)" stroke="var(--theory)"/><text x="118" y="196" fill="var(--fg)">VPN bits</text><text x="118" y="211" font-size="11" fill="var(--muted)">VA − offset</text>
+  <rect x="522" y="178" width="160" height="40" rx="7" fill="var(--surface)" stroke="var(--example)"/><text x="602" y="196" fill="var(--fg)">PFN bits</text><text x="602" y="211" font-size="11" fill="var(--muted)">PA − offset</text>
+  <rect x="285" y="178" width="150" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/><text x="360" y="196" fill="var(--fg)">#entries · PTE</text><text x="360" y="211" font-size="11" fill="var(--muted)">2^VPN · (PFN+status)</text>
+  <rect x="250" y="250" width="220" height="56" rx="7" fill="var(--formula-bg)" stroke="var(--formula)"/><text x="360" y="272" fill="var(--fg)">table size = 2^VPN × PTE</text><text x="360" y="292" font-size="11" fill="var(--muted)">k = page / PTE per table page</text>
+ </g>
+</g>
+</svg>
+<figcaption>הכתובת הווירטואלית והפיזית חולקות את אותו היסט, כי דף ומסגרת באותו גודל. ה-<bdi dir="ltr">VPN</bdi> קובע כמה רשומות יש בטבלה, וה-<bdi dir="ltr">PFN</bdi> קובע כמה ביטים יש בכל רשומה.</figcaption>
+</figure>
+<div class="fline">VA bits = VPN bits + offset bits &nbsp;&nbsp;·&nbsp;&nbsp; PA bits = PFN bits + offset bits</div>
+
+<h2 id="vmc-split">פירוק כתובת ותרגום (בעשרוני ובבינארי)</h2>
+<div class="box example"><div class="box-title">דוגמה 1 · התהליך <bdi dir="ltr">P1</bdi> מהשקפים</div><div class="box-body">
+<p><strong>נתון:</strong> מרחב כתובות של <bdi dir="ltr">64KB</bdi>, דף של <bdi dir="ltr">16KB</bdi>, זיכרון פיזי של <bdi dir="ltr">128KB</bdi>, וטבלת הדפים <code>[3, 7, 5, 2]</code> (דף <bdi dir="ltr">i</bdi> ממופה למסגרת שבמקום <bdi dir="ltr">i</bdi>). <strong>מבקשים:</strong> את הכתובת הפיזית של הכתובת הווירטואלית <bdi dir="ltr">33K</bdi>.</p>
+<ol>
+<li><strong>גדלים לחזקות:</strong> <code>64KB = 2^16</code>, <code>16KB = 2^14</code>, <code>128KB = 2^17</code>.</li>
+<li><strong>ביטים:</strong> כתובת וירטואלית 16 ביט, היסט 14 ביט, ולכן <bdi dir="ltr">VPN</bdi> של 2 ביט: 4 דפים. כתובת פיזית 17 ביט, ולכן <bdi dir="ltr">PFN</bdi> של 3 ביט: 8 מסגרות.</li>
+<li><strong>פירוק בעשרוני:</strong> מחלקים בגודל הדף. המנה היא ה-<bdi dir="ltr">VPN</bdi> והשארית היא ההיסט.
+<span class="fline">33K = 2 × 16K + 1K → VPN = 2, offset = 1K = 1024</span></li>
+<li><strong>הטבלה:</strong> דף 2 ממופה למסגרת 5.</li>
+<li><strong>הרכבה:</strong> אותו היסט, מסגרת אחרת.
+<span class="fline">PA = 5 × 16K + 1K = 81K = 82944</span></li>
+</ol>
+<p>אותו דבר בבינארי – מחליפים את ביטי ה-<bdi dir="ltr">VPN</bdi> בביטי ה-<bdi dir="ltr">PFN</bdi>, וההיסט לא זז:</p>
+<div class="bits-wrap"><div class="bits"><div class="bgrp g-vpn"><div class="bcells"><span class="bit">1</span><span class="bit">0</span></div><div class="blab">VPN</div><div class="bval">2</div></div><div class="bgrp g-off"><div class="bcells"><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span></div><div class="blab">offset</div><div class="bval">1024</div></div></div><div class="bcap">virtual address = 33792</div></div>
+<div class="bits-wrap"><div class="bits"><div class="bgrp g-pfn"><div class="bcells"><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span></div><div class="blab">PFN</div><div class="bval">5</div></div><div class="bgrp g-off"><div class="bcells"><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span></div><div class="blab">offset</div><div class="bval">1024</div></div></div><div class="bcap">physical address = 82944</div></div>
+</div></div>
+
+<h2 id="vmc-hex">תרגום בהקסה: הטריק של 3 הספרות</h2>
+<p>כשהדף בגודל <bdi dir="ltr">4KB = 2^12</bdi>, ההיסט הוא 12 ביט – בדיוק <strong>3 ספרות הקסה</strong>. אז לא צריך להמיר לבינארי: 3 הספרות האחרונות הן ההיסט, וכל מה שלפניהן הוא ה-<bdi dir="ltr">VPN</bdi>.</p>
+<div class="box example"><div class="box-title">דוגמה 2 · ארבע כתובות</div><div class="box-body">
+<p><strong>נתון:</strong> כתובות של 32 ביט, דף של <bdi dir="ltr">4KB</bdi>. בטבלת הדפים: דף 0 ← מסגרת <code>0x1A</code>, דף 1 ← <code>0x1B</code>, דף 2 ← <code>0x7</code>, דף 3 ← <code>0x3C0</code>. שאר הדפים לא <bdi dir="ltr">valid</bdi>.</p>
+<div class="tbl"><table>
+<tr><th>כתובת וירטואלית</th><th><bdi dir="ltr">VPN</bdi> (הספרות שלפני)</th><th>היסט (3 אחרונות)</th><th>מסגרת</th><th>כתובת פיזית</th></tr>
+<tr><td class="mono">0x00002ABC</td><td class="num">2</td><td class="mono">ABC</td><td class="mono">0x7</td><td class="mono">0x7ABC</td></tr>
+<tr><td class="mono">0x00003F00</td><td class="num">3</td><td class="mono">F00</td><td class="mono">0x3C0</td><td class="mono">0x3C0F00</td></tr>
+<tr><td class="mono">0x00000010</td><td class="num">0</td><td class="mono">010</td><td class="mono">0x1A</td><td class="mono">0x1A010</td></tr>
+<tr><td class="mono">0x00005000</td><td class="num">5</td><td class="mono">000</td><td>לא <bdi dir="ltr">valid</bdi></td><td>חריגה: הגישה לא חוקית</td></tr>
+</table></div>
+<p>הכתובת הפיזית = מספר המסגרת, ומיד אחריו 3 ספרות ההיסט. אם הדף היה 8KB (13 ביט) הטריק לא עובד ישירות, כי 13 לא מתחלק ב-4 – אז ממירים את הספרה הרביעית מהסוף לבינארי ומפצלים אותה.</p>
+</div></div>
+
+<h2 id="vmc-pte">ממה בנוי <bdi dir="ltr">PTE</bdi></h2>
+<p>רשומה בטבלה = מספר מסגרת + ביטי סטטוס (<bdi dir="ltr">valid, present, dirty</bdi> וכו') + ריפוד. ברירת המחדל בקורס: מרפדים לחזקה של 2 בבתים (1, 2, 4, 8). אם השאלה נותנת גודל או אומרת "בלי ריפוד" – משתמשים בנתון.</p>
+<div class="box example"><div class="box-title">דוגמה 3 · קדימה: מהזיכרון הפיזי לגודל הרשומה</div><div class="box-body">
+<p><strong>נתון:</strong> זיכרון פיזי <bdi dir="ltr">256MB</bdi>, דף <bdi dir="ltr">2KB</bdi>, ו-3 ביטי סטטוס. כל טבלה בדף אחד, ברמה אחת. <strong>מבקשים:</strong> גודל <bdi dir="ltr">PTE</bdi>, ומה מרחב הכתובות של תהליך.</p>
+<ol>
+<li><code>256MB = 2^28</code> → כתובת פיזית 28 ביט. <code>2KB = 2^11</code> → היסט 11.</li>
+<li><bdi dir="ltr">PFN</bdi> = 28 − 11 = 17 ביט. עם 3 ביטי סטטוס: 20 ביט.</li>
+<li>20 ביט לא נכנסים ב-2 בתים, ו-3 בתים אינם חזקה של 2 → <strong>4 בתים</strong> (12 ביט ריפוד).</li>
+<li>רשומות בדף: <code>2KB / 4B = 2^11 / 2^2 = 2^9 = 512</code>. טבלה בדף אחד → 512 דפים לכל היותר → <bdi dir="ltr">VPN</bdi> של 9 ביט.</li>
+<li>מרחב הכתובות: <code>2^9 × 2^11 = 2^20 = 1MB</code>.</li>
+</ol>
+</div></div>
+<div class="box example"><div class="box-title">דוגמה 4 · אחורה: מגודל הרשומה לזיכרון הפיזי</div><div class="box-body">
+<p><strong>נתון:</strong> <bdi dir="ltr">PTE</bdi> של 32 ביט, מתוכם 25 ביט למספר מסגרת, ודף של <bdi dir="ltr">4KB</bdi>. <strong>מבקשים:</strong> הזיכרון הפיזי המקסימלי.</p>
+<p>25 ביט של <bdi dir="ltr">PFN</bdi> = <code>2^25</code> מסגרות, כל אחת <code>2^12</code> בתים:</p>
+<span class="fline">2^25 × 2^12 = 2^37 = 128GB</span>
+<p>שאר 7 הביטים ברשומה הם סטטוס וריפוד, והם לא משפיעים על התשובה.</p>
+</div></div>
+
+<h2 id="vmc-linear">טבלה לינארית: גודל, ובכיוון ההפוך</h2>
+<div class="box example"><div class="box-title">דוגמה 5 · גודל הטבלה</div><div class="box-body">
+<p><strong>נתון:</strong> כתובת וירטואלית של 36 ביט, דף <bdi dir="ltr">8KB</bdi>, זיכרון פיזי <bdi dir="ltr">16GB</bdi>, 4 ביטי סטטוס.</p>
+<ol>
+<li>היסט: <code>8KB = 2^13</code> → 13. <bdi dir="ltr">VPN</bdi> = 36 − 13 = 23 → <code>2^23</code> רשומות.</li>
+<li>כתובת פיזית: <code>16GB = 2^34</code> → 34. <bdi dir="ltr">PFN</bdi> = 34 − 13 = 21. עם הסטטוס 25 ביט → <bdi dir="ltr">PTE</bdi> של 4 בתים.</li>
+<li>גודל הטבלה: <code>2^23 × 2^2 = 2^25 = 32MB</code> – לכל תהליך, גם אם הוא משתמש בדף אחד.</li>
+<li>בדפים: <code>32MB / 8KB = 2^25 / 2^13 = 2^12 = 4096</code> דפים, רציפים בזיכרון.</li>
+</ol>
+</div></div>
+<div class="box example"><div class="box-title">דוגמה 6 · אחורה: מגודל הטבלה למרחב הכתובות</div><div class="box-body">
+<p><strong>נתון:</strong> כתובת פיזית = 26 ביט מסגרת + 12 ביט היסט. בכל <bdi dir="ltr">PTE</bdi> יש 5 ביטי סטטוס. הטבלה הלינארית של תהליך <bdi dir="ltr">A</bdi> תופסת בדיוק 2 מסגרות. <strong>מבקשים:</strong> מרחב הכתובות של <bdi dir="ltr">A</bdi>.</p>
+<ol>
+<li><bdi dir="ltr">PTE</bdi> = 26 + 5 = 31 ביט → 4 בתים.</li>
+<li>הטבלה: 2 מסגרות של <bdi dir="ltr">4KB</bdi> = <code>2^13</code> בתים. רשומות: <code>2^13 / 2^2 = 2^11</code>.</li>
+<li>רשומה לכל דף → <code>2^11</code> דפים → <code>2^11 × 2^12 = 2^23 = 8MB</code>.</li>
+</ol>
+<p>וכל תהליך אחר באותה מערכת? אותו מרחב, כי בטבלה לינארית הגודל תלוי רק במבנה הכתובת.</p>
+</div></div>
+
+<h2 id="vmc-multi">טבלה היררכית: כמה רמות ואיך מחלקים את הביטים</h2>
+<p>השיטה: כל חלק של הטבלה תופס דף אחד, ולכן בכל חלק <code>k = page / PTE</code> רשומות, וכל רמה "אוכלת" <code>log2(k)</code> ביטים מה-<bdi dir="ltr">VPN</bdi>. מחלקים את ביטי ה-<bdi dir="ltr">VPN</bdi> לקבוצות כאלה, עם עיגול למעלה. אם החלוקה לא מדויקת – <strong>הרמה העליונה</strong> מקבלת את השארית.</p>
+<div class="tbl"><table>
+<tr><th>נתון</th><th><bdi dir="ltr">k</bdi> (רשומות בדף)</th><th>ביטים לרמה</th><th>ביטי <bdi dir="ltr">VPN</bdi></th><th>רמות</th><th>חלוקה (מלמעלה למטה)</th></tr>
+<tr><td class="mono">32-bit · 4KB · PTE 4B</td><td class="num">1024</td><td class="num">10</td><td class="num">20</td><td class="num">2</td><td class="mono">10 + 10</td></tr>
+<tr><td class="mono">48-bit · 4KB · PTE 8B</td><td class="num">512</td><td class="num">9</td><td class="num">36</td><td class="num">4</td><td class="mono">9 + 9 + 9 + 9</td></tr>
+<tr><td class="mono">32-bit · 1KB · PTE 4B</td><td class="num">256</td><td class="num">8</td><td class="num">22</td><td class="num">3</td><td class="mono">6 + 8 + 8</td></tr>
+</table></div>
+<p>בשורה האחרונה: <code>22 / 8 = 2.75</code> → 3 רמות. שתי התחתונות מקבלות 8 ביט כל אחת, והעליונה את השאר: 6 ביט, כלומר רק 64 מתוך 256 הרשומות בדף העליון בשימוש.</p>
+<div class="box example"><div class="box-title">דוגמה 7 · אחורה: מרוחבי השדות לכל השאר</div><div class="box-body">
+<p><strong>נתון:</strong> כתובת וירטואלית מחולקת כך (משמאל לימין): 5 ביט לרמה העליונה, 9 לאמצעית, 9 לתחתונה, ו-11 ביט היסט. ה-<bdi dir="ltr">PTE</bdi> וה-<bdi dir="ltr">PDE</bdi> באותו גודל, כל טבלה בדף אחד, ובכל רשומה 4 ביטי סטטוס בלי ריפוד.</p>
+<ol>
+<li>היסט 11 → דף <code>2^11 = 2KB</code>. כתובת וירטואלית: 5 + 9 + 9 + 11 = 34 ביט.</li>
+<li>הרמות המלאות משתמשות ב-9 ביטים → <code>k = 2^9 = 512</code> רשומות בדף. גודל רשומה: <code>2KB / 512 = 4B</code> = 32 ביט.</li>
+<li><bdi dir="ltr">PFN</bdi> = 32 − 4 = 28 ביט → זיכרון פיזי מקסימלי <code>2^28 × 2^11 = 2^39 = 512GB</code>.</li>
+<li>ברמה העליונה רק <code>2^5 = 32</code> רשומות (<bdi dir="ltr">128B</bdi>), אבל היא תופסת דף שלם, כי כל טבלה בדף אחד.</li>
+</ol>
+</div></div>
+
+<h2 id="vmc-sparse">כמה זיכרון באמת תופסות הטבלאות</h2>
+<p>היתרון של טבלה היררכית: טבלאות תחתונות קיימות רק לחלקים של מרחב הכתובות שבשימוש. כל טבלה תחתונה מכסה <code>k</code> דפים – כאן <code>1024 × 4KB = 4MB</code> רצופים.</p>
+<div class="box example"><div class="box-title">דוגמה 8 · תהליך עם שלושה סגמנטים</div><div class="box-body">
+<p><strong>נתון:</strong> 32 ביט, דף <bdi dir="ltr">4KB</bdi>, <bdi dir="ltr">PTE</bdi> של 4 בתים, שתי רמות של 10 ביט. התהליך משתמש ב: קוד <bdi dir="ltr">40KB</bdi> מכתובת <code>0x00400000</code>, ערימה <bdi dir="ltr">1MB</bdi> מכתובת <code>0x10000000</code>, ומחסנית <bdi dir="ltr">8KB</bdi> מכתובת <code>0xFFFFE000</code> (עד סוף מרחב הכתובות).</p>
+<p>לכל סגמנט: באיזו טבלה תחתונה הוא נמצא? האינדקס ברמה העליונה = הכתובת חלקי <bdi dir="ltr">4MB</bdi> (10 הביטים העליונים).</p>
+<div class="tbl"><table>
+<tr><th>סגמנט</th><th>דפים</th><th>אינדקס ברמה העליונה</th><th>טבלאות תחתונות</th></tr>
+<tr><td>קוד</td><td class="num"><bdi dir="ltr">40KB / 4KB = 10</bdi></td><td class="mono">0x00400000 / 4MB = 1</td><td class="num">1</td></tr>
+<tr><td>ערימה</td><td class="num"><bdi dir="ltr">1MB / 4KB = 256</bdi></td><td class="mono">0x10000000 / 4MB = 64</td><td class="num">1</td></tr>
+<tr><td>מחסנית</td><td class="num"><bdi dir="ltr">8KB / 4KB = 2</bdi></td><td class="mono">0xFFFFE000 / 4MB = 1023</td><td class="num">1</td></tr>
+</table></div>
+<ul>
+<li>כל סגמנט נכנס כולו בטבלה תחתונה אחת (אף אחד לא חוצה גבול של <bdi dir="ltr">4MB</bdi>), והן שונות זו מזו → 3 טבלאות תחתונות, ועוד העליונה: <strong>4 דפים = 16KB</strong>. טבלה לינארית: <bdi dir="ltr">4MB</bdi>.</li>
+<li>רשומות <bdi dir="ltr">valid</bdi>: ברמה התחתונה אחת לכל דף בשימוש: <code>10 + 256 + 2 = 268</code>. ברמה העליונה אחת לכל טבלה תחתונה: 3. סך הכל <strong>271</strong>.</li>
+<li>מלכודת: סגמנט שחוצה גבול של <bdi dir="ltr">4MB</bdi> צריך שתי טבלאות תחתונות, גם אם הוא קטן.</li>
+</ul>
+</div></div>
+
+<h2 id="vmc-tlb"><bdi dir="ltr">TLB</bdi>: לספור החטאות</h2>
+<p>מה שקובע אם יש <bdi dir="ltr">TLB hit</bdi> הוא <strong>הדף</strong> של הכתובת, לא הכתובת עצמה. לכן סופרים: באיזה סדר ניגשים לדפים, וכמה דפים שונים ה-<bdi dir="ltr">TLB</bdi> מחזיק.</p>
+<div class="box example"><div class="box-title">דוגמה 9 · מעבר לפי שורות מול לפי עמודות</div><div class="box-body">
+<p><strong>נתון:</strong> <code>int a[8][1024]</code> שמתחיל בתחילת דף. <code>int</code> = 4 בתים, דף <bdi dir="ltr">4KB</bdi>, <bdi dir="ltr">TLB</bdi> ריק בהתחלה עם 4 כניסות ופינוי <bdi dir="ltr">LRU</bdi>. בשפת <bdi dir="ltr">C</bdi> המערך שמור לפי שורות: כל שורה היא <code>1024 × 4B = 4KB</code> – <strong>דף שלם</strong>. כלומר <code>a[i][j]</code> נמצא בדף <bdi dir="ltr">i</bdi>.</p>
+<pre><code class="language-c">for (i = 0; i &lt; 8; i++)            // by rows
+    for (j = 0; j &lt; 1024; j++) sum += a[i][j];
+
+for (j = 0; j &lt; 1024; j++)         // by columns
+    for (i = 0; i &lt; 8; i++) sum += a[i][j];</code></pre>
+<div class="tbl"><table>
+<tr><th>סדר</th><th>גישות</th><th><bdi dir="ltr">TLB misses</bdi></th><th><bdi dir="ltr">hit rate</bdi></th><th>למה</th></tr>
+<tr><td>לפי שורות</td><td class="num">8192</td><td class="num">8</td><td class="num">99.9%</td><td>1024 גישות רצופות באותו דף; החטאה אחת בתחילת כל שורה</td></tr>
+<tr><td>לפי עמודות</td><td class="num">8192</td><td class="num">8192</td><td class="num">0%</td><td>כל גישה בשורה אחרת = דף אחר. 8 דפים במחזור על <bdi dir="ltr">TLB</bdi> של 4 עם <bdi dir="ltr">LRU</bdi>: כל דף נזרק בדיוק לפני שחוזרים אליו</td></tr>
+</table></div>
+<p>עם <bdi dir="ltr">TLB</bdi> של 8 כניסות, גם המעבר לפי עמודות יורד ל-8 החטאות: כל 8 הדפים נכנסים. בדקתי את שלושת המקרים בסימולציה.</p>
+</div></div>
+<p><strong><bdi dir="ltr">TLB reach</bdi></strong> = כמה זיכרון ה-<bdi dir="ltr">TLB</bdi> מכסה בבת אחת: מספר כניסות × גודל דף. למשל <code>64 × 4KB = 256KB</code>. לולאה שעוברת על פחות מזה, שוב ושוב, תרוץ כמעט בלי החטאות.</p>
+
+<h2 id="vmc-inv">טבלה הפוכה</h2>
+<p>בטבלה הפוכה יש רשומה לכל <strong>מסגרת</strong>, לא לכל דף, ואחת לכל המערכת. בכל רשומה: מזהה תהליך + מספר הדף שבמסגרת + סטטוס. לכן הגודל תלוי רק בזיכרון הפיזי – לא במספר התהליכים ולא בגודל מרחב הכתובות.</p>
+<div class="box example"><div class="box-title">דוגמה 10</div><div class="box-body">
+<p><strong>נתון:</strong> זיכרון פיזי <bdi dir="ltr">2GB</bdi>, דף <bdi dir="ltr">8KB</bdi>, כתובת וירטואלית 39 ביט, מזהה תהליך 12 ביט, 3 ביטי סטטוס, וכל רשומה מרופדת לבית שלם.</p>
+<ol>
+<li>רשומות = מסגרות: <code>2^31 / 2^13 = 2^18 = 262144</code>.</li>
+<li>מספר דף: <code>39 − 13 = 26</code> ביט. רשומה: <code>12 + 26 + 3 = 41</code> ביט → 6 בתים.</li>
+<li>הטבלה: <code>2^18 × 6B = 1.5MB</code>, לכל המערכת.</li>
+</ol>
+</div></div>
+
+<h2 id="vmc-repl">החלפת דפים: טבלה צעד אחר צעד</h2>
+<p>הדרך הבטוחה לפתור: טבלה עם עמודה לכל גישה, ובכל עמודה מה יש במסגרות אחרי הגישה. מסמנים <bdi dir="ltr">fault</bdi>, ובכל פינוי כותבים מי פונה ולמה. הסימולטור בונה את הטבלה – נסו קודם לבד, ואז השוו.</p>
+<div class="vmw" id="repl">
+ <div class="vmc-ctrl">
+  <label>סדר הגישות <input id="repl-s" dir="ltr" value="2 3 2 1 5 2 4 5 3 2 5 2"></label>
+  <label>מסגרות <input id="repl-f" type="number" min="1" max="8" value="3" dir="ltr"></label>
+  <span class="chips" id="repl-alg"></span>
+ </div>
+ <div id="repl-out"></div>
+ <div id="repl-sum" class="vmc-sum"></div>
+</div>
+<div class="tbl"><table>
+<tr><th>אלגוריתם</th><th>מפנה את</th><th>בדוגמה (3 מסגרות)</th></tr>
+<tr><td class="mono">FIFO</td><td>מי שנכנס ראשון</td><td class="num">9 <bdi dir="ltr">faults</bdi></td></tr>
+<tr><td class="mono">LRU</td><td>מי שהשתמשו בו הכי מזמן</td><td class="num">7</td></tr>
+<tr><td class="mono">OPT</td><td>מי שישתמשו בו הכי מאוחר בעתיד (או לעולם לא)</td><td class="num">6</td></tr>
+<tr><td class="mono">MRU</td><td>מי שהשתמשו בו הכי לאחרונה</td><td class="num">6</td></tr>
+</table></div>
+<p><bdi dir="ltr">OPT</bdi> הוא תמיד המינימום האפשרי, אבל דורש לדעת את העתיד – לכן משתמשים בו רק כקנה מידה. כאן <bdi dir="ltr">MRU</bdi> יצא שווה לו במקרה; בסדר גישות אחר הוא יכול להיות גרוע מאוד. <strong>אנומליית בלאדי:</strong> בסדר <code>1 2 3 4 1 2 5 1 2 3 4 5</code>, <bdi dir="ltr">FIFO</bdi> עם 3 מסגרות נותן 9 <bdi dir="ltr">faults</bdi> ועם 4 – <strong>10</strong>. יותר מסגרות, יותר החטאות. <bdi dir="ltr">LRU</bdi> על אותו סדר: 10 ואז 8, כמו שמצפים. אפשר לבדוק בסימולטור.</p>
+
+<h2 id="vmc-practice">מחולל תרגילים</h2>
+<p>בכל לחיצה נוצרת שאלה חדשה עם מספרים אחרים. כותבים תשובות, בודקים, ואם צריך – פותחים את הפתרון המלא. כל התשובות מחושבות בדיוק לפי השיטות שלמעלה.</p>
+<div class="vmw" id="prac">
+ <div class="vmc-ctrl"><span class="chips" id="prac-type"></span><button type="button" class="btn" id="prac-new">שאלה חדשה</button></div>
+ <div id="prac-q" class="vmc-q"></div>
+ <div id="prac-fields" class="vmc-fields"></div>
+ <div class="vmc-ctrl"><button type="button" class="btn" id="prac-check">בדיקה</button><button type="button" class="btn ghost" id="prac-sol">פתרון מלא</button></div>
+ <div id="prac-out" class="vmc-out"></div>
+</div>
+</section>
+<script>
+(function () {
+  /* ---------- page replacement simulator ---------- */
+  var ALGS = ['FIFO', 'LRU', 'OPT', 'MRU'], alg = 'FIFO';
+  function run(S, F, a) {
+    var fr = [], last = {}, rows = [], faults = 0, order = [];
+    S.forEach(function (p, t) {
+      var hit = fr.indexOf(p) >= 0, victim = null;
+      if (!hit) {
+        faults++;
+        if (fr.length < F) { fr.push(p); order.push(p); }
+        else {
+          if (a === 'FIFO') { victim = order.shift(); fr[fr.indexOf(victim)] = p; order.push(p); }
+          else if (a === 'LRU' || a === 'MRU') {
+            victim = fr.reduce(function (b, x) { return a === 'LRU' ? (last[x] < last[b] ? x : b) : (last[x] > last[b] ? x : b); }, fr[0]);
+            fr[fr.indexOf(victim)] = p;
+          } else {
+            var nxt = function (x) { for (var k = t + 1; k < S.length; k++) if (S[k] === x) return k; return Infinity; };
+            victim = fr.reduce(function (b, x) { return nxt(x) > nxt(b) ? x : b; }, fr[0]);
+            fr[fr.indexOf(victim)] = p;
+          }
+        }
+      }
+      last[p] = t;
+      rows.push({ p: p, hit: hit, victim: victim, fr: fr.slice() });
+    });
+    return { faults: faults, rows: rows };
+  }
+  window.__vmcRun = run;
+  var sEl = document.getElementById('repl-s'), fEl = document.getElementById('repl-f');
+  var ac = document.getElementById('repl-alg');
+  ALGS.forEach(function (a) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (a === alg ? ' on' : ''); b.textContent = a;
+    b.onclick = function () { alg = a; [].forEach.call(ac.children, function (c) { c.classList.toggle('on', c.textContent === a); }); draw(); };
+    ac.appendChild(b);
+  });
+  function parse() { return sEl.value.trim().split(/[\s,]+/).filter(Boolean).map(Number).filter(function (x) { return !isNaN(x); }); }
+  function draw() {
+    var S = parse(), F = Math.max(1, Math.min(8, +fEl.value || 3));
+    var r = run(S, F, alg);
+    var h = '<div class="tbl vmc-repl"><table><tr><th>גישה</th>' + r.rows.map(function (x) { return '<th class="mono">' + x.p + '</th>'; }).join('') + '</tr>';
+    for (var k = 0; k < F; k++) {
+      h += '<tr><td>מסגרת ' + k + '</td>' + r.rows.map(function (x) {
+        var v = x.fr[k]; var cls = (v === x.p && !x.hit) ? ' class="nw"' : '';
+        return '<td' + cls + '>' + (v === undefined ? '' : v) + '</td>';
+      }).join('') + '</tr>';
+    }
+    h += '<tr><td>fault?</td>' + r.rows.map(function (x) { return '<td class="' + (x.hit ? 'ok' : 'bad') + '">' + (x.hit ? '✓' : '✗') + '</td>'; }).join('') + '</tr>';
+    h += '<tr><td>פונה</td>' + r.rows.map(function (x) { return '<td class="muted">' + (x.victim === null ? '' : x.victim) + '</td>'; }).join('') + '</tr></table></div>';
+    document.getElementById('repl-out').innerHTML = h;
+    document.getElementById('repl-sum').innerHTML = ALGS.map(function (a) { return '<span' + (a === alg ? ' class="cur"' : '') + '><bdi dir="ltr">' + a + '</bdi>: ' + run(S, F, a).faults + '</span>'; }).join(' · ') + ' <bdi dir="ltr">page faults</bdi> (מתוך ' + S.length + ' גישות)';
+  }
+  sEl.addEventListener('input', draw); fEl.addEventListener('input', draw); draw();
+
+  /* ---------- practice generator ---------- */
+  var U = function (b) { var u = [['TB', 40], ['GB', 30], ['MB', 20], ['KB', 10]]; for (var i = 0; i < u.length; i++) if (b >= u[i][1]) return Math.pow(2, b - u[i][1]) + u[i][0]; return Math.pow(2, b) + 'B'; };
+  var R = function (a, b) { return a + Math.floor(Math.random() * (b - a + 1)); };
+  var padBytes = function (bits) { var b = Math.ceil(bits / 8), p = 1; while (p < b) p *= 2; return p; };
+  var lg = function (x) { return Math.round(Math.log2(x)); };
+  var TYPES = {
+    split: { name: 'פירוק כתובת', gen: function () {
+      var off = R(9, 14), va = R(off + 4, 40), pa = R(off + 4, 40);
+      return { off: off, va: va, pa: pa,
+        q: 'זיכרון וירטואלי של <b>' + U(va) + '</b>, דף של <b>' + U(off) + '</b>, וזיכרון פיזי של <b>' + U(pa) + '</b>.',
+        f: [['offset', 'ביטי היסט', off], ['vpn', 'ביטי VPN', va - off], ['pfn', 'ביטי PFN', pa - off], ['pages', 'מספר דפים (חזקה של 2: כתבו את המעריך)', va - off], ['frames', 'מספר מסגרות (המעריך)', pa - off]],
+        s: ['גדלים לחזקות: ' + U(va) + ' = 2^' + va + ', ' + U(off) + ' = 2^' + off + ', ' + U(pa) + ' = 2^' + pa + '.',
+            'היסט = log2(דף) = ' + off + '.', 'VPN = ' + va + ' − ' + off + ' = ' + (va - off) + ' → 2^' + (va - off) + ' דפים.',
+            'PFN = ' + pa + ' − ' + off + ' = ' + (pa - off) + ' → 2^' + (pa - off) + ' מסגרות.'] };
+    } },
+    linear: { name: 'גודל טבלה לינארית', gen: function () {
+      var off = R(10, 14), va = R(off + 8, 40), pa = R(off + 6, 40), st = R(1, 8);
+      var pfn = pa - off, bits = pfn + st, pte = padBytes(bits), vpn = va - off, tb = vpn + lg(pte);
+      return { q: 'כתובת וירטואלית של <b>' + va + ' ביט</b>, דף של <b>' + U(off) + '</b>, זיכרון פיזי של <b>' + U(pa) + '</b>, ו-<b>' + st + '</b> ביטי סטטוס בכל רשומה. ריפוד לחזקה של 2 בבתים.',
+        f: [['pfn', 'ביטי PFN', pfn], ['pte', 'גודל PTE בבתים', pte], ['tbl', 'גודל הטבלה: המעריך של 2 (בבתים)', tb]],
+        s: ['היסט = ' + off + ', ולכן PFN = ' + pa + ' − ' + off + ' = ' + pfn + '.', 'PTE = ' + pfn + ' + ' + st + ' = ' + bits + ' ביט → ' + Math.ceil(bits / 8) + ' בתים לפחות → מרופד ל-' + pte + ' בתים.',
+            'VPN = ' + va + ' − ' + off + ' = ' + vpn + ' → 2^' + vpn + ' רשומות.', 'גודל = 2^' + vpn + ' × 2^' + lg(pte) + ' = 2^' + tb + ' = ' + U(tb) + '.'] };
+    } },
+    levels: { name: 'כמה רמות', gen: function () {
+      var off = [10, 11, 12, 13, 14][R(0, 4)], pte = [2, 4, 8][R(0, 2)], va = R(off + 10, 64);
+      var k = off - lg(pte), vpn = va - off, lv = Math.ceil(vpn / k), top = vpn - (lv - 1) * k;
+      return { q: 'כתובת וירטואלית של <b>' + va + ' ביט</b>, דף של <b>' + U(off) + '</b>, ו-PTE של <b>' + pte + ' בתים</b>. כל חלק של הטבלה תופס דף אחד בדיוק.',
+        f: [['k', 'ביטים לרמה (log2 של מספר הרשומות בדף)', k], ['lv', 'מספר רמות', lv], ['top', 'ביטים לרמה העליונה', top]],
+        s: ['רשומות בדף: 2^' + off + ' / 2^' + lg(pte) + ' = 2^' + k + ' → כל רמה ' + k + ' ביטים.', 'VPN = ' + va + ' − ' + off + ' = ' + vpn + '.',
+            'רמות = ⌈' + vpn + ' / ' + k + '⌉ = ' + lv + '.', 'הרמה העליונה מקבלת את השארית: ' + vpn + ' − ' + (lv - 1) + ' × ' + k + ' = ' + top + ' ביטים.'] };
+    } },
+    hex: { name: 'תרגום בהקסה', gen: function () {
+      var map = {}, used = [];
+      for (var i = 0; i < 4; i++) { var v; do { v = R(0, 15); } while (used.indexOf(v) >= 0); used.push(v); map[v] = R(1, 0xFFF); }
+      var vpn = used[R(0, 3)], off = R(0, 0xFFF);
+      var hx = function (n, d) { var s = n.toString(16).toUpperCase(); while (s.length < d) s = '0' + s; return s; };
+      var va = '0x' + hx(vpn, 5) + hx(off, 3), pa = '0x' + (map[vpn].toString(16).toUpperCase()) + hx(off, 3);
+      return { q: 'כתובות של 32 ביט, דף של <b>4KB</b>. בטבלה: ' + used.map(function (v) { return 'דף ' + v + ' ← מסגרת <code>0x' + map[v].toString(16).toUpperCase() + '</code>'; }).join(', ') + '. מה הכתובת הפיזית של <code>' + va + '</code>?',
+        f: [['vpn', 'VPN (בעשרוני)', vpn], ['pa', 'כתובת פיזית (בהקסה, עם 0x)', pa]],
+        s: ['דף של 4KB → היסט של 12 ביט = 3 הספרות האחרונות: <code>' + hx(off, 3) + '</code>.', 'הספרות שלפניהן: <code>0x' + hx(vpn, 5) + '</code> = דף ' + vpn + '.',
+            'דף ' + vpn + ' ממופה למסגרת <code>0x' + map[vpn].toString(16).toUpperCase() + '</code>.', 'כתובת פיזית = מסגרת ואחריה ההיסט: <code>' + pa + '</code>.'] };
+    } }
+  };
+  var type = 'split', cur = null;
+  var tc = document.getElementById('prac-type');
+  Object.keys(TYPES).forEach(function (t) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (t === type ? ' on' : ''); b.textContent = TYPES[t].name;
+    b.onclick = function () { type = t; [].forEach.call(tc.children, function (c) { c.classList.toggle('on', c === b); }); fresh(); };
+    tc.appendChild(b);
+  });
+  function fresh() {
+    cur = TYPES[type].gen();
+    document.getElementById('prac-q').innerHTML = cur.q;
+    document.getElementById('prac-fields').innerHTML = cur.f.map(function (f) { return '<label><span>' + f[1] + '</span><input dir="ltr" data-k="' + f[0] + '" autocomplete="off"><i></i></label>'; }).join('');
+    document.getElementById('prac-out').innerHTML = '';
+  }
+  function norm(v) { return String(v).trim().toUpperCase().replace(/^0X0*/, '0X').replace(/\s/g, ''); }
+  document.getElementById('prac-check').onclick = function () {
+    var ok = 0;
+    cur.f.forEach(function (f) {
+      var inp = document.querySelector('#prac-fields input[data-k="' + f[0] + '"]'), mark = inp.nextElementSibling;
+      var good = norm(inp.value) === norm(f[2]);
+      mark.textContent = inp.value === '' ? '' : (good ? '✓' : '✗'); mark.className = good ? 'ok' : 'bad'; if (good) ok++;
+    });
+    document.getElementById('prac-out').textContent = ok + ' מתוך ' + cur.f.length + ' נכונות';
+  };
+  document.getElementById('prac-sol').onclick = function () {
+    document.getElementById('prac-out').innerHTML = '<ol>' + cur.s.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol><p>התשובות: ' + cur.f.map(function (f) { return f[1] + ' = <b dir="ltr">' + f[2] + '</b>'; }).join(' · ') + '</p>';
+  };
+  document.getElementById('prac-new').onclick = fresh;
+  window.__vmcTypes = TYPES;
+  fresh();
+})();
+</script>
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script>
+try { hljs.highlightAll(); } catch (e) {}
+
+/* ---------- scheduler core ---------- */
+function simulate(jobs, alg, q) {
+  jobs = jobs.map((j, i) => ({ name: j.name, arr: +j.arr, burst: +j.burst, idx: i, rem: +j.burst, first: null, done: null }));
+  const seg = []; let t = 0;
+  const push = (name, s, e) => { if (e <= s) return; const l = seg[seg.length - 1]; if (l && l.name === name && l.e === s) l.e = e; else seg.push({ name, s, e }); };
+  const byArr = (a, b) => a.arr - b.arr || a.idx - b.idx;
+  const left = () => jobs.some(j => j.rem > 0);
+  if (alg === 'FCFS' || alg === 'SJF') {
+    while (left()) {
+      const ready = jobs.filter(j => j.rem > 0 && j.arr <= t);
+      if (!ready.length) { const nx = Math.min(...jobs.filter(j => j.rem > 0).map(j => j.arr)); push('idle', t, nx); t = nx; continue; }
+      ready.sort(alg === 'SJF' ? (a, b) => a.burst - b.burst || byArr(a, b) : byArr);
+      const j = ready[0]; j.first = t; push(j.name, t, t + j.rem); t += j.rem; j.rem = 0; j.done = t;
+    }
+  } else if (alg === 'SRTF') {
+    while (left()) {
+      const ready = jobs.filter(j => j.rem > 0 && j.arr <= t);
+      if (!ready.length) { const nx = Math.min(...jobs.filter(j => j.rem > 0).map(j => j.arr)); push('idle', t, nx); t = nx; continue; }
+      ready.sort((a, b) => a.rem - b.rem || byArr(a, b));
+      const j = ready[0]; if (j.first === null) j.first = t;
+      const nextArr = Math.min(Infinity, ...jobs.filter(x => x.rem > 0 && x.arr > t).map(x => x.arr));
+      const run = Math.min(j.rem, nextArr - t);
+      push(j.name, t, t + run); t += run; j.rem -= run; if (!j.rem) j.done = t;
+    }
+  } else { // RR
+    q = Math.max(1, +q || 1);
+    const pending = jobs.slice().sort(byArr); const queue = [];
+    const admit = (upto) => { while (pending.length && pending[0].arr <= upto) queue.push(pending.shift()); };
+    admit(t);
+    while (queue.length || pending.length) {
+      if (!queue.length) { const nx = pending[0].arr; push('idle', t, nx); t = nx; admit(t); continue; }
+      const j = queue.shift(); if (j.first === null) j.first = t;
+      const run = Math.min(q, j.rem); push(j.name, t, t + run); t += run; j.rem -= run;
+      admit(t);
+      if (j.rem > 0) queue.push(j); else j.done = t;
+    }
+  }
+  const rows = jobs.map(j => ({ name: j.name, arr: j.arr, burst: j.burst, tat: j.done - j.arr, resp: j.first - j.arr }));
+  const avg = k => rows.reduce((s, r) => s + r[k], 0) / rows.length;
+  return { seg, rows, avgTat: avg('tat'), avgResp: avg('resp'), end: t };
+}
+
+/* ---------- rendering ---------- */
+const palette = ['var(--example)', 'var(--theory)', 'var(--exercise)', 'var(--formula)', 'var(--warn)', 'var(--summary)'];
+function colorOf(name, names) { return name === 'idle' ? 'var(--sunk)' : palette[names.indexOf(name) % palette.length]; }
+function fmt(x) { return Number.isInteger(x) ? String(x) : x.toFixed(2); }
+function gantt(res, names, title) {
+  const W = 560, L = 10, H = 34, scale = (W - 2 * L) / Math.max(1, res.end);
+  const step = res.end <= 20 ? 1 : res.end <= 40 ? 5 : res.end <= 100 ? 10 : Math.ceil(res.end / 10);
+  let s = `<svg viewBox="0 0 ${W} ${H + 40}" width="${W}" role="img" aria-label="Gantt">`;
+  res.seg.forEach(g => {
+    const x = L + g.s * scale, w = (g.e - g.s) * scale;
+    s += `<rect x="${x}" y="8" width="${w}" height="${H}" fill="${colorOf(g.name, names)}" stroke="var(--surface)" stroke-width="1"/>`;
+    if (w > 14 && g.name !== 'idle') s += `<text x="${x + w / 2}" y="${8 + H / 2 + 5}" text-anchor="middle" font-size="13" class="mono" fill="var(--surface)">${g.name}</text>`;
+  });
+  for (let v = 0; v <= res.end; v += step) {
+    const x = L + v * scale;
+    s += `<line x1="${x}" y1="${H + 8}" x2="${x}" y2="${H + 14}" stroke="var(--muted)"/><text x="${x}" y="${H + 28}" text-anchor="middle" font-size="11" class="mono" fill="var(--muted)">${v}</text>`;
+  }
+  s += '</svg>';
+  let tbl = '<div class="tbl"><table><tr><th>עבודה</th><th>הגעה</th><th>אורך</th><th>Turnaround</th><th>Response</th></tr>';
+  res.rows.forEach(r => tbl += `<tr><td class="mono">${r.name}</td><td class="num">${r.arr}</td><td class="num">${r.burst}</td><td class="num">${r.tat}</td><td class="num">${r.resp}</td></tr>`);
+  tbl += `<tr><th>ממוצע</th><td></td><td></td><td class="num">${fmt(res.avgTat)}</td><td class="num">${fmt(res.avgResp)}</td></tr></table></div>`;
+  return `<figure>${title ? `<figcaption style="margin:0 0 6px">${title}</figcaption>` : ''}${s}${tbl}</figure>`;
+}
+
+const presets = [
+  { label: 'FCFS · 10/10/10', alg: 'FCFS', jobs: [['A', 0, 10], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'FCFS · A=60', alg: 'FCFS', jobs: [['A', 0, 60], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'SJF · A=60', alg: 'SJF', jobs: [['A', 0, 60], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'SJF · B,C at t=10', alg: 'SJF', jobs: [['A', 0, 60], ['B', 10, 10], ['C', 10, 10]] },
+  { label: 'SRTF · B,C at t=10', alg: 'SRTF', jobs: [['A', 0, 60], ['B', 10, 10], ['C', 10, 10]] },
+  { label: 'RR · 5/5/5, q=1', alg: 'RR', q: 1, jobs: [['A', 0, 5], ['B', 0, 5], ['C', 0, 5]] },
+];
+const toJobs = p => p.jobs.map(([name, arr, burst]) => ({ name, arr, burst }));
+
+/* lecture figures */
+(function () {
+  const box = document.getElementById('lec-gantts'); if (!box) return;
+  const L = x => '<bdi dir="ltr">' + x + '</bdi>';
+  const caps = [L('FCFS') + ': שלוש עבודות של 10, ממוצע 20', L('FCFS') + ': עבודה ' + L('A') + ' הארוכה ראשונה, ממוצע 70', L('SJF') + ': אותן עבודות, ממוצע 36.67', L('SJF') + ': ' + L('B') + ' ו-' + L('C') + ' מגיעות בזמן 10, ממוצע 63.33', L('SRTF') + ': אותו מקרה, ממוצע 36.67'];
+  let html = '';
+  presets.slice(0, 5).forEach((p, i) => { const j = toJobs(p); html += gantt(simulate(j, p.alg, p.q), j.map(x => x.name), caps[i]); });
+  box.innerHTML = html;
+  const rr = presets[5], rj = toJobs(rr);
+  document.getElementById('rr-gantt').innerHTML = gantt(simulate(rj, 'RR', 1), rj.map(x => x.name));
+})();
+
+/* interactive simulator */
+(function () {
+  const jobsEl = document.getElementById('jobs'), out = document.getElementById('out');
+  if (!jobsEl) return;
+  const alg = document.getElementById('alg'), q = document.getElementById('q');
+  let jobs = toJobs(presets[4]), uid = 0;
+  function renderJobs() {
+    jobsEl.innerHTML = '';
+    jobs.forEach((j, i) => {
+      const d = document.createElement('div'); d.className = 'job'; const id = 'j' + (uid++);
+      d.innerHTML = `<strong>${j.name}</strong><label for="${id}a">הגעה</label><input id="${id}a" type="number" min="0" value="${j.arr}"><label for="${id}b">אורך</label><input id="${id}b" type="number" min="1" value="${j.burst}"><button class="ghost" type="button" aria-label="הסר ${j.name}">×</button>`;
+      d.querySelector(`#${id}a`).oninput = e => { j.arr = Math.max(0, +e.target.value || 0); };
+      d.querySelector(`#${id}b`).oninput = e => { j.burst = Math.max(1, +e.target.value || 1); };
+      d.querySelector('button').onclick = () => { if (jobs.length > 1) { jobs.splice(i, 1); renderJobs(); run(); } };
+      jobsEl.appendChild(d);
+    });
+  }
+  function run() {
+    q.disabled = alg.value !== 'RR';
+    const res = simulate(jobs, alg.value, q.value);
+    out.innerHTML = gantt(res, jobs.map(j => j.name), alg.value + (alg.value === 'RR' ? ` · quantum ${q.value}` : ''));
+  }
+  document.getElementById('add').onclick = () => { if (jobs.length >= 6) return; jobs.push({ name: 'ABCDEF'[jobs.length] || 'X', arr: 0, burst: 5 }); renderJobs(); run(); };
+  document.getElementById('run').onclick = run;
+  alg.onchange = run; q.oninput = run;
+  const pc = document.getElementById('presets');
+  presets.forEach(p => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = p.label;
+    b.onclick = () => { jobs = toJobs(p); alg.value = p.alg; if (p.q) q.value = p.q; renderJobs(); run(); }; pc.appendChild(b); });
+  alg.value = 'SRTF'; renderJobs(); run();
+})();
+
+/* ================= dry-run tracer ================= */
+(function () {
+  const C = x => '<code>' + x + '</code>';
+  const E = x => '<bdi dir="ltr">' + x + '</bdi>';
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const PCOL = ['var(--example)', 'var(--theory)', 'var(--exercise)', 'var(--formula)', 'var(--warn)', 'var(--summary)'];
+  const ST = { running: 'רץ', ready: 'מוכן', blocked: 'חסום', zombie: 'זומבי', reaped: 'נאסף', kernel: 'בקרנל' };
+
+  /* ---- builder ---- */
+  function B(code) {
+    const t = { code, procs: [], out: [], steps: [] };
+    const P = pid => t.procs.find(p => p.pid === pid);
+    const api = {
+      proc(pid, ppid, line, vars, extra) { t.procs.push(Object.assign({ pid, ppid, line, vars: vars || {}, state: 'running', prog: null, buf: '' }, extra || {})); return api; },
+      fork(par, child) { const p = P(par); t.procs.push({ pid: child, ppid: par, line: p.line, vars: JSON.parse(JSON.stringify(p.vars)), state: 'ready', prog: p.prog, buf: p.buf }); return api; },
+      at(pid, line) { P(pid).line = line; return api; },
+      v(pid, k, val) { P(pid).vars[k] = val; return api; },
+      st(pid, s) { P(pid).state = s; if (s === 'reaped' || s === 'zombie') P(pid).line = null; return api; },
+      ppid(pid, pp) { P(pid).ppid = pp; return api; },
+      prog(pid, name) { P(pid).prog = name; return api; },
+      buf(pid, s) { P(pid).buf = s; return api; },
+      print(pid, text) { t.out.push({ pid, text }); return api; },
+      snap(active, note) {
+        t.steps.push({ procs: JSON.parse(JSON.stringify(t.procs)), out: t.out.slice(), active, note });
+        t.procs.forEach(p => { if (p.state === 'running' && p.pid !== active) p.state = 'ready'; });
+        return api;
+      },
+      run(pid) { t.procs.forEach(p => { if (p.state === 'running') p.state = 'ready'; }); P(pid).state = 'running'; return api; },
+      done() { return t; }
+    };
+    return api;
+  }
+
+  const KF = (par, child) => `<strong>מאחורי הקלעים:</strong> ${C('fork')} היא קריאת מערכת, ולכן ${E(par)} מבצע ${E('trap')} ועובר לקרנל. הקרנל מקצה ${E('PID')} חדש (${child}), יוצר ${E('PCB')} חדש בטבלת התהליכים ומעתיק לתוכו את מרחב הכתובות של ההורה, את האוגרים ואת הקבצים הפתוחים. בפועל ההעתקה עצלה, בשיטת ${E('copy-on-write')}. שני התהליכים נמצאים עכשיו באותה נקודה בקוד.`;
+  const RET = (par, child) => `הקרנל קובע ערך החזרה שונה לכל אחד: ההורה ${E(par)} מקבל ${child} (ה-${E('PID')} של הילד), והילד ${E(child)} מקבל 0. מכאן הם ממשיכים בנפרד, וכל אחד עובד על <strong>העותק שלו</strong> של המשתנים.`;
+
+  const traces = {};
+
+  /* 1. basic fork */
+  traces.basic = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['int main() {', '    pid_t pid1 = getpid();', '    pid_t pid2 = fork();', '    printf("%d\\n", getpid());', '    printf("%d\\n", pid1);', '    printf("%d\\n", pid2);', '}']);
+    b.proc(5, 1, 1).snap(5, `יש תהליך אחד, ${E('PID 5')}. הוא מתחיל לרוץ ב-${C('main')}.`);
+    b.at(5, 2).v(5, 'pid1', 5).snap(5, `${C('getpid()')} מחזירה 5, והערך נשמר ב-${C('pid1')}. שימו לב: זה קורה <strong>לפני</strong> ה-${C('fork')}, ולכן העותק של הילד יקבל את אותו ערך.`);
+    b.at(5, 3).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'pid2', 6).v(6, 'pid2', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 4).print(5, '5\n').snap(5, `המתזמן ממשיך להריץ את ההורה. ${C('getpid()')} מחזירה לו 5.`);
+    b.at(5, 5).print(5, '5\n').snap(5, `${C('pid1')} של ההורה הוא 5.`);
+    b.at(5, 6).print(5, '6\n').snap(5, `${C('pid2')} של ההורה הוא 6, ה-${E('PID')} של הילד.`);
+    b.at(5, 7).st(5, 'reaped').run(6).at(6, 4).print(6, '6\n').snap(6, `ההורה סיים. הילד, שהיה במצב "מוכן", מקבל עכשיו את המעבד וממשיך משורה 4 – בדיוק מאיפה ש-${C('fork')} חזר אליו. ${C('getpid()')} מחזירה לו 6.`);
+    b.ppid(6, 1).at(6, 5).print(6, '5\n').snap(6, `${C('pid1')} של הילד הוא 5: הערך הועתק מההורה. וכיוון שההורה כבר מת, הילד נעשה <strong>יתום</strong>, ולכן אומץ ע"י ${C('init')} וה-${E('PPID')} שלו הוא עכשיו 1.`);
+    b.at(6, 6).print(6, '0\n').snap(6, `${C('pid2')} של הילד הוא 0 – הערך ש-${C('fork')} החזיר לו.`);
+    b.at(6, 7).st(6, 'reaped').snap(null, `גם הילד סיים, ו-${C('init')} אוסף אותו. סדר אחר (הילד רץ ראשון, או החלפות באמצע) היה נותן סדר שורות אחר, אבל אותן שש שורות.`);
+    return b.done(); })() }];
+
+  /* 2. fork + wait, private copy */
+  traces.waitx = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int x = 0;', 'int rc = fork();', 'if (rc) {', '    wait(NULL);', '} else {', '    x += 3;', '}', 'printf("%d\\n", x);']);
+    b.proc(5, 1, 1, { x: 0 }).snap(5, `${E('PID 5')} מאתחל ${C('x = 0')}.`);
+    b.at(5, 2).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'rc', 6).v(6, 'rc', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 4).st(5, 'blocked').snap(5, `ההורה: ${C('rc')} הוא 6, כלומר "אמת", ונכנס ל-${C('if')}. ${C('wait')} היא קריאת מערכת: הקרנל בודק אם יש ילד שכבר הסתיים. אין, ולכן ההורה עובר למצב <strong>חסום</strong> ולא מקבל מעבד עד שילד יסתיים.`);
+    b.run(6).at(6, 6).v(6, 'x', 3).snap(6, `המתזמן מריץ את הילד. אצלו ${C('rc')} הוא 0, ולכן הוא ב-${C('else')} ומגדיל את ${C('x')} ל-3. זה משנה <strong>רק את העותק שלו</strong> – ה-${C('x')} של ההורה עדיין 0.`);
+    b.at(6, 8).print(6, '3\n').snap(6, `הילד מדפיס 3.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `הילד מסיים. הקרנל לא מוחק אותו מיד: הוא הופך ל<strong>זומבי</strong> (נשאר בטבלה עם סטטוס היציאה), שולח ${E('SIGCHLD')} להורה ומעיר אותו – ההורה עובר מ"חסום" ל"מוכן".`);
+    b.run(5).st(6, 'reaped').snap(5, `ה-${C('wait')} של ההורה חוזר עם 6 ו<strong>אוסף</strong> את הזומבי – הרשומה שלו נמחקת מטבלת התהליכים.`);
+    b.at(5, 8).print(5, '0\n').snap(5, `ההורה מדפיס את ה-${C('x')} שלו: 0. בזכות ה-${C('wait')} הסדר תמיד 3 ואז 0.`);
+    b.st(5, 'reaped').snap(null, `סוף.`);
+    return b.done(); })() }];
+
+  /* 3. exec */
+  traces.exec = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int rc = fork();', 'if (rc == 0) {', '    char *args[] = { "wc", "-l", "exec.c", NULL };', '    execvp(args[0], args);', '    printf("this shouldn\'t print out\\n");', '} else {', '    int rc_wait = wait(NULL);', '    printf("I am parent of %d (rc_wait:%d)\\n", rc, rc_wait);', '}']);
+    b.proc(5, 1, 1, {}, { prog: 'exec_demo' }).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'rc', 6).v(6, 'rc', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 7).st(5, 'blocked').snap(5, `ההורה נכנס ל-${C('else')} ונחסם ב-${C('wait')} עד שהילד יסתיים.`);
+    b.run(6).at(6, 3).v(6, 'args', '{wc, -l, exec.c}').snap(6, `הילד בונה את מערך הארגומנטים. האיבר הראשון הוא שם התוכנית, והמערך מסתיים ב-${C('NULL')}.`);
+    b.at(6, 4).st(6, 'kernel').snap(6, `${C('execvp')} היא קריאת מערכת. הקרנל טוען את התוכנית ${C('wc')} מהדיסק <strong>לתוך אותו תהליך.</strong> הוא זורק את ה-${E('Text')}, ה-${E('Data')}, ה-${E('Heap')} וה-${E('Stack')} של הילד, וטוען את אלה של ${C('wc')}. ה-${E('PID')}, ה-${E('PPID')} והקבצים הפתוחים לא משתנים.`);
+    b.prog(6, 'wc').at(6, null).st(6, 'running').v(6, 'args', undefined).v(6, 'rc', undefined).snap(6, `עכשיו תהליך 6 מריץ את ה-${C('main')} של ${C('wc')}. הקוד שלנו כבר לא קיים בזיכרון שלו, ולכן אין לו שורה מסומנת – ושורה 5 <strong>לעולם לא תרוץ</strong>, כי ${C('exec')} שהצליח לא חוזר.`);
+    b.print(6, '27 exec.c\n').snap(6, `${C('wc -l')} מדפיס את מספר השורות בקובץ.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `${C('wc')} מסיים, תהליך 6 הופך לזומבי וההורה מתעורר.`);
+    b.run(5).st(6, 'reaped').v(5, 'rc_wait', 6).snap(5, `${C('wait')} מחזיר 6 ואוסף את הזומבי.`);
+    b.at(5, 8).print(5, 'I am parent of 6 (rc_wait:6)\n').snap(5, `ההורה מדפיס. ${C('rc')} ו-${C('rc_wait')} שווים, כי זה אותו ילד.`);
+    b.st(5, 'reaped').snap(null, `כך בדיוק ה-${E('shell')} מריץ כל פקודה: ${C('fork')}, בילד ${C('exec')}, ובהורה ${C('wait')}.`);
+    return b.done(); })() }];
+
+  /* 4. SB20 */
+  traces.sb20 = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['int i = 0;', 'if (fork()) {', '    ++i;', '    fork();', '}', 'else if (fork())', '    ++i;', 'printf("%d", i);']);
+    b.proc(5, 1, 1, { i: 0 }).snap(5, `${C('i = 0')}.`);
+    b.at(5, 2).fork(5, 6).snap(5, `${C('fork')} ראשון: נוצר תהליך 6 עם ${C('i = 0')}. להורה הוחזר 6 (אמת), לילד 0 (שקר).`);
+    b.at(5, 3).v(5, 'i', 1).snap(5, `ההורה נכנס ל-${C('if')} ומגדיל את ה-${C('i')} שלו ל-1.`);
+    b.at(5, 4).fork(5, 7).snap(5, `${C('fork')} שני, בתוך הבלוק: נוצר 7 – עותק של 5, ולכן גם אצלו ${C('i = 1')}. ערך ההחזרה לא נשמר, אז שניהם פשוט ממשיכים.`);
+    b.at(5, 8).print(5, '1').snap(5, `5 מדלג על ה-${C('else')} ומדפיס 1.`);
+    b.st(5, 'reaped').run(7).at(7, 8).print(7, '1').snap(7, `7 מדפיס 1.`);
+    b.st(7, 'reaped').run(6).at(6, 6).fork(6, 8).snap(6, `עכשיו 6. אצלו ה-${C('fork')} הראשון החזיר 0, ולכן הוא ב-${C('else if (fork())')} – ומבצע ${C('fork')} נוסף: נוצר 8 עם ${C('i = 0')}.`);
+    b.at(6, 7).v(6, 'i', 1).snap(6, `ל-6 הוחזר 8 (אמת), ולכן הוא מגדיל את ${C('i')} ל-1.`);
+    b.at(6, 8).print(6, '1').snap(6, `6 מדפיס 1.`);
+    b.st(6, 'reaped').run(8).at(8, 8).print(8, '0').snap(8, `ל-8 הוחזר 0, אז הוא לא מגדיל, ומדפיס 0.`);
+    b.st(8, 'reaped').snap(null, `פלט: ${C('1110')}. בסדר הרצה אחר ה-0 יכול להופיע בכל מקום, אבל תמיד יהיו שלושה 1 ואפס אחד.`);
+    return b.done(); })() }];
+
+  /* 5. SA20 with three schedules */
+  function sa20(order) {
+    const b = B(['fork();', 'if (fork() == 0) {', '    printf("B");', '} else {', '    wait(NULL);', '    printf("A");', '}']);
+    b.proc(5, 1, 1).fork(5, 6).snap(5, `${C('fork')} ראשון: יש עכשיו 5 ו-6. ערך ההחזרה לא נשמר, אז שניהם ממשיכים לשורה 2.`);
+    b.at(5, 2).fork(5, 7).snap(5, `5 מבצע את ה-${C('fork')} השני ויוצר את 7. ל-7 הוחזר 0, ולכן הוא ידפיס ${C('B')}.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `5 קיבל ערך חיובי, נכנס ל-${C('else')} ונחסם ב-${C('wait')}. שימו לב: <strong>יש לו שני ילדים</strong> – 6 ו-7 – ו-${C('wait')} יחזור כשאחד מהם, לא משנה איזה, יסתיים.`);
+    b.run(6).at(6, 2).fork(6, 8).snap(6, `6 מגיע לשורה 2 ויוצר את 8, שידפיס ${C('B')}.`);
+    b.at(6, 5).st(6, 'blocked').snap(6, `6 נחסם ב-${C('wait')}. לו יש ילד אחד: 8.`);
+    if (order === 'BBAA') {
+      b.run(7).at(7, 3).print(7, 'B').snap(7, `7 מדפיס ${C('B')}.`);
+      b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים והופך לזומבי. 5 מתעורר.`);
+      b.run(8).at(8, 3).print(8, 'B').snap(8, `לפני ש-5 מספיק לרוץ, המתזמן מריץ את 8, שמדפיס ${C('B')}.`);
+      b.st(8, 'zombie').st(6, 'ready').snap(null, `8 מסיים. 6 מתעורר.`);
+      b.run(5).st(7, 'reaped').at(5, 6).print(5, 'A').snap(5, `5 רץ: ${C('wait')} אסף את 7, ו-5 מדפיס ${C('A')}.`);
+      b.st(5, 'reaped').run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'reaped').snap(null, `פלט: ${C('BBAA')} – הסדר הנפוץ.`);
+    } else if (order === 'BABA') {
+      b.run(7).at(7, 3).print(7, 'B').snap(7, `7 מדפיס ${C('B')}.`);
+      b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים והופך לזומבי. 5 מתעורר.`);
+      b.run(5).st(7, 'reaped').at(5, 6).print(5, 'A').snap(5, `הפעם 5 רץ מיד: ${C('wait')} אוסף את 7, ו-5 מדפיס ${C('A')}.`);
+      b.st(5, 'reaped').ppid(6, 1).run(8).at(8, 3).print(8, 'B').snap(8, `5 מסיים; 6 נעשה יתום ומאומץ ע"י ${C('init')}. עכשיו 8 מדפיס ${C('B')}.`);
+      b.st(8, 'zombie').run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 מתעורר, אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'reaped').snap(null, `פלט: ${C('BABA')}.`);
+    } else {
+      b.run(8).at(8, 3).print(8, 'B').snap(8, `המתזמן מריץ קודם את 8, שמדפיס ${C('B')}. 7 עדיין לא רץ בכלל.`);
+      b.st(8, 'zombie').st(6, 'ready').snap(null, `8 מסיים והופך לזומבי; 6 מתעורר.`);
+      b.run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'zombie').st(5, 'ready').snap(null, `<strong>כאן המלכודת:</strong> 6 מסיים, והוא ילד של 5. הקרנל מעיר את 5 – כי ${C('wait')} מחכה לילד <em>כלשהו</em>, ו-6 הוא ילד שהסתיים.`);
+      b.run(5).st(6, 'reaped').at(5, 6).print(5, 'A').snap(5, `${C('wait')} של 5 חוזר עם 6 (לא עם 7!), ו-5 מדפיס ${C('A')} – בזמן ש-7 עוד לא הדפיס כלום.`);
+      b.st(5, 'reaped').ppid(7, 1).run(7).at(7, 3).print(7, 'B').snap(7, `5 מסיים, 7 נעשה יתום ומאומץ ע"י ${C('init')}. רק עכשיו 7 רץ ומדפיס ${C('B')}.`);
+      b.st(7, 'reaped').snap(null, `פלט: ${C('BAAB')}. נדיר, אבל חוקי לגמרי.`);
+    }
+    return b.done();
+  }
+  traces.sa20 = () => [{ label: 'BBAA', t: sa20('BBAA') }, { label: 'BABA', t: sa20('BABA') }, { label: 'BAAB', t: sa20('BAAB') }];
+
+  /* 6. AA24 */
+  traces.aa24 = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['char *str = "hello";', 'if (fork() && fork()) {', '    wait(NULL);', '    printf("1: %s\\n", str);', '    wait(NULL);', '    printf("1: %s\\n", str);', '} else {', '    wait(NULL);', '    printf("0: %s\\n", str);', '    str = "goodbye";', '    wait(NULL);', '    printf("0: %s\\n", str);', '}']);
+    b.proc(5, 1, 1, { str: '"hello"' }).snap(5, `${C('str')} מצביע ל-${C('"hello"')}.`);
+    b.at(5, 2).fork(5, 6).snap(5, `ה-${C('fork')} השמאלי ב-${C('&&')}: נוצר 6. ל-5 הוחזר 6 (אמת), ל-6 הוחזר 0 (שקר).`);
+    b.fork(5, 7).snap(5, `כי האופרנד הראשון אמת אצל 5, הוא מחשב גם את השני: עוד ${C('fork')}, ונוצר 7. ל-5 הוחזר 7, ל-7 הוחזר 0.`);
+    b.at(5, 3).st(5, 'blocked').snap(5, `אצל 5 שני האופרנדים אמת, אז הוא ב-${C('if')}, ונחסם ב-${C('wait')} הראשון.`);
+    b.run(6).at(6, 8).snap(6, `אצל 6 האופרנד הראשון 0 (שקר), ולכן ה-${C('fork')} השני <strong>לא בוצע בכלל</strong> (קיצור של ${C('&&')}). 6 ב-${C('else')}. ל-6 אין ילדים, אז ${C('wait')} מחזיר מיד ${E('-1')} ולא חוסם.`);
+    b.at(6, 9).print(6, '0: hello\n').snap(6, `6 מדפיס.`);
+    b.at(6, 10).v(6, 'str', '"goodbye"').snap(6, `6 משנה את ה-${C('str')} <strong>שלו</strong>. ל-5 ול-7 יש עותקים משלהם, והם עדיין ${C('"hello"')}.`);
+    b.at(6, 12).print(6, '0: goodbye\n').snap(6, `עוד ${C('wait')} שחוזר מיד, והדפסה.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `6 מסיים, הופך לזומבי ומעיר את 5.`);
+    b.run(5).st(6, 'reaped').at(5, 4).print(5, '1: hello\n').snap(5, `${C('wait')} של 5 אסף את 6. 5 מדפיס את ה-${C('str')} שלו – ${C('hello')}.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `${C('wait')} השני: 7 עדיין חי, אז 5 נחסם שוב.`);
+    b.run(7).at(7, 9).print(7, '0: hello\n').snap(7, `7 (ה-${C('fork')} השני החזיר לו 0) ב-${C('else')}, ה-${C('wait')} שלו חוזר מיד, והוא מדפיס.`);
+    b.at(7, 12).v(7, 'str', '"goodbye"').print(7, '0: goodbye\n').snap(7, `7 משנה את העותק שלו ומדפיס.`);
+    b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים ומעיר את 5.`);
+    b.run(5).st(7, 'reaped').at(5, 6).print(5, '1: hello\n').snap(5, `5 אוסף את 7 ומדפיס שוב ${C('hello')}. השורה הזו תמיד אחרונה: היא באה אחרי ${C('wait')} שני, כלומר אחרי ששני הילדים סיימו.`);
+    b.st(5, 'reaped').snap(null, `סוף. שש שורות.`);
+    return b.done(); })() }];
+
+  /* 7. stdout buffer */
+  function bufTrace(unbuf) {
+    const b = B(['printf("Good afternoon");', 'fork();', 'printf(", good evening");', 'fork();', 'printf(" and good night\\n");']);
+    const W = (pid, s, line, nl) => {
+      b.at(pid, line);
+      if (unbuf) { b.print(pid, s); return; }
+      const cur = b.done().procs.find(p => p.pid === pid).buf + s;
+      if (nl) { b.print(pid, cur); b.buf(pid, ''); } else b.buf(pid, cur);
+    };
+    b.proc(5, 1, 1);
+    W(5, 'Good afternoon', 1, false);
+    b.snap(5, unbuf ? `עם ${C('setbuf(stdout, NULL)')} אין באפר: הטקסט נשלח למסך מיד.` : `${C('printf')} לא כותב למסך. הוא מעתיק את הטקסט ל<strong>באפר</strong> בתוך הזיכרון של התהליך (עמודת "באפר"). בלי ${C('\\n')} הבאפר לא נשלח.`);
+    b.at(5, 2).fork(5, 6).snap(5, unbuf ? `${C('fork')}: נוצר 6. הבאפר ריק, אז אין מה להעתיק.` : `${C('fork')} מעתיק את כל הזיכרון של 5 – <strong>כולל הבאפר</strong>. עכשיו ל-6 יש עותק של "${E('Good afternoon')}" שעוד לא הודפס.`);
+    W(5, ', good evening', 3, false); W(6, ', good evening', 3, false);
+    b.snap(5, `שניהם מוסיפים "${E(', good evening')}".`);
+    b.at(5, 4).at(6, 4).fork(5, 7).fork(6, 8).snap(5, unbuf ? `עוד ${C('fork')} בכל תהליך: 4 תהליכים, כולם עם באפר ריק.` : `עוד ${C('fork')} בכל אחד: 7 מקבל עותק של הבאפר של 5, ו-8 של 6. ארבעה תהליכים, ובכל אחד אותו משפט חלקי.`);
+    [5, 6, 7, 8].forEach(p => W(p, ' and good night\n', 5, true));
+    b.snap(null, unbuf ? `כל תהליך מדפיס את השורה האחרונה. סך הכל: ${E('Good afternoon')} פעם אחת, ${E('good evening')} פעמיים, ${E('and good night')} ארבע פעמים.` : `כל אחד מוסיף את סוף המשפט עם ${C('\\n')} – ושורה חדשה גורמת לבאפר להישלח. כל אחד מארבעת התהליכים מדפיס את <strong>כל</strong> המשפט.`);
+    [5, 6, 7, 8].forEach(p => b.st(p, 'reaped'));
+    b.snap(null, unbuf ? `לכן בקורס תמיד מניחים ${C('setbuf(stdout, NULL)')}.` : `ארבע שורות זהות. זה מה שבלבל בשקף – והסיבה שתמיד משתמשים ב-${C('setbuf')}.`);
+    return b.done();
+  }
+  traces.buf = () => [{ label: 'עם באפר (ברירת מחדל)', t: bufTrace(false) }, { label: 'עם setbuf', t: bufTrace(true) }];
+
+  /* 8. zombie */
+  traces.zombie = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int rc = fork();', 'if (rc == 0) {', '    exit(0);', '}', 'sleep(10);', 'wait(NULL);']);
+    b.proc(5, 1, 1).fork(5, 6).v(5, 'rc', 6).v(6, 'rc', 0).snap(5, `${C('fork')}: נוצר 6.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `ההורה מדלג על ה-${C('if')} ונכנס ל-${C('sleep(10)')} – חסום ל-10 שניות.`);
+    b.run(6).at(6, 3).snap(6, `הילד נכנס ל-${C('if')} וקורא ל-${C('exit(0)')}.`);
+    b.st(6, 'zombie').snap(null, `הילד סיים, אבל <strong>לא נמחק</strong>. הקרנל משחרר את הזיכרון שלו, אבל משאיר את הרשומה בטבלת התהליכים – ה-${E('PID')} וסטטוס היציאה – כי ההורה עלול לבקש אותם ב-${C('wait')}. זה זומבי. ב-${C('ps')} הוא מופיע עם מצב ${E('Z')} או ${E('&lt;defunct&gt;')}. הקרנל גם שולח ${E('SIGCHLD')} להורה, אבל ברירת המחדל היא להתעלם ממנו.`);
+    b.snap(null, `ההורה עדיין ישן. כל עוד הוא לא קורא ל-${C('wait')}, הזומבי תופס רשומה בטבלה. הורה שרץ הרבה זמן ויוצר הרבה ילדים בלי לאסוף אותם ימלא את הטבלה בזומבים.`);
+    b.run(5).at(5, 6).st(6, 'reaped').snap(5, `ההורה מתעורר וקורא ל-${C('wait')}. יש ילד זומבי, אז ${C('wait')} חוזר מיד עם 6 ו<strong>אוסף</strong> אותו: הרשומה נמחקת. פתרון בלי לחכות: handler ל-${E('SIGCHLD')} שקורא ל-${C('waitpid')} (בהמשך הפרק).`);
+    b.st(5, 'reaped').snap(null, `סוף.`);
+    return b.done(); })() }];
+
+  /* ---- renderer ---- */
+  function colorOfPid(pid, all) { return PCOL[all.indexOf(pid) % PCOL.length]; }
+  function hl(line) {
+    try { return hljs.highlight(line, { language: 'c', ignoreIllegals: true }).value; } catch (e) { return esc(line); }
+  }
+  function treeSvg(procs, all) {
+    const nodes = procs.map(p => ({ pid: p.pid, par: p.ppid, state: p.state, c: [] }));
+    const byPid = Object.fromEntries(nodes.map(n => [n.pid, n]));
+    const roots = [];
+    // draw by original parent (first ppid seen) so the tree keeps its shape after adoption
+    nodes.forEach(n => { const op = (procs.find(p => p.pid === n.pid).origPpid) ?? n.par; const pn = byPid[op]; if (pn) pn.c.push(n); else roots.push(n); });
+    let leaf = 0; const all2 = [];
+    (function lay(list, d) { list.forEach(n => { n.d = d; if (n.c.length) { lay(n.c, d + 1); n.x = (n.c[0].x + n.c[n.c.length - 1].x) / 2; } else n.x = leaf++; all2.push(n); }); })(roots, 0);
+    const dx = 62, dy = 56, W = Math.max(leaf, 1) * dx, H = (Math.max(0, ...all2.map(n => n.d)) + 1) * dy;
+    const X = n => n.x * dx + dx / 2, Y = n => n.d * dy + 24;
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="עץ תהליכים">`;
+    all2.forEach(n => n.c.forEach(k => s += `<line x1="${X(n)}" y1="${Y(n)}" x2="${X(k)}" y2="${Y(k)}" stroke="var(--line)" stroke-width="1.6"/>`));
+    all2.forEach(n => {
+      const gone = n.state === 'reaped', z = n.state === 'zombie';
+      s += `<circle cx="${X(n)}" cy="${Y(n)}" r="17" fill="${gone ? 'var(--sunk)' : 'var(--surface)'}" stroke="${colorOfPid(n.pid, all)}" stroke-width="${n.state === 'running' ? 3.5 : 2}" ${gone || z ? 'stroke-dasharray="4 3"' : ''}/>`;
+      s += `<text x="${X(n)}" y="${Y(n) + 5}" text-anchor="middle" font-size="14" class="mono" fill="${gone ? 'var(--muted)' : 'var(--fg)'}">${n.pid}</text>`;
+      if (z) s += `<text x="${X(n)}" y="${Y(n) - 21}" text-anchor="middle" font-size="10" fill="var(--warn)" class="mono">Z</text>`;
+    });
+    return s + '</svg>';
+  }
+  function render(el, variants) {
+    let vi = 0, si = 0;
+    el.innerHTML = `<div class="tr-head"><span class="tr-title">הרצה יבשה</span><span class="tr-vars"></span></div>
+      <div class="tr-body">
+        <div class="tr-vis">
+          <div class="tr-grid"><div class="tr-code"></div><div class="tr-side"><div class="tr-procs"></div><div class="tr-tree"></div></div></div>
+          <div class="tr-outwrap"><div class="tr-label">פלט על המסך</div><pre class="tr-out"></pre></div>
+          <div class="tr-ctrl"><button type="button" class="ghost tr-reset">מההתחלה</button><button type="button" class="ghost tr-prev">הקודם</button><span class="tr-count"></span><button type="button" class="tr-next">הבא</button></div>
+        </div>
+        <div class="tr-note" aria-live="polite"></div>
+      </div>`;
+    const q = c => el.querySelector(c);
+    const vars = q('.tr-vars');
+    if (variants.length > 1) variants.forEach((v, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.innerHTML = /[א-ת]/.test(v.label) ? v.label.replace(/([A-Za-z]+)/g, '<bdi dir="ltr">$1</bdi>') : `<bdi dir="ltr">${v.label}</bdi>`;
+      b.onclick = () => { vi = i; si = 0; draw(); }; vars.appendChild(b);
+    });
+    function draw() {
+      const t = variants[vi].t, step = t.steps[si];
+      // remember the first parent of each process for tree shape
+      const firstPar = {}; t.steps.forEach(s => s.procs.forEach(p => { if (!(p.pid in firstPar)) firstPar[p.pid] = p.ppid; }));
+      const all = []; t.steps.forEach(s => s.procs.forEach(p => { if (!all.includes(p.pid)) all.push(p.pid); }));
+      [...vars.children].forEach((b, i) => b.classList.toggle('on', i === vi));
+      // code with markers
+      const live = step.procs.filter(p => p.line != null && p.state !== 'reaped' && p.state !== 'zombie');
+      let ch = '<pre class="tr-pre"><code>';
+      t.code.forEach((line, i) => {
+        const here = live.filter(p => p.line === i + 1);
+        const act = here.some(p => p.pid === step.active);
+        ch += `<span class="tr-ln${act ? ' act' : ''}"><span class="tr-num">${i + 1}</span><span class="tr-src">${hl(line) || ' '}</span><span class="tr-mk">${here.map(p => `<span class="tr-pid${p.pid === step.active ? ' on' : ''}" style="--pc:${colorOfPid(p.pid, all)}">${p.pid}</span>`).join('')}</span></span>`;
+      });
+      ch += '</code></pre>';
+      q('.tr-code').innerHTML = ch;
+      // process table
+      const keys = []; step.procs.forEach(p => Object.keys(p.vars).forEach(k => { if (p.vars[k] !== undefined && !keys.includes(k)) keys.push(k); }));
+      const showBuf = t.steps.some(s => s.procs.some(p => p.buf));
+      const showProg = t.steps.some(s => s.procs.some(p => p.prog));
+      let tb = '<div class="tbl"><table class="tr-table"><tr><th>PID</th><th>PPID</th><th>מצב</th>' + (showProg ? '<th>תוכנית</th>' : '') + keys.map(k => `<th class="num">${k}</th>`).join('') + (showBuf ? '<th>באפר</th>' : '') + '</tr>';
+      step.procs.forEach(p => {
+        tb += `<tr class="st-${p.state}${p.pid === step.active ? ' act' : ''}"><td class="num"><span class="tr-dot" style="--pc:${colorOfPid(p.pid, all)}"></span>${p.pid}</td><td class="num">${p.ppid}</td><td><span class="tr-st">${ST[p.state]}</span></td>` +
+          (showProg ? `<td class="num">${p.prog || ''}</td>` : '') +
+          keys.map(k => `<td class="num">${p.vars[k] === undefined ? '—' : esc(String(p.vars[k]))}</td>`).join('') +
+          (showBuf ? `<td class="num tr-buf">${p.buf ? esc(p.buf.replace(/\n/g, '\\n')) : '∅'}</td>` : '') + '</tr>';
+      });
+      q('.tr-procs').innerHTML = tb + '</table></div>';
+      // tree
+      const tp = step.procs.map(p => Object.assign({}, p, { origPpid: firstPar[p.pid] }));
+      q('.tr-tree').innerHTML = treeSvg(tp, all);
+      // output
+      const o = q('.tr-out');
+      o.innerHTML = step.out.length ? step.out.map((x, i) => `<span class="tr-o${i === step.out.length - 1 && si > 0 && t.steps[si - 1].out.length < step.out.length ? ' new' : ''}" style="--pc:${colorOfPid(x.pid, all)}" title="PID ${x.pid}">${esc(x.text)}</span>`).join('') : '<span class="tr-empty">(עדיין ריק)</span>';
+      q('.tr-note').innerHTML = step.note;
+      q('.tr-count').textContent = `שלב ${si + 1} מתוך ${t.steps.length}`;
+      q('.tr-prev').disabled = si === 0; q('.tr-next').disabled = si === t.steps.length - 1;
+    }
+    q('.tr-next').onclick = () => { if (si < variants[vi].t.steps.length - 1) { si++; draw(); } };
+    q('.tr-prev').onclick = () => { if (si > 0) { si--; draw(); } };
+    q('.tr-reset').onclick = () => { si = 0; draw(); };
+    el.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') q('.tr-next').click(); if (e.key === 'ArrowRight') q('.tr-prev').click(); });
+    draw();
+    /* lock sizes: measure every step of every variant, keep the max, so nothing moves between steps */
+    const PARTS = ['.tr-note', '.tr-code', '.tr-procs', '.tr-tree', '.tr-out'];
+    function lock() {
+      if (!el.offsetParent) return;                    // hidden (closed <details>): lock when shown
+      const box = PARTS.map(c => q(c));
+      box.forEach(b => { b.style.minHeight = ''; });
+      const max = box.map(() => 0), keepV = vi, keepS = si;
+      variants.forEach((v, i) => v.t.steps.forEach((_, j) => {
+        vi = i; si = j; draw();
+        box.forEach((b, k) => { max[k] = Math.max(max[k], b.getBoundingClientRect().height); });
+      }));
+      vi = keepV; si = keepS; draw();
+      box.forEach((b, k) => { b.style.minHeight = Math.ceil(max[k]) + 'px'; });
+    }
+    el._lock = lock;
+    lock();
+  }
+  window.__traces = traces;
+  document.querySelectorAll('.trace[data-trace]').forEach(el => {
+    const f = traces[el.dataset.trace]; if (!f) return;
+    el.tabIndex = 0; el.setAttribute('role', 'group'); el.setAttribute('aria-label', 'הרצה יבשה');
+    try { render(el, f()); } catch (e) { el.textContent = 'שגיאה בטעינת ההרצה היבשה'; console.error(e); }
+  });
+  const relock = () => document.querySelectorAll('.trace').forEach(t => t._lock && t._lock());
+  document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => { if (d.open) d.querySelectorAll('.trace').forEach(t => t._lock && t._lock()); }));
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relock, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relock);
+})();
+
+/* fork trees */
+document.querySelectorAll('.tree').forEach(el => {
+  let spec; try { spec = JSON.parse(el.dataset.tree); } catch (e) { return; }
+  const nodes = []; let leaf = 0;
+  (function lay(n, d) { n.d = d; if (n.c) { n.c.forEach(k => lay(k, d + 1)); n.x = (n.c[0].x + n.c[n.c.length - 1].x) / 2; } else n.x = leaf++; nodes.push(n); })(spec, 0);
+  const depth = Math.max(...nodes.map(n => n.d)), dx = 110, dy = 64, W = Math.max(leaf, 1) * dx, H = (depth + 1) * dy;
+  const X = n => n.x * dx + dx / 2, Y = n => n.d * dy + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="עץ תהליכים">`;
+  nodes.forEach(n => (n.c || []).forEach((k, i) => s += `<line x1="${X(n)}" y1="${Y(n)}" x2="${X(k)}" y2="${Y(k)}" stroke="${i === 0 ? 'var(--theory)' : 'var(--example)'}" stroke-width="1.6"/>`));
+  nodes.forEach(n => { s += `<rect x="${X(n) - 46}" y="${Y(n) - 14}" width="92" height="28" rx="14" fill="${n.c ? 'var(--surface)' : 'var(--sunk)'}" stroke="var(--line)"/><text x="${X(n)}" y="${Y(n) + 5}" text-anchor="middle" font-size="13" class="mono" fill="var(--fg)">${n.n}</text>`; });
+  s += '</svg>';
+  el.innerHTML = `<figure>${s}<figcaption>כחול = ענף ההורה (fork החזיר <bdi dir="ltr">&gt; 0</bdi>) · ירוק = ענף הילד (0)</figcaption></figure>`;
+});
+
+
+/* active section in sidebar (current page only) */
+(function () {
+  const links = [...document.querySelectorAll('nav.side a[data-id]')];
+  const map = new Map(links.map(a => [a.dataset.id, a]));
+  const targets = [...map.keys()].map(id => document.getElementById(id)).filter(Boolean);
+  if (!targets.length) return;
+  function upd() {
+    let cur = targets[0];
+    for (const t of targets) if (t.getBoundingClientRect().top < 120) cur = t;
+    links.forEach(a => a.classList.remove('active'));
+    const a = map.get(cur.id); if (a) a.classList.add('active');
+  }
+  addEventListener('scroll', upd, { passive: true }); upd();
+})();
+</script>
+
+<script id="gloss2">
+/* ===== glossary tooltips =====
+   Hovering (or tapping) a course term shows a short definition.
+   Only the first occurrence of each term in every section (h2) is marked, so the text stays calm.
+   One floating tip on <body> (position:fixed), clamped to the viewport. */
+(function () {
+  const DEFS = [
+    // [definition, ...term variants]   — Hebrew variants may take prefixes ו/ה/ב/ל/כ/מ/ש
+    // --- מבוא ומצבי מעבד
+    ['Central Processing Unit — המעבד: מריץ את הפקודות של התהליכים, אחת אחרי השנייה.', 'CPU'],
+    ['Random Access Memory — הזיכרון הראשי (הפיזי) של המחשב. מהיר, אבל נמחק כשהמחשב כבוי.', 'RAM'],
+    ['Input/Output — קלט ופלט: גישה לדיסק, למקלדת, לרשת וכו׳. איטי מאוד ביחס למעבד.', 'I/O'],
+    ['Kernel — הגרעין של מערכת ההפעלה: רץ ב-kernel mode ומנהל את החומרה, הזיכרון והתהליכים.', 'kernel', 'Kernel', 'קרנל'],
+    ['מצב מעבד עם הרשאות מלאות: אפשר לגשת לחומרה ולבצע פקודות מוגנות. רק הקרנל רץ בו.', 'kernel mode', 'Kernel mode', 'Kernel Mode'],
+    ['מצב מעבד מוגבל: אין גישה ישירה לחומרה. פעולה רגישה דורשת קריאת מערכת.', 'user mode', 'User mode', 'User Mode'],
+    ['קריאת מערכת — בקשה של תהליך מהקרנל לבצע פעולה מוגנת (למשל read או fork). המעבר לקרנל נעשה בפקודת trap.', 'system call', 'syscall', 'System call', 'קריאת מערכת', 'קריאות מערכת', 'קריאות המערכת'],
+    ['פקודה שמעבירה את המעבד ל-kernel mode וקופצת לקוד קרנל שנקבע מראש (לפי טבלת ה-trap). כך מתבצעת קריאת מערכת.', 'trap', 'Trap'],
+    ['החזרה מהקרנל לתהליך: משחזרת את הרגיסטרים ומחזירה את המעבד ל-user mode.', 'return-from-trap'],
+    ['פסיקה — אות מהחומרה (טיימר, דיסק, מקלדת) שעוצר את מה שרץ ומעביר את השליטה לקרנל.', 'interrupt', 'Interrupt', 'פסיקה', 'פסיקות', 'פסיקת טיימר'],
+    ['התהליך רץ ישירות על המעבד (מהיר), אבל עם שתי הגבלות: user mode, ופסיקת טיימר שמחזירה את השליטה לקרנל.', 'Limited Direct Execution'],
+    ['החלפת הקשר — שמירת המצב של התהליך הנוכחי (רגיסטרים) ב-PCB שלו, וטעינת המצב של תהליך אחר כדי להריץ אותו.', 'context switch', 'Context Switch', 'Context switch', 'החלפת הקשר', 'החלפות הקשר'],
+    // --- תהליכים
+    ['תהליך — תוכנית בזמן ריצה: עם מרחב כתובות, רגיסטרים וקבצים פתוחים משלו.', 'Process'],
+    ['Process Control Block — המבנה שבו הקרנל שומר את כל המידע על תהליך: מצב, PID, רגיסטרים שמורים, קבצים פתוחים.', 'PCB'],
+    ['Process ID — מספר מזהה ייחודי של תהליך.', 'PID'],
+    ['יוצר תהליך בן שהוא העתק של ההורה. מחזיר 0 לבן ואת ה-PID של הבן להורה; בכישלון מחזיר מספר שלילי.', 'fork', 'fork()'],
+    ['מחליף את התוכנית שרצה בתהליך בתוכנית חדשה. ה-PID נשאר. אם הצליח – לא חוזר.', 'exec', 'execvp', 'exec()', 'execvp()'],
+    ['ההורה מחכה שבן יסתיים ואוסף את סטטוס היציאה שלו (כך הבן לא נשאר זומבי). אם אין בנים – מחזיר מיד מספר שלילי.', 'wait', 'waitpid', 'wait()', 'waitpid()'],
+    ['מסיים את התהליך עם קוד יציאה, שההורה יכול לקבל ב-wait.', 'exit', 'exit()'],
+    ['זומבי — תהליך שהסתיים, אבל ההורה עוד לא אסף אותו ב-wait. נשארת ממנו רק רשומה בטבלת התהליכים.', 'zombie', 'Zombie', 'זומבי', 'זומבים'],
+    ['יתום — תהליך שההורה שלו הסתיים לפניו. init מאמץ אותו, ויאסוף אותו כשיסתיים.', 'orphan', 'יתום', 'יתומים'],
+    ['התהליך הראשון במערכת (PID 1). מאמץ יתומים ואוסף אותם.', 'init'],
+    ['תהליך שרץ ברקע, בלי טרמינל, ומספק שירות (למשל שרת).', 'daemon'],
+    ['תוכנית שקוראת פקודות מהמשתמש ומריצה אותן – בעזרת fork, exec ו-wait.', 'shell', 'Shell'],
+    ['מצב של תהליך: מוכן לרוץ, ומחכה שהמתזמן ייתן לו את המעבד.', 'Ready'],
+    ['מצב של תהליך: רץ עכשיו על המעבד.', 'Running'],
+    ['מצב של תהליך: מחכה לאירוע (למשל סיום I/O) ולא יכול לרוץ עד שיקרה.', 'Blocked'],
+    // --- תזמון
+    ['מתזמן — החלק בקרנל שמחליט איזה תהליך ירוץ עכשיו על המעבד.', 'scheduler', 'מתזמן', 'המתזמן'],
+    ['First In First Out — מי שהגיע ראשון מטופל ראשון. בתזמון: לפי סדר ההגעה, כל עבודה עד הסוף. בהחלפת דפים: מפנים את הדף שנטען הכי מוקדם.', 'FIFO'],
+    ['First Come First Served — שם נוסף ל-FIFO בתזמון: מריצים לפי סדר ההגעה, כל עבודה עד הסוף.', 'FCFS'],
+    ['Shortest Job First — מריצים קודם את העבודה הקצרה ביותר מבין אלה שכבר הגיעו. לא מפקיע.', 'SJF'],
+    ['Shortest Remaining Time First — כמו SJF, אבל מפקיע: כשמגיעה עבודה שנשאר לה פחות זמן, היא מקבלת את המעבד.', 'SRTF', 'STCF'],
+    ['Round Robin — כל עבודה רצה quantum אחד ועוברת לסוף התור. זמן תגובה טוב, turnaround גרוע.', 'Round Robin', 'RR'],
+    ['Multi-Level Feedback Queue — כמה תורים בעדיפויות שונות. עבודה שמנצלת quantum שלם יורדת בעדיפות, וכל פרק זמן מעלים את כולן למעלה (boost) כדי למנוע הרעבה.', 'MLFQ'],
+    ['פרק הזמן שתהליך רץ לפני שהמתזמן מחליף אותו (ב-RR וב-MLFQ). נקרא גם time slice.', 'quantum', 'time slice', 'קוונטום'],
+    ['הזמן מהגעת העבודה ועד שהיא מסתיימת: T_completion − T_arrival.', 'Turnaround', 'turnaround'],
+    ['הזמן מהגעת העבודה ועד שהיא רצה בפעם הראשונה: T_firstrun − T_arrival.', 'Response', 'response time'],
+    ['מפקיע — אלגוריתם שיכול לעצור עבודה באמצע ולתת את המעבד לעבודה אחרת.', 'preemptive', 'מפקיע'],
+    ['הרעבה — עבודה שמחכה בלי סוף, כי תמיד יש עבודה אחרת שקודמת לה.', 'starvation', 'הרעבה'],
+    ['תרשים זמנים: איזו עבודה רצה על המעבד בכל רגע.', 'Gantt'],
+    // --- סיגנלים
+    ['סיגנל — הודעה אסינכרונית לתהליך על אירוע. התהליך מגיב לפי ה-handler שרשם, או לפי ברירת המחדל.', 'signal', 'סיגנל', 'סיגנלים'],
+    ['פונקציה שהתהליך רושם (ב-signal או ב-sigaction) כדי לטפל בסיגנל מסוים.', 'handler'],
+    ['נשלח להורה כשבן שלו מסתיים (או נעצר). ברירת המחדל: התעלמות.', 'SIGCHLD'],
+    ['הורג את התהליך מיד. אי אפשר לתפוס, לחסום או להתעלם ממנו.', 'SIGKILL'],
+    ['נשלח כשלוחצים Ctrl+C בטרמינל. ברירת המחדל: סיום התהליך.', 'SIGINT'],
+    ['משהה את התהליך (עד SIGCONT). אי אפשר לתפוס או להתעלם ממנו.', 'SIGSTOP'],
+    ['קריאת מערכת שרושמת handler לסיגנל, עם שליטה מלאה (מסכה ודגלים).', 'sigaction'],
+    ['שליחת סיגנל לתהליך – לא בהכרח כדי להרוג אותו.', 'kill'],
+    // --- הפניות וצינורות
+    ['File Descriptor — מספר שמייצג קובץ פתוח בתהליך: אינדקס בטבלת הקבצים הפתוחים שלו. 0 = stdin, 1 = stdout, 2 = stderr.', 'fd', 'FD', 'file descriptor', 'descriptors'],
+    ['קלט סטנדרטי – fd 0. כברירת מחדל: המקלדת.', 'stdin'],
+    ['פלט סטנדרטי – fd 1. כברירת מחדל: הטרמינל.', 'stdout'],
+    ['פלט שגיאות – fd 2. כברירת מחדל: הטרמינל. בלי חוצץ.', 'stderr'],
+    ['dup2(oldfd, newfd) — סוגר את newfd (אם פתוח) וגורם לו להצביע לאותו קובץ כמו oldfd. כך עושים הפניה.', 'dup2', 'dup2()'],
+    ['יוצר עותק של fd, במספר הפנוי הנמוך ביותר.', 'dup', 'dup()'],
+    ['צינור — ערוץ חד-כיווני בין תהליכים, עם fd לקריאה ו-fd לכתיבה. read חוסם כשאין נתונים, ומחזיר 0 (EOF) רק כשכל צדי הכתיבה סגורים.', 'pipe', 'pipe()', 'צינור', 'צינורות'],
+    ['End Of File — read מחזיר 0: אין יותר מה לקרוא.', 'EOF'],
+    ['חוצץ — printf כותב קודם לחוצץ בזיכרון של התהליך. לטרמינל הוא נשפך בכל ירידת שורה; לקובץ או ל-pipe רק כשהוא מתמלא. fork משכפל גם את החוצץ.', 'buffer', 'חוצץ'],
+    ['קובע איך יעבוד החוצץ של stream. setbuf(stdout, NULL) מבטל אותו – כל printf נכתב מיד.', 'setbuf'],
+    ['מזיז את מיקום הקריאה/הכתיבה בקובץ פתוח.', 'lseek'],
+    // --- זיכרון וירטואלי
+    ['זיכרון וירטואלי — לכל תהליך נראה שיש לו מרחב כתובות פרטי ורציף משלו; החומרה והקרנל מתרגמים כל כתובת וירטואלית לפיזית.', 'VM', 'virtual memory', 'זיכרון וירטואלי'],
+    ['מרחב כתובות — כל הכתובות שתהליך רואה: קוד, נתונים, ערימה ומחסנית.', 'address space', 'מרחב כתובות', 'מרחב הכתובות'],
+    ['Memory Management Unit — רכיב חומרה שמתרגם כל כתובת וירטואלית לכתובת פיזית.', 'MMU'],
+    ['לכל תהליך רגיסטר base שמוסיפים לכל כתובת, ורגיסטר bounds שבודק שהכתובת בתחום.', 'Base and Bounds'],
+    ['חלוקת מרחב הכתובות לסגמנטים (קוד, ערימה, מחסנית), לכל אחד base ו-bounds משלו.', 'Segmentation', 'סגמנטציה'],
+    ['מקום פנוי שמפוזר בחורים קטנים בין הקצאות: בסך הכל יש מספיק, אבל אין רצף גדול מספיק.', 'External fragmentation', 'external fragmentation'],
+    ['מקום מבוזבז בתוך יחידה שהוקצתה (למשל סוף דף שלא נוצל).', 'Internal fragmentation', 'internal fragmentation'],
+    ['חלוקת הזיכרון הווירטואלי לדפים בגודל קבוע, והפיזי למסגרות באותו גודל. כל דף יכול לשבת בכל מסגרת.', 'Paging'],
+    ['דף — יחידה בגודל קבוע של הזיכרון הווירטואלי.', 'page', 'Page'],
+    ['מסגרת — יחידה של הזיכרון הפיזי, בגודל של דף.', 'frame', 'frames', 'מסגרת', 'מסגרות'],
+    ['טבלת דפים — טבלה (לכל תהליך) שממפה כל מספר דף וירטואלי (VPN) למספר מסגרת (PFN).', 'page table', 'Page table', 'טבלת דפים', 'טבלת הדפים', 'טבלאות דפים'],
+    ['Page Table Entry — כניסה בטבלת הדפים: ה-PFN, וביטים כמו valid, present, dirty והרשאות.', 'PTE'],
+    ['Virtual Page Number — הביטים העליונים של הכתובת הווירטואלית: מספר הדף.', 'VPN'],
+    ['Physical Frame Number — מספר המסגרת בזיכרון הפיזי.', 'PFN'],
+    ['היסט — הביטים התחתונים של הכתובת: המיקום בתוך הדף. לא משתנה בתרגום.', 'offset', 'היסט'],
+    ['האם הדף שייך בכלל למרחב הכתובות של התהליך. גישה לדף לא valid – segmentation fault.', 'valid'],
+    ['האם הדף נמצא עכשיו בזיכרון הפיזי (ולא ב-swap). גישה לדף לא present – page fault.', 'Present', 'present'],
+    ['האם הדף שונה מאז שנטען. דף dirty צריך לכתוב לדיסק לפני שמפנים אותו.', 'Dirty', 'dirty'],
+    ['Translation Lookaside Buffer — מטמון חומרה קטן של תרגומים אחרונים (VPN ← PFN). חוסך גישה לטבלת הדפים.', 'TLB'],
+    ['Address Space ID — מזהה תהליך בכל כניסה ב-TLB, כדי שלא צריך לרוקן את ה-TLB בכל החלפת הקשר.', 'ASID'],
+    ['הרמה העליונה בטבלה היררכית: מצביעה לדפים של טבלת הדפים. מקצים רק דפי טבלה שבשימוש.', 'Page Directory', 'PD'],
+    ['Page Directory Entry — כניסה ב-page directory: מצביעה לדף אחד של טבלת הדפים.', 'PDE'],
+    ['גישה לדף שלא נמצא בזיכרון (present = 0). הקרנל מביא אותו מה-swap, ואז מריץ שוב את הפקודה.', 'Page Fault', 'page fault', 'page faults'],
+    ['אזור בדיסק שאליו מפנים דפים כשאין מקום בזיכרון הפיזי.', 'swap', 'Swap', 'Swapping', 'swapping'],
+    ['האלגוריתם האופטימלי: מפנה את הדף שישמש הכי רחוק בעתיד. אי אפשר לממש אותו – משמש להשוואה.', 'OPT'],
+    ['Least Recently Used — מפנה את הדף שלא השתמשו בו הכי הרבה זמן.', 'LRU'],
+    ['קירוב ל-LRU: מחוג עובר על הדפים במעגל. דף עם ביט שימוש 1 מקבל הזדמנות שנייה (הביט מתאפס); דף עם 0 מפונה.', 'Clock'],
+    ['אנומליית Belady — ב-FIFO, הוספת מסגרות יכולה דווקא להגדיל את מספר ה-page faults.', 'Belady'],
+    ['אחרי fork, ההורה והבן חולקים את אותן מסגרות לקריאה בלבד. רק כשאחד מהם כותב לדף – מעתיקים אותו.', 'Copy-on-Write', 'copy-on-write'],
+    ['ערימה — אזור להקצאות דינמיות (malloc). גדל לכיוון הכתובות הגבוהות – לכיוון המחסנית.', 'Heap', 'heap', 'ערימה'],
+    ['מחסנית — אזור למשתנים מקומיים ולקריאות לפונקציות. גדל לכיוון הכתובות הנמוכות – לכיוון הערימה.', 'Stack', 'stack', 'מחסנית'],
+    ['הקוד של התוכנית. לקריאה ולהרצה בלבד, ולכן אפשר לשתף אותו בין תהליכים.', 'Text'],
+    ['החלק במערכת ההפעלה שטוען את הקובץ הבינארי לזיכרון ומכין את התהליך לריצה.', 'loader'],
+    // --- סביבת העבודה
+    ['תוכנה שמריצה מכונות וירטואליות – מחשב שלם בתוך המחשב שלך.', 'VirtualBox'],
+    ['כלי שמקים מכונה וירטואלית מוגדרת מראש, מתוך קובץ הגדרות אחד.', 'Vagrant'],
+    ['משנה את ההרשאות של קובץ (קריאה, כתיבה, הרצה).', 'chmod'],
+  ];
+
+  const HEBR = /[֐-׿]/;
+  const GLOSSARY = {}, KEY = {};
+  DEFS.forEach((row, k) => { for (let i = 1; i < row.length; i++) { GLOSSARY[row[i]] = row[0]; KEY[row[i]] = k; } });
+  const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const EN = Object.keys(GLOSSARY).filter(t => !HEBR.test(t)).sort((a, b) => b.length - a.length);
+  const HE = Object.keys(GLOSSARY).filter(t => HEBR.test(t)).sort((a, b) => b.length - a.length);
+  // English: whole word. Hebrew: optional one/two-letter prefix (ו ה ב ל כ מ ש) kept outside the mark.
+  const RE = new RegExp('(?<![A-Za-z0-9_])(' + EN.map(esc).join('|') + ')(?![A-Za-z0-9_])' +
+                        '|(?<![א-ת])([ובלכמהש]{0,2})(' + HE.map(esc).join('|') + ')(?![א-ת])', 'g');
+
+  const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'PRE', 'TEXTAREA', 'A', 'BUTTON', 'H1', 'H2', 'H3', 'NAV', 'SVG', 'INPUT', 'SELECT', 'LABEL', 'OPTION', 'TH']);
+  function skipped(el) {
+    for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+      if (SKIP_TAGS.has(n.tagName.toUpperCase())) return true;
+      if (n.classList && (n.classList.contains('gloss') || n.classList.contains('box-title') || n.classList.contains('pager') || n.classList.contains('sim') || n.classList.contains('drill'))) return true;
+    }
+    return false;
+  }
+
+  let tip = null, arrow = null, current = null, pinned = false;
+  function ensureTip() {
+    if (tip) return;
+    tip = document.createElement('div'); tip.id = 'gloss-tip'; tip.setAttribute('role', 'tooltip');
+    arrow = document.createElement('div'); arrow.className = 'arrow';
+    tip.appendChild(arrow); document.body.appendChild(tip);
+  }
+  function setContent(span) {
+    while (tip.childNodes.length > 1) tip.removeChild(tip.firstChild);
+    const text = span.getAttribute('data-tip') || '';
+    const head = document.createElement('b'); head.textContent = span.getAttribute('data-term');
+    head.dir = HEBR.test(head.textContent) ? 'rtl' : 'ltr';
+    const sep = text.indexOf(' — ');
+    const body = document.createElement('span');
+    if (sep > 0 && !HEBR.test(text.slice(0, sep))) {
+      const bdi = document.createElement('bdi'); bdi.dir = 'ltr'; bdi.textContent = text.slice(0, sep);
+      body.appendChild(bdi); body.appendChild(document.createTextNode(text.slice(sep)));
+    } else body.textContent = sep > 0 ? text.slice(sep + 3) : text;   // a Hebrew name before the dash repeats the heading
+    tip.insertBefore(body, tip.firstChild); tip.insertBefore(head, tip.firstChild);
+  }
+  function show(span) {
+    ensureTip(); current = span; setContent(span);
+    tip.classList.remove('above', 'below'); tip.classList.add('show');
+    const r = span.getBoundingClientRect(), vw = window.innerWidth, margin = 8, gap = 9;
+    tip.style.maxWidth = Math.min(340, vw - 2 * margin) + 'px';
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = Math.max(margin, Math.min(r.left + r.width / 2 - tw / 2, vw - tw - margin));
+    let top = r.top - th - gap;
+    if (top < margin) { top = r.bottom + gap; tip.classList.add('below'); } else tip.classList.add('above');
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    arrow.style.left = Math.max(10, Math.min(r.left + r.width / 2 - left - 6, tw - 22)) + 'px';
+  }
+  function hide() { current = null; if (tip) tip.classList.remove('show'); }
+  function mark(el, term) {
+    el.classList.add('gloss'); el.setAttribute('data-tip', GLOSSARY[term]); el.setAttribute('data-term', term);
+    el.tabIndex = 0;
+  }
+
+  function run() {
+    const root = document.querySelector('main') || document.body;
+    const h2s = [...root.querySelectorAll('h2')];
+    let hi = 0, seen = new Set();
+    const section = node => { while (hi < h2s.length && (h2s[hi].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING)) { hi++; seen = new Set(); } };
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
+      acceptNode(n) {
+        if (n.nodeType === 1) return SKIP_TAGS.has(n.tagName.toUpperCase()) || skipped(n) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        return n.nodeValue && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }
+    });
+    const jobs = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      section(n);
+      if (n.nodeType === 1) {
+        // <code>fork</code> – the whole element is a term
+        if (n.tagName === 'CODE') {
+          const t = n.textContent.trim();
+          if (GLOSSARY[t] !== undefined && !seen.has(KEY[t])) { seen.add(KEY[t]); jobs.push(['el', n, t]); }
+        }
+        continue;
+      }
+      if (n.parentElement && n.parentElement.closest('code')) continue;
+      const text = n.nodeValue, hits = [];
+      RE.lastIndex = 0; let m;
+      while ((m = RE.exec(text)) !== null) {
+        const term = m[1] || m[3], pre = m[1] ? '' : m[2];
+        if (seen.has(KEY[term])) continue;
+        seen.add(KEY[term]); hits.push([m.index + pre.length, term]);
+      }
+      if (hits.length) jobs.push(['txt', n, hits]);
+    }
+    for (const [kind, n, x] of jobs) {
+      if (kind === 'el') { mark(n, x); continue; }
+      const text = n.nodeValue, frag = document.createDocumentFragment(); let last = 0;
+      for (const [i, term] of x) {
+        if (i > last) frag.appendChild(document.createTextNode(text.slice(last, i)));
+        const s = document.createElement('span'); s.textContent = term; mark(s, term);
+        frag.appendChild(s); last = i + term.length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    }
+    document.addEventListener('mouseover', e => {
+      const g = e.target.closest && e.target.closest('.gloss');
+      if (g && g !== current) { show(g); pinned = false; } else if (!g && current && !pinned) hide();
+    });
+    document.addEventListener('click', e => {
+      const g = e.target.closest && e.target.closest('.gloss');
+      // a click pins the tip (a tap on a phone also fires mouseover first); a second click on the same term closes it
+      if (g) { if (g === current && pinned && tip.classList.contains('show')) { hide(); pinned = false; } else { show(g); pinned = true; } }
+      else { hide(); pinned = false; }
+    });
+    let pointer = false;   // keyboard focus shows the tip; a click/tap is handled by the click toggle above
+    document.addEventListener('pointerdown', () => { pointer = true; setTimeout(() => pointer = false, 400); });
+    document.addEventListener('focusin', e => { if (!pointer && e.target.classList && e.target.classList.contains('gloss')) show(e.target); });
+    document.addEventListener('focusout', hide);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+    window.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('resize', hide);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

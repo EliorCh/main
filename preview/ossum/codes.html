@@ -1,0 +1,2547 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+
+<!-- mta-theme --><link rel="stylesheet" href="/main/site-theme.css"><script src="/main/site-theme.js" data-course="os" data-fam="os" data-footer="body"></script><!-- /mta-theme -->
+</head>
+<body>
+<!doctype html>
+<html lang="he" dir="rtl">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>מעבדת קוד · מערכות הפעלה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: right-side sticky chapter rail (like a man-page index) + one reading column; boxes are color-coded by role. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --sunk:#eceff3; --fg:#1b2430; --muted:#5b6676; --line:#d6dbe2;
+  --ink:#1d5f8f;           /* course blue, from the slides */
+  --amber:#b86a00;         /* highlight / keypoint */
+  --theory:#1d5f8f; --theory-bg:#e8f1f8;
+  --formula:#6b3fa0; --formula-bg:#f1ebf8;
+  --example:#1f7a4d; --example-bg:#e7f4ed;
+  --warn:#b3261e; --warn-bg:#fbebea;
+  --exercise:#8a5a00; --exercise-bg:#fbf2df;
+  --summary:#3c4757; --summary-bg:#eef0f3;
+  --code-bg:#f2f4f7; --code-fg:#1b2430;
+  --hl-kw:#a4237a; --hl-str:#1f7a4d; --hl-num:#b86a00; --hl-com:#7a8494; --hl-fn:#1d5f8f; --hl-type:#6b3fa0;
+  --f-display:"Secular One","IBM Plex Sans Hebrew",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Hebrew",system-ui,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#171e27; --sunk:#1f2833; --fg:#e3e8ef; --muted:#9aa5b4; --line:#2c3744;
+  --ink:#6db3e6; --amber:#f0a83c;
+  --theory:#6db3e6; --theory-bg:#16283a; --formula:#b892ea; --formula-bg:#241b36;
+  --example:#5ccb93; --example-bg:#13291f; --warn:#f08079; --warn-bg:#331816;
+  --exercise:#e8b04f; --exercise-bg:#2e2412; --summary:#b6c0cd; --summary-bg:#1e2630;
+  --code-bg:#0d1218; --code-fg:#dde3ea;
+  --hl-kw:#e48ac6; --hl-str:#7fd6a6; --hl-num:#f0b45c; --hl-com:#7d8898; --hl-fn:#7cc0ef; --hl-type:#c3a3f0;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#171e27; --sunk:#1f2833; --fg:#e3e8ef; --muted:#9aa5b4; --line:#2c3744;
+  --ink:#6db3e6; --amber:#f0a83c;
+  --theory:#6db3e6; --theory-bg:#16283a; --formula:#b892ea; --formula-bg:#241b36;
+  --example:#5ccb93; --example-bg:#13291f; --warn:#f08079; --warn-bg:#331816;
+  --exercise:#e8b04f; --exercise-bg:#2e2412; --summary:#b6c0cd; --summary-bg:#1e2630;
+  --code-bg:#0d1218; --code-fg:#dde3ea;
+  --hl-kw:#e48ac6; --hl-str:#7fd6a6; --hl-num:#f0b45c; --hl-com:#7d8898; --hl-fn:#7cc0ef; --hl-type:#c3a3f0;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{direction:rtl;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16.5px;line-height:1.75;margin:0}
+.wrap{display:flex;gap:32px;max-width:1240px;margin:0 auto;padding-block:24px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.side{flex:0 0 250px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:flex-start;
+  max-height:calc(100vh - 32px);overflow-y:auto;font-size:14.5px;padding-inline-end:8px}
+nav.side .brand{font-family:var(--f-display);font-size:22px;color:var(--ink);line-height:1.3;margin-bottom:4px}
+nav.side .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+nav.side a{display:block;color:var(--fg);text-decoration:none;padding:3px 10px;border-inline-start:2px solid transparent}
+nav.side a:hover{color:var(--ink)}
+nav.side a.ch{font-weight:700;margin-top:14px}
+nav.side a.xlink{margin:26px 0 8px;border:1.5px solid var(--theory);border-radius:8px;padding:6px 10px;color:var(--theory);font-weight:600}
+nav.side a.sec{color:var(--muted);font-size:13.5px}
+nav.side a.active{border-inline-start-color:var(--ink);color:var(--ink)}
+main{flex:1;min-width:0;max-width:820px}
+main p, main li, .box-body p, .box-body li{direction:rtl;unicode-bidi:isolate;text-align:right}
+main strong, .box-body strong{margin-inline-end:.15em}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.3}
+.chapter{margin-top:56px;padding-top:8px}
+.chapter:first-of-type{margin-top:8px}
+.ch-head{border-bottom:2px solid var(--line);padding-bottom:14px;margin-bottom:8px}
+.ch-num{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+h1{font-size:34px;margin:4px 0 6px;color:var(--fg)}
+.hook{color:var(--muted);margin:0}
+h2{font-size:24px;margin:40px 0 10px;color:var(--ink)}
+h3{font-size:19px;margin:26px 0 6px}
+.t,.ltr{direction:ltr;unicode-bidi:isolate}
+code{direction:ltr;unicode-bidi:isolate}
+main :not(pre) > code{white-space:nowrap}
+svg{direction:ltr}
+code,.t{font-family:var(--f-mono);font-size:.9em}
+p code, li code, td code, .box-body code{background:var(--sunk);padding:1px 5px;border-radius:4px;direction:ltr;unicode-bidi:isolate}
+pre{direction:ltr;text-align:left;background:var(--code-bg);color:var(--code-fg);border:1px solid var(--line);
+  border-radius:8px;padding:14px 16px;overflow-x:auto;font-family:var(--f-mono);font-size:14px;line-height:1.6;margin:12px 0}
+main pre code, .box-body pre code{background:none;padding:0;font-size:inherit;border-radius:0}
+.hljs-keyword,.hljs-built_in{color:var(--hl-kw)} .hljs-string{color:var(--hl-str)} .hljs-number,.hljs-literal{color:var(--hl-num)}
+.hljs-comment{color:var(--hl-com);font-style:italic} .hljs-title,.hljs-function .hljs-title{color:var(--hl-fn)} .hljs-type,.hljs-meta{color:var(--hl-type)}
+.hljs-variable,.hljs-params{color:inherit}
+
+/* boxes */
+.box{border:1px solid var(--line);border-inline-start:4px solid var(--c);background:var(--cb);border-radius:6px;padding:12px 16px;margin:16px 0}
+.box-title{font-weight:700;color:var(--c);font-size:14px;letter-spacing:.02em;margin-bottom:4px}
+.box-body > :first-child{margin-top:0} .box-body > :last-child{margin-bottom:0}
+.theory{--c:var(--theory);--cb:var(--theory-bg)} .formula{--c:var(--formula);--cb:var(--formula-bg)}
+.example{--c:var(--example);--cb:var(--example-bg)} .warn{--c:var(--warn);--cb:var(--warn-bg)}
+.exercise{--c:var(--exercise);--cb:var(--exercise-bg)} .summary{--c:var(--summary);--cb:var(--summary-bg)}
+.keypoint{background:linear-gradient(transparent 60%, color-mix(in srgb,var(--amber) 28%, transparent) 60%);font-weight:500}
+.fline{display:block;direction:ltr;unicode-bidi:isolate;text-align:center;font-family:var(--f-mono);font-size:15px;margin:8px 0;padding:6px;background:var(--surface);border-radius:4px}
+
+/* function cards */
+.fn{border:1px solid var(--line);background:var(--surface);border-radius:8px;margin:14px 0;overflow:hidden}
+.fn-sig{direction:ltr;text-align:left;font-family:var(--f-mono);font-size:14.5px;background:var(--sunk);padding:8px 14px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+.fn-body{padding:10px 14px}
+.fn-body dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.fn-body dt{color:var(--muted);font-size:14px;font-weight:700}
+.fn-body dd{margin:0;min-width:0}
+
+/* tables */
+.tbl{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:right;vertical-align:top}
+th{background:var(--sunk);font-weight:700}
+td.mono,td.num{direction:ltr;unicode-bidi:isolate;text-align:center;font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+
+/* figures */
+figure{margin:18px 0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+figure svg{display:block;margin:0 auto;max-width:100%}
+figcaption{color:var(--muted);font-size:14px;text-align:center;margin-top:6px}
+svg text{font-family:var(--f-body)}
+svg .mono{font-family:var(--f-mono)}
+
+/* reveal */
+details.sol{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+details.sol summary{cursor:pointer;color:var(--exercise);font-weight:700;list-style:none}
+details.sol summary::before{content:"◂ ";display:inline-block;transition:transform .15s}
+details.sol[open] summary::before{transform:rotate(-90deg)}
+details.sol summary:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:18px 0}
+.sim-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+.sim label{font-size:14px;color:var(--muted)}
+.sim select,.sim input,.sim button{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.sim input[type=number]{width:64px;direction:ltr}
+.sim button{cursor:pointer;background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.sim button.ghost{background:transparent;color:var(--ink)}
+.jobs{display:flex;flex-wrap:wrap;gap:8px}
+.job{display:flex;gap:6px;align-items:center;background:var(--sunk);padding:4px 8px;border-radius:6px;font-family:var(--f-mono);font-size:13px}
+.gantt{overflow-x:auto}
+.legend{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sim .chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer}
+
+
+/* dry-run tracer */
+.trace{border:1px solid var(--line);background:var(--surface);border-radius:10px;margin:18px 0;overflow:hidden}
+.trace:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tr-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--sunk);border-bottom:1px solid var(--line)}
+.tr-title{font-family:var(--f-display);color:var(--ink);font-size:17px}
+.tr-vars{display:flex;flex-wrap:wrap;gap:6px}
+.trace .chip{font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer;font-family:var(--f-body)}
+.trace .chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tr-body{display:flex;flex-direction:column}
+.tr-vis{min-width:0}
+.tr-note{padding:12px 14px;background:var(--theory-bg);border-top:1px solid var(--line);direction:rtl;unicode-bidi:isolate;text-align:right;line-height:1.7}
+.tr-grid{display:flex;flex-wrap:wrap;gap:14px;padding:12px 14px}
+.tr-code{flex:1 1 330px;min-width:0}
+.tr-side{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.tr-pre{margin:0;padding:8px 0;font-size:13.5px;overflow-x:auto}
+.tr-pre > code{display:block;min-width:max-content}
+.tr-ln{display:flex;gap:10px;align-items:center;padding:1px 10px;min-height:1.7em}
+.tr-ln.act{background:color-mix(in srgb,var(--amber) 18%,transparent)}
+.tr-num{color:var(--muted);min-width:1.6em;text-align:right;user-select:none}
+.tr-src{flex:1;white-space:pre}
+.tr-mk{display:flex;gap:4px}
+.tr-pid{font-size:11px;font-weight:600;border:1.5px solid var(--pc);color:var(--pc);border-radius:999px;padding:0 6px;line-height:1.5;background:var(--surface)}
+.tr-pid.on{background:var(--pc);color:var(--surface)}
+.tr-table{font-size:13.5px}
+.tr-table th,.tr-table td{padding:4px 8px}
+.tr-table tr.act td{background:color-mix(in srgb,var(--amber) 14%,var(--surface))}
+.tr-table tr.st-reaped td{color:var(--muted);text-decoration:line-through}
+.tr-table tr.st-zombie .tr-st{color:var(--warn);font-weight:700}
+.tr-table tr.st-blocked .tr-st{color:var(--exercise);font-weight:700}
+.tr-table tr.st-running .tr-st,.tr-table tr.st-kernel .tr-st{color:var(--example);font-weight:700}
+.tr-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pc);margin-inline-end:6px;vertical-align:middle}
+.tr-buf{white-space:pre-wrap;font-size:12.5px;min-width:11em}
+.tr-table td.num{white-space:nowrap}
+.tr-tree{overflow-x:auto}
+.tr-tree svg{display:block;margin:0 auto}
+.tr-outwrap{padding:0 14px 10px}
+.tr-label{font-size:13px;color:var(--muted);margin-bottom:4px}
+.tr-out{margin:0;min-height:2.4em;white-space:pre-wrap}
+.tr-o{color:var(--pc);font-weight:600}
+.tr-o.new{background:color-mix(in srgb,var(--pc) 16%,transparent)}
+.tr-empty{color:var(--muted);font-family:var(--f-body);direction:rtl;unicode-bidi:isolate}
+.tr-ctrl{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);background:var(--sunk)}
+.tr-ctrl button{font:inherit;font-size:14px;padding:6px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.tr-ctrl button.ghost{background:transparent;color:var(--ink)}
+.tr-ctrl button:disabled{opacity:.4;cursor:default}
+.tr-count{font-size:13px;color:var(--muted);margin-inline:auto}
+
+@media (max-width:860px){
+  .wrap{flex-direction:column;gap:8px}
+  nav.side{position:static;max-height:none;flex:none;border-bottom:1px solid var(--line);padding-bottom:12px}
+  nav.side a.sec{display:none}
+  h1{font-size:28px}
+}
+
+/* ---- wide screens: the page widens, prose keeps its reading width, dry runs sit side by side ---- */
+@media (min-width:1400px){
+  .wrap{max-width:1700px}
+  main{max-width:none}
+  main > section > *, main .box, main details > *{max-width:820px}
+  main > section > .trace, main .box:has(.trace), main details:has(.trace) > *, main .box .trace, main > section > .sim{max-width:none}
+  main .box:has(.trace) > .box-body > :not(details):not(.trace){max-width:788px}
+  .tr-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);grid-template-areas:"vis note";align-items:stretch}
+  .tr-vis{grid-area:vis}
+  .tr-note{grid-area:note;border-top:none;border-inline-start:1px solid var(--line);font-size:16px}
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+nav.side a.brand{display:block;font-family:var(--f-display);font-size:22px;color:var(--ink);line-height:1.3;margin-bottom:4px;padding:0;border:0;text-decoration:none}
+nav.side a.ch.here{color:var(--ink);border-inline-start-color:var(--ink)}
+.pager{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:56px;padding-top:18px;border-top:2px solid var(--line)}
+.pager a{flex:1 1 220px;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:12px 16px}
+.pager a:hover{border-color:var(--ink)}
+.pager a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.pager .dir{font-size:13px;color:var(--muted)}
+.pager .nm{font-family:var(--f-display);font-size:19px;color:var(--ink)}
+.pager a.next{text-align:left}
+a.drill{display:flex;flex-direction:column;gap:2px;margin-top:48px;text-decoration:none;border:1.5px solid var(--theory);background:var(--theory-bg);border-radius:10px;padding:14px 18px}
+a.drill .dir{font-size:13px;color:var(--muted)}
+a.drill .nm{font-family:var(--f-display);font-size:19px;color:var(--theory)}
+a.drill:hover{filter:brightness(.97)}
+a.drill+.pager{margin-top:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;margin:24px 0}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(6,minmax(0,1fr))}.card{grid-column:span 2}.card:nth-child(4){grid-column:2 / span 2}}
+main bdi, .tr-note bdi{white-space:nowrap}
+.card{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card:hover{border-color:var(--ink)}
+.card:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.card .num{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.card h2{margin:0;font-size:22px;color:var(--ink)}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card ul{margin:4px 0 0;padding-inline-start:18px;font-size:14px;color:var(--fg)}
+.card .tag{font-size:12.5px;color:var(--exercise);font-weight:700;margin-top:auto;padding-top:6px}
+.hero{padding:8px 0 4px;border-bottom:2px solid var(--line)}
+.hero h1{font-size:38px;margin:4px 0 8px}
+</style>
+
+
+<style id="theme2">
+/* ===== theme v2 — warm paper, indigo rail, vivid role colours (after the comsum summary site) ===== */
+:root{
+  --bg:#fbf9f3; --surface:#fffefa; --sunk:#f3f0e8; --fg:#1c1917; --muted:#6f6863; --line:#e7e5e0;
+  --ink:#4338ca; --amber:#b45309;
+  --theory:#1d4ed8; --theory-bg:#eff6ff; --theory-edge:#bfdbfe;
+  --formula:#6d28d9; --formula-bg:#f5f3ff; --formula-edge:#ddd6fe;
+  --example:#047857; --example-bg:#ecfdf5; --example-edge:#a7f3d0;
+  --warn:#be123c; --warn-bg:#fff1f2; --warn-edge:#fecdd3;
+  --exercise:#b45309; --exercise-bg:#fef9e7; --exercise-edge:#fcd34d;
+  --summary:#334155; --summary-bg:#f1f5f9; --summary-edge:#cbd5e1;
+  --code-bg:#f5f3ee; --code-fg:#1c1917;
+  --chip-fg:#be185d; --chip-bg:#f5f5f4; --chip-edge:#e7e5e4;
+  --rail-1:#1e1b4b; --rail-2:#312e81; --rail-fg:#c7d2fe; --rail-hi:#fbbf24;
+  --shadow-sm:0 1px 2px rgba(28,25,23,.04),0 1px 3px rgba(28,25,23,.06);
+  --f-display:"Frank Ruhl Libre",Georgia,serif;
+  --f-body:"Assistant","IBM Plex Sans Hebrew",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15131d; --surface:#1c1a26; --sunk:#24212f; --fg:#ece9f4; --muted:#a29db3; --line:#34304a;
+  --ink:#a5b4fc; --amber:#fbbf24;
+  --theory:#93c5fd; --theory-bg:#16213a; --theory-edge:#2a4373;
+  --formula:#c4b5fd; --formula-bg:#221b3b; --formula-edge:#40346b;
+  --example:#6ee7b7; --example-bg:#0f2a23; --example-edge:#1f5646;
+  --warn:#fda4af; --warn-bg:#33151d; --warn-edge:#6b2535;
+  --exercise:#fcd34d; --exercise-bg:#2c230f; --exercise-edge:#5d4815;
+  --summary:#cbd5e1; --summary-bg:#1f2431; --summary-edge:#3b4357;
+  --code-bg:#100e17; --code-fg:#e6e3ee;
+  --chip-fg:#f9a8d4; --chip-bg:#2a2236; --chip-edge:#46395a;
+  --rail-1:#12102b; --rail-2:#1f1b4d; --shadow-sm:none;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#15131d; --surface:#1c1a26; --sunk:#24212f; --fg:#ece9f4; --muted:#a29db3; --line:#34304a;
+  --ink:#a5b4fc; --amber:#fbbf24;
+  --theory:#93c5fd; --theory-bg:#16213a; --theory-edge:#2a4373;
+  --formula:#c4b5fd; --formula-bg:#221b3b; --formula-edge:#40346b;
+  --example:#6ee7b7; --example-bg:#0f2a23; --example-edge:#1f5646;
+  --warn:#fda4af; --warn-bg:#33151d; --warn-edge:#6b2535;
+  --exercise:#fcd34d; --exercise-bg:#2c230f; --exercise-edge:#5d4815;
+  --summary:#cbd5e1; --summary-bg:#1f2431; --summary-edge:#3b4357;
+  --code-bg:#100e17; --code-fg:#e6e3ee;
+  --chip-fg:#f9a8d4; --chip-bg:#2a2236; --chip-edge:#46395a;
+  --rail-1:#12102b; --rail-2:#1f1b4d; --shadow-sm:none;
+  color-scheme:dark }
+body{font-size:17px;background-image:radial-gradient(circle at 20% 0%,rgba(99,102,241,.05),transparent 40%),radial-gradient(circle at 80% 100%,rgba(245,158,11,.05),transparent 40%);background-attachment:fixed}
+/* indigo side rail */
+nav.side{background:linear-gradient(180deg,var(--rail-1),var(--rail-2));color:var(--rail-fg);border-radius:16px;padding:22px 14px 18px;box-shadow:0 6px 24px rgba(30,27,75,.18);max-height:calc(100vh - 32px)}
+nav.side a{color:var(--rail-fg);border-radius:7px;border-inline-start:3px solid transparent}
+nav.side a:hover{background:rgba(255,255,255,.07);color:#fff}
+nav.side a.brand,nav.side .brand{color:#fff;font-weight:700;padding:0 10px}
+nav.side .sub{color:#a5b4fc;padding:0 10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:14px}
+nav.side a.ch{color:#e0e7ff}
+nav.side a.ch.here,nav.side a.active{color:#fff;background:rgba(255,255,255,.12);border-inline-start-color:var(--rail-hi)}
+nav.side a.sec{color:#a5b4fc}
+nav.side a.xlink{border:1.5px solid var(--rail-hi);color:var(--rail-hi);text-align:center}
+nav.side a.xlink:hover{background:var(--rail-hi);color:var(--rail-1)}
+nav.side::-webkit-scrollbar{width:6px} nav.side::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+/* headings */
+h1,h2,h3{font-family:var(--f-display);font-weight:700}
+h1{font-size:44px;letter-spacing:-.02em;line-height:1.15}
+h2{font-size:29px;color:var(--fg);position:relative;padding-inline-start:18px}
+h2::before{content:"";position:absolute;inset-inline-start:0;top:.32em;bottom:.32em;width:4px;border-radius:2px;background:var(--ink)}
+h3{font-family:var(--f-body);font-weight:700;font-size:20px}
+.ch-num{display:inline-block;font-family:var(--f-body);font-weight:700;font-size:12px;letter-spacing:.12em;color:var(--ink);background:color-mix(in srgb,var(--ink) 12%,var(--surface));padding:5px 12px;border-radius:99px}
+.ch-head{border-bottom:1px solid var(--line)}
+.hook{font-size:18.5px}
+/* role boxes: full coloured edge, tinted paper, strong title */
+.theory{--ce:var(--theory-edge)} .formula{--ce:var(--formula-edge)} .example{--ce:var(--example-edge)}
+.warn{--ce:var(--warn-edge)} .exercise{--ce:var(--exercise-edge)} .summary{--ce:var(--summary-edge)}
+.box{border:1px solid var(--ce,var(--line));border-inline-start:5px solid var(--c);border-radius:10px;box-shadow:var(--shadow-sm);padding:14px 18px}
+.box-title{font-size:15px;letter-spacing:0;font-weight:800}
+/* inline code as a coloured chip */
+:not(pre)>code{color:var(--chip-fg);background:var(--chip-bg);border:1px solid var(--chip-edge);border-radius:5px;padding:0 6px}
+/* glossary tooltips */
+.gloss{border-bottom:1.5px dashed color-mix(in srgb,var(--ink) 55%,transparent);cursor:help;text-decoration:none}
+code.gloss{border-bottom-style:dashed}
+.gloss:hover,.gloss:focus{background:color-mix(in srgb,var(--ink) 10%,transparent);outline:none;border-radius:3px}
+#gloss-tip{position:fixed;z-index:9999;max-width:340px;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:9px;font:400 13.5px/1.6 var(--f-body);direction:rtl;text-align:right;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .12s}
+#gloss-tip.show{opacity:1}
+#gloss-tip b{display:block;font-size:14px;margin-bottom:2px;color:var(--rail-hi);unicode-bidi:isolate;text-align:right}
+#gloss-tip bdi{unicode-bidi:isolate;font-weight:600}
+#gloss-tip .arrow{position:absolute;width:0;height:0;border:6px solid transparent}
+#gloss-tip.above .arrow{top:100%;border-top-color:var(--fg)}
+#gloss-tip.below .arrow{bottom:100%;border-bottom-color:var(--fg)}
+@media (max-width:860px){nav.side{border-radius:12px;max-height:none}}
+@media (max-width:600px){h1{font-size:34px} h2{font-size:24px} h1 bdi,h2 bdi,h3 bdi{white-space:normal}}
+</style>
+<style>
+.lab-intro{font-size:17px}
+.lab-bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 12px;margin:18px 0 6px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lab-bar input{flex:1 1 220px;font:inherit;font-size:15px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg)}
+.lab-bar .chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 12px;cursor:pointer}
+.lab-bar .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.lab-count{font-size:13px;color:var(--muted)}
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px 16px;margin:18px 0}
+.lab-h{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.lab-h h3{margin:0!important;padding:0!important;font-size:21px}
+.lab-tags{display:flex;gap:6px;flex-wrap:wrap}
+.lab-tag{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted);text-decoration:none;background:var(--bg)}
+a.lab-tag:hover{border-color:var(--ink);color:var(--ink)}
+.lab-tag.course{background:var(--theory-bg);border-color:transparent;color:var(--theory);font-weight:600}
+.lab-goal{margin:4px 0 12px}
+.lab-block{margin:10px 0}
+.lab-label{font-size:12.5px;font-weight:700;color:var(--muted);margin:0 2px 4px;letter-spacing:.02em}
+.lab pre{margin:0}
+pre.term{background:#1b1f24;color:#d7dde5;border:1px solid #1b1f24;direction:ltr;text-align:left}
+pre.term code{background:none;color:inherit}
+pre.term .pr{color:#f0a83c;font-weight:600;user-select:none}
+pre.term .cmd{color:#ffffff;font-weight:600}
+pre.term .cm{color:#8b98a8;font-weight:400}
+.lab-note{font-size:14px;color:var(--muted);margin:6px 2px 0}
+.lab-what{margin-top:12px}
+.lab-sub{font-weight:700;margin-bottom:4px}
+.lab-what ol{margin:0;padding-inline-start:22px}
+.lab-what li{margin:4px 0}
+.lab-take{margin-top:12px;background:var(--theory-bg);border-radius:10px;padding:10px 14px}
+.lab-take-k{display:inline-block;font-weight:700;color:var(--theory);margin-inline-end:6px}
+.lab-empty{display:none;color:var(--muted);padding:20px 0}
+</style>
+</head>
+<body>
+<div class="wrap" dir="rtl" lang="he">
+<nav class="side" aria-label="תוכן העניינים"><a class="brand" href="https://eliorch.github.io/ossum/index.html" target="_blank">מערכות הפעלה</a><a class="sec" href="#g-term">טרמינל: פקודות שצריך להכיר</a><a class="sec" href="#g-intro">פרק 1: התוכניות מההרצאה הראשונה</a><a class="sec" href="#g-proc">פרק 3: fork, wait, exec</a><a class="sec" href="#g-shell">קלט: קריאת שורות ופיצול למילים</a><a class="sec" href="#g-sig">פרק 5: באפרים, יתומים, זומבים וסיגנלים</a><a class="sec" href="#g-files">פרק 6: קבצים, הפניות וצינורות</a></nav>
+<main>
+<section class="chapter" id="lab" style="margin-top:8px">
+<div class="ch-head">
+  <div class="ch-num">Code Lab</div>
+  <h1>מעבדת קוד</h1>
+  <p class="hook">כל התוכניות והפקודות של הקורס במקום אחד: מה המטרה של כל אחת, הקוד המלא, מה רואים כשמריצים אותה, ומה קורה שם בפועל.</p>
+</div>
+<p class="lab-intro">כל פלט בעמוד הזה הוא פלט אמיתי. הרצתי את כל הדוגמאות כמשתמש <code>vagrant</code> על <bdi dir="ltr">Ubuntu</bdi> עם <bdi dir="ltr">gcc</bdi>, כמו ב-<bdi dir="ltr">VM</bdi> של הקורס. מה שישתנה אצלכם: מספרי ה-<bdi dir="ltr">PID</bdi>, התאריכים, ולפעמים הסדר של שורות מתהליכים שרצים במקביל. דוגמאות שמסומנות <span class="lab-tag course">מהקורס</span> מופיעות כמו שהן בחומרי הקורס.</p>
+<p>הדרך המומלצת: לקרוא את המטרה, לנחש מה יודפס, ורק אז להסתכל על הטרמינל.</p>
+<div class="lab-bar" role="search">
+<input type="search" id="lab-q" placeholder="חיפוש: fork, pipe, זומבי, chmod…" aria-label="חיפוש בדוגמאות">
+<button type="button" class="chip" data-g="term" aria-pressed="false">טרמינל</button><button type="button" class="chip" data-g="intro" aria-pressed="false">פרק 1</button><button type="button" class="chip" data-g="proc" aria-pressed="false">פרק 3</button><button type="button" class="chip" data-g="shell" aria-pressed="false">קלט</button><button type="button" class="chip" data-g="sig" aria-pressed="false">פרק 5</button><button type="button" class="chip" data-g="files" aria-pressed="false">פרק 6</button>
+<span class="lab-count" id="lab-count"></span>
+</div>
+<p class="lab-empty" id="lab-empty">אין דוגמה שמתאימה לחיפוש.</p>
+<div class="lab-group" data-group="term">
+<h2 id="g-term">טרמינל: פקודות שצריך להכיר</h2>
+<p>כל פקודה כאן היא תוכנית שה-<bdi dir="ltr">shell</bdi> מריץ בשבילכם. כדאי להריץ אותן ב-<bdi dir="ltr">VM</bdi> תוך כדי קריאה.</p>
+<article class="lab" id="lab-t-nav" data-group="term">
+<header class="lab-h"><h3>התמצאות: איפה אני ומה יש כאן</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#shell" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לדעת בכל רגע באיזו תיקייה אתם עומדים ומה יש בה. כל פקודה רצה ביחס לתיקייה הנוכחית.</p>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">pwd</span>
+/home/vagrant/nav
+<span class="pr">$</span> <span class="cmd">mkdir -p demo/sub</span>
+<span class="pr">$</span> <span class="cmd">ls</span>
+demo
+<span class="pr">$</span> <span class="cmd">cd demo</span>
+<span class="pr">$</span> <span class="cmd">pwd</span>
+/home/vagrant/nav/demo
+<span class="pr">$</span> <span class="cmd">ls -la</span>
+total 12
+drwxrwxr-x 3 vagrant vagrant 4096 Nov 12 23:44 .
+drwxr-xr-x 3 vagrant vagrant 4096 Nov 12 23:44 ..
+drwxrwxr-x 2 vagrant vagrant 4096 Nov 12 23:44 sub
+<span class="pr">$</span> <span class="cmd">cd ..</span>
+<span class="pr">$</span> <span class="cmd">pwd</span>
+/home/vagrant/nav</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>pwd</code> מדפיס את הנתיב המלא של התיקייה הנוכחית <bdi dir="ltr">(print working directory)</bdi>.</li><li><code>mkdir -p demo/sub</code> יוצר את <code>demo</code> ובתוכה <code>sub</code> בפקודה אחת. בלי <code>-p</code>, <code>mkdir</code> נכשל אם תיקיית האב לא קיימת.</li><li><code>ls -la</code>: <code>-l</code> פורמט ארוך (הרשאות, בעלים, גודל, תאריך) ו-<code>-a</code> מציג גם קבצים שמתחילים בנקודה. כך רואים את <code>.</code> (התיקייה עצמה) ו-<code>..</code> (תיקיית האב).</li><li>התו הראשון בכל שורה הוא הסוג: <code>d</code> תיקייה, <code>-</code> קובץ רגיל.</li><li><code>cd ..</code> עולה רמה אחת. <code>cd</code> לבד חוזר לתיקיית הבית <code>~</code>.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>.</code> = כאן, <code>..</code> = למעלה, <code>~</code> = הבית. נתיב שלא מתחיל ב-<code>/</code> הוא יחסי לתיקייה הנוכחית.</div>
+</article>
+<article class="lab" id="lab-t-files" data-group="term">
+<header class="lab-h"><h3>קבצים: יצירה, כתיבה, העתקה, מחיקה</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#cmds" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> הפעולות הבסיסיות על קבצים, ומה ההבדל בין <code>&gt;</code> ל-<code>&gt;&gt;</code>.</p>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">echo "first line" &gt; notes.txt</span>
+<span class="pr">$</span> <span class="cmd">echo "second line" &gt;&gt; notes.txt</span>
+<span class="pr">$</span> <span class="cmd">cat notes.txt</span>
+first line
+second line
+<span class="pr">$</span> <span class="cmd">echo "oops" &gt; notes.txt</span>
+<span class="pr">$</span> <span class="cmd">cat notes.txt</span>
+oops
+<span class="pr">$</span> <span class="cmd">cp notes.txt copy.txt</span>
+<span class="pr">$</span> <span class="cmd">mv copy.txt renamed.txt</span>
+<span class="pr">$</span> <span class="cmd">touch empty.txt</span>
+<span class="pr">$</span> <span class="cmd">ls -l</span>
+total 8
+-rw-rw-r-- 1 vagrant vagrant 0 Nov 12 23:44 empty.txt
+-rw-rw-r-- 1 vagrant vagrant 5 Nov 12 23:44 notes.txt
+-rw-rw-r-- 1 vagrant vagrant 5 Nov 12 23:44 renamed.txt
+<span class="pr">$</span> <span class="cmd">rm renamed.txt empty.txt</span>
+<span class="pr">$</span> <span class="cmd">ls</span>
+notes.txt</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>&gt;</code> מפנה את הפלט לקובץ ו<strong>דורס</strong> אותו. <code>&gt;&gt;</code> <strong>מוסיף</strong> לסופו.</li><li>ה-<code>echo "oops" &gt; notes.txt</code> מחק את שתי השורות הקודמות. אין "בטוח?" ואין סל מחזור.</li><li><code>mv</code> משמש גם להעברה וגם לשינוי שם: באותה תיקייה זה פשוט שינוי שם.</li><li><code>touch</code> יוצר קובץ ריק (גודל 0 ב-<code>ls -l</code>).</li><li><code>rm</code> מוחק מיד. לתיקייה: <code>rm -r</code>, ובזהירות.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>&gt;</code> דורס, <code>&gt;&gt;</code> מוסיף. גם <code>rm</code> וגם <code>&gt;</code> לא שואלים לפני שהם מוחקים.</div>
+</article>
+<article class="lab" id="lab-t-perm" data-group="term">
+<header class="lab-h"><h3>הרשאות: למה <bdi dir="ltr">./script.sh</bdi> לא רץ</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#perm" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להבין את מחרוזת ההרשאות ב-<code>ls -l</code>, ולמה צריך <code>chmod +x</code> לפני שמריצים סקריפט.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">hello.sh</bdi></div><pre><code class="language-bash">#!/bin/bash
+echo "hello from $0"</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">ls -l hello.sh</span>
+-rw-r--r-- 1 vagrant vagrant 33 Nov 12 23:44 hello.sh
+<span class="pr">$</span> <span class="cmd">./hello.sh</span>
+bash: line 6: ./hello.sh: Permission denied
+<span class="pr">$</span> <span class="cmd">chmod u+x hello.sh</span>
+<span class="pr">$</span> <span class="cmd">ls -l hello.sh</span>
+-rwxr--r-- 1 vagrant vagrant 33 Nov 12 23:44 hello.sh
+<span class="pr">$</span> <span class="cmd">./hello.sh</span>
+hello from ./hello.sh
+<span class="pr">$</span> <span class="cmd">chmod 750 hello.sh</span>
+<span class="pr">$</span> <span class="cmd">ls -l hello.sh</span>
+-rwxr-x--- 1 vagrant vagrant 33 Nov 12 23:44 hello.sh
+<span class="pr">$</span> <span class="cmd">chmod 700 hello.sh</span>
+<span class="pr">$</span> <span class="cmd">ls -l hello.sh</span>
+-rwx------ 1 vagrant vagrant 33 Nov 12 23:44 hello.sh</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>קובץ חדש נוצר בלי הרשאת הרצה (<code>x</code>), ולכן ההרצה נכשלת ב-<code>Permission denied</code>.</li><li><code>rw-rw-r--</code> מתחלק לשלוש שלשות: בעלים <bdi dir="ltr">(u)</bdi>, קבוצה <bdi dir="ltr">(g)</bdi>, אחרים <bdi dir="ltr">(o)</bdi>. בכל שלשה: קריאה, כתיבה, הרצה.</li><li><code>chmod u+x</code> מוסיף הרצה רק לבעלים, ומשאיר את השאר כמו שהם.</li><li>בצורה המספרית כל שלשה היא סכום: <bdi dir="ltr">r=4, w=2, x=1</bdi>. לכן <code>750</code> = <code>rwxr-x---</code> ו-<code>700</code> = <code>rwx------</code>.</li><li>הצורה המספרית <strong>קובעת</strong> את כל ההרשאות מחדש; הצורה עם <code>+</code>/<code>-</code> <strong>משנה</strong> רק את מה שכתוב.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>Permission denied</code> בהרצה של קובץ שלכם = חסר <code>x</code>. התיקון: <code>chmod u+x</code>.</div>
+</article>
+<article class="lab" id="lab-t-gcc" data-group="term">
+<header class="lab-h"><h3>קומפילציה: <bdi dir="ltr">-Wall</bdi>, אזהרות וקוד יציאה</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#cmds" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לקמפל בדיוק כמו הבודק, לקרוא אזהרה, ולראות את הערך שהתוכנית מחזירה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">warn.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    int unused;
+    int x;
+    printf("x = %d\n", x);
+    return 3;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc warn.c -o warn</span>
+<span class="pr">$</span> <span class="cmd">gcc warn.c -Wall -o warn</span>
+warn.c: In function ‘main’:
+warn.c:4:9: warning: unused variable ‘unused’ [-Wunused-variable]
+    4 |     int unused;
+      |         ^~~~~~
+warn.c:6:5: warning: ‘x’ is used uninitialized [-Wuninitialized]
+    6 |     printf("x = %d\n", x);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+warn.c:5:9: note: ‘x’ was declared here
+    5 |     int x;
+      |         ^
+<span class="pr">$</span> <span class="cmd">./warn</span>
+x = 32766
+<span class="pr">$</span> <span class="cmd">echo $?</span>
+0</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>בלי <code>-Wall</code> הקומפילציה עברה <strong>בשקט</strong>, למרות שיש בקוד שתי בעיות.</li><li>עם <code>-Wall</code>: <code>unused variable</code> – משתנה שהוגדר ולא בשימוש, ו-<code>is used uninitialized</code> – משתנה שקוראים לפני שנתנו לו ערך. השני הוא באג אמיתי: הערך המודפס הוא מה שהיה במקרה בזיכרון.</li><li>אזהרה לא עוצרת את הקומפילציה: קובץ הריצה נוצר ורץ. אבל בתרגילי הקורס כל אזהרה מורידה נקודות.</li><li>הערך ש-<code>main</code> מחזיר הוא קוד היציאה, ו-<code>$?</code> מציג אותו מיד אחרי ההרצה: 3.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> מקמפלים תמיד עם <code>-Wall</code>, ומתקנים כל אזהרה. היא כמעט תמיד מצביעה על באג.</div>
+</article>
+<article class="lab" id="lab-t-args" data-group="term">
+<header class="lab-h"><h3>ארגומנטים: מה התוכנית באמת מקבלת</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות איך ה-<bdi dir="ltr">shell</bdi> מפרק שורת פקודה ל-<code>argv</code> – כולל מרכאות ו-<code>$</code>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">args.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+    printf("argc = %d\n", argc);
+    for (int i = 0; i &lt; argc; i++)
+        printf("argv[%d] = [%s]\n", i, argv[i]);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc args.c -Wall -o args</span>
+<span class="pr">$</span> <span class="cmd">./args one   two</span>
+argc = 3
+argv[0] = [./args]
+argv[1] = [one]
+argv[2] = [two]
+<span class="pr">$</span> <span class="cmd">./args "one   two"</span>
+argc = 2
+argv[0] = [./args]
+argv[1] = [one   two]
+<span class="pr">$</span> <span class="cmd">./args $HOME '$HOME'</span>
+argc = 3
+argv[0] = [./args]
+argv[1] = [/home/vagrant]
+argv[2] = [$HOME]
+<span class="pr">$</span> <span class="cmd">./args *.c</span>
+argc = 2
+argv[0] = [./args]
+argv[1] = [args.c]</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>argv[0]</code> הוא שם התוכנית כפי שהורצה, ולכן <code>argc</code> תמיד גדול ב-1 ממספר הארגומנטים.</li><li>רווחים מרובים בין מילים לא נכנסים לתוכנית: ה-<bdi dir="ltr">shell</bdi> מפצל לפי רווחים לפני שהוא מריץ.</li><li>בתוך מרכאות כפולות הרווחים נשמרים, והכל ארגומנט אחד.</li><li><code>$HOME</code> מוחלף בערך <strong>לפני</strong> שהתוכנית רצה; בתוך מרכאות בודדות לא. גם <code>*.c</code> מוחלף ברשימת הקבצים לפני ההרצה – התוכנית מקבלת <code>args.c</code>, לא כוכבית.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> התוכנית לא רואה את שורת הפקודה. היא רואה רק את <code>argv</code> שה-<bdi dir="ltr">shell</bdi> כבר פירק, החליף והוריד ממנו מרכאות.</div>
+</article>
+<article class="lab" id="lab-t-redir" data-group="term">
+<header class="lab-h"><h3>הפניות: ‎&<bdi dir="ltr">lt</bdi>;‎, ‎&<bdi dir="ltr">gt</bdi>;‎ ו-‎2&<bdi dir="ltr">gt</bdi>;‎</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לשלוח פלט לקובץ, לקרוא קלט מקובץ, ולהפריד הודעות שגיאה מפלט רגיל.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">names.txt</bdi></div><pre><code class="nohighlight">dana
+omer
+yael</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">wc -l &lt; names.txt</span>
+3
+<span class="pr">$</span> <span class="cmd">sort -r names.txt &gt; sorted.txt</span>
+<span class="pr">$</span> <span class="cmd">cat sorted.txt</span>
+yael
+omer
+dana
+<span class="pr">$</span> <span class="cmd">ls names.txt nosuchfile</span>
+ls: cannot access 'nosuchfile': No such file or directory
+names.txt
+<span class="pr">$</span> <span class="cmd">ls names.txt nosuchfile &gt; out.txt 2&gt; err.txt</span>
+<span class="pr">$</span> <span class="cmd">cat out.txt</span>
+names.txt
+<span class="pr">$</span> <span class="cmd">cat err.txt</span>
+ls: cannot access 'nosuchfile': No such file or directory</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>&lt; names.txt</code> מחבר את הקובץ ל-<code>stdin</code> של <code>wc</code>. לכן <code>wc</code> מדפיס רק מספר, בלי שם קובץ – הוא לא יודע מאיפה הגיע הקלט.</li><li><code>&gt; sorted.txt</code> מחבר את <code>stdout</code> לקובץ. על המסך לא מודפס כלום.</li><li><code>ls</code> עם קובץ שקיים ואחד שלא: שתי שורות על המסך, אבל הן הגיעו משני ערוצים שונים – <code>stdout</code> <bdi dir="ltr">(1)</bdi> ו-<code>stderr</code> <bdi dir="ltr">(2)</bdi>.</li><li><code>2&gt; err.txt</code> מפנה רק את ערוץ 2. ההפרדה מראה בדיוק מה הלך לאן.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>&lt;</code> = <bdi dir="ltr">stdin</bdi>, <code>&gt;</code> = <bdi dir="ltr">stdout</bdi>, <code>2&gt;</code> = <bdi dir="ltr">stderr</bdi>. <code>perror</code> כותבת לערוץ 2, ולכן הודעות שגיאה לא נכנסות לקובץ פלט רגיל.</div>
+</article>
+<article class="lab" id="lab-t-pipe" data-group="term">
+<header class="lab-h"><h3>צינורות: לחבר פקודות</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לבנות מפקודות קטנות כלי שעונה על שאלה, כשהפלט של אחת הוא הקלט של הבאה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">log.txt</bdi></div><pre><code class="nohighlight">GET /home 200
+GET /about 404
+POST /login 200
+GET /home 200
+GET /missing 404
+GET /home 500</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">cat log.txt | wc -l</span>
+6
+<span class="pr">$</span> <span class="cmd">grep 404 log.txt</span>
+GET /about 404
+GET /missing 404
+<span class="pr">$</span> <span class="cmd">grep -c 200 log.txt</span>
+3
+<span class="pr">$</span> <span class="cmd">cut -d" " -f3 log.txt | sort | uniq -c</span>
+      3 200
+      2 404
+      1 500
+<span class="pr">$</span> <span class="cmd">head -3 log.txt | tail -1</span>
+POST /login 200</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>|</code> מחבר את <code>stdout</code> של הפקודה משמאל ל-<code>stdin</code> של הפקודה מימין. שתיהן רצות <strong>במקביל</strong>, כשני תהליכים.</li><li><code>grep</code> מסנן שורות שמכילות מחרוזת; <code>-c</code> סופר אותן במקום להדפיס.</li><li><code>cut -d" " -f3</code> לוקח את השדה השלישי (מופרד ברווח), <code>sort</code> ממיין, ו-<code>uniq -c</code> סופר שורות זהות <strong>צמודות</strong> – לכן חייבים <code>sort</code> לפניו.</li><li><code>head -3 | tail -1</code> = השורה השלישית בדיוק.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> כל פקודה עושה דבר אחד, והצינור מחבר ביניהן. ב-<bdi dir="ltr">C</bdi> זה <code>pipe</code> + <code>dup2</code> + <code>fork</code> (פרק 6).</div>
+</article>
+<article class="lab" id="lab-t-ps" data-group="term">
+<header class="lab-h"><h3>תהליכים: ‎&<bdi dir="ltr">amp</bdi>;‎, ‎<bdi dir="ltr">ps</bdi>‎ ו-‎<bdi dir="ltr">kill</bdi>‎</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#signals" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להריץ תהליך ברקע, לראות אותו ברשימת התהליכים, ולעצור אותו עם סיגנל.</p>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">sleep 300 &amp;</span>
+[1] 1039
+<span class="pr">$</span> <span class="cmd">ps -o pid,ppid,stat,cmd</span>
+  PID  PPID STAT CMD
+ 1038  1037 Ss+  bash -s
+ 1039  1038 S+   sleep 300
+ 1040  1038 R+   ps -o pid,ppid,stat,cmd
+<span class="pr">$</span> <span class="cmd">kill 1039</span>
+<span class="pr">$</span> <span class="cmd">ps -o pid,ppid,stat,cmd</span>
+  PID  PPID STAT CMD
+ 1038  1037 Ss+  bash -s
+ 1042  1038 R+   ps -o pid,ppid,stat,cmd</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>&amp;</code> מריץ את <code>sleep</code> ברקע: ה-<bdi dir="ltr">shell</bdi> מדפיס את מספר העבודה ואת ה-<bdi dir="ltr">PID</bdi>, ומחזיר את ה-<bdi dir="ltr">prompt</bdi> מיד.</li><li>ב-<code>ps</code>: ה-<bdi dir="ltr">PPID</bdi> של <code>sleep</code> הוא ה-<bdi dir="ltr">PID</bdi> של <code>bash</code> – ה-<bdi dir="ltr">shell</bdi> הוא ההורה שעשה לו <code>fork</code>.</li><li>עמודת <bdi dir="ltr">STAT</bdi>: <code>S</code> = ישן (חסום, מחכה), <code>R</code> = רץ. <code>ps</code> עצמו רץ ברגע הצילום.</li><li><code>kill PID</code> שולח <bdi dir="ltr">SIGTERM</bdi> כברירת מחדל. <code>sleep</code> לא תופס אותו, ולכן מסתיים, ונעלם מהרשימה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> כל פקודה שמריצים היא תהליך שה-<bdi dir="ltr">shell</bdi> יצר. <code>kill</code> הוא שליחת סיגנל, לא בהכרח הריגה.</div>
+</article>
+<article class="lab" id="lab-t-env" data-group="term">
+<header class="lab-h"><h3>משתני סביבה: מה עובר לתהליך ילד</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#scripts" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להבין למה משתנה שהגדרתם לא נראה בתוכנית שהרצתם, ומה <code>export</code> עושה.</p>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">echo "$USER lives in $HOME"</span>
+vagrant lives in /home/vagrant
+<span class="pr">$</span> <span class="cmd">COLOR=blue</span>
+<span class="pr">$</span> <span class="cmd">echo $COLOR</span>
+blue
+<span class="pr">$</span> <span class="cmd">bash -c 'echo "child sees: [$COLOR]"'</span>
+child sees: []
+<span class="pr">$</span> <span class="cmd">export COLOR</span>
+<span class="pr">$</span> <span class="cmd">bash -c 'echo "child sees: [$COLOR]"'</span>
+child sees: [blue]
+<span class="pr">$</span> <span class="cmd">COLOR=red bash -c 'echo "one-time: [$COLOR]"'</span>
+one-time: [red]</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>$USER</code> ו-<code>$HOME</code> מוגדרים כבר בכניסה, וכל תוכנית מקבלת אותם.</li><li><code>COLOR=blue</code> (בלי רווחים סביב ה-<code>=</code>) יוצר משתנה <strong>של ה-<bdi dir="ltr">shell</bdi> בלבד</strong>.</li><li><code>bash -c</code> מריץ <bdi dir="ltr">shell</bdi> חדש – תהליך ילד. הוא לא רואה את <code>COLOR</code>, כי משתנה רגיל לא עובר ב-<code>fork</code>/<code>exec</code>.</li><li>אחרי <code>export</code> המשתנה הוא חלק מהסביבה, וכל ילד מקבל עותק.</li><li><code>VAR=value command</code> מגדיר את המשתנה רק להרצה הזו.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> ילד מקבל <strong>עותק</strong> של הסביבה בזמן היצירה. שינוי אצל הילד לא חוזר להורה – כמו כל זיכרון אחרי <code>fork</code>.</div>
+</article>
+<article class="lab" id="lab-t-exit" data-group="term">
+<header class="lab-h"><h3>קוד יציאה, ‎&<bdi dir="ltr">amp</bdi>;&<bdi dir="ltr">amp</bdi>;‎ ו-‎;‎</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#scripts" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לשרשר פקודות כך שהבאה תרוץ רק אם הקודמת הצליחה.</p>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">ls /nope; echo "code: $?"</span>
+ls: cannot access '/nope': No such file or directory
+code: 2
+<span class="pr">$</span> <span class="cmd">ls /nope &amp;&amp; echo "will not print"</span>
+ls: cannot access '/nope': No such file or directory
+<span class="pr">$</span> <span class="cmd">ls /nope; echo "prints anyway"</span>
+ls: cannot access '/nope': No such file or directory
+prints anyway
+<span class="pr">$</span> <span class="cmd">ls / &gt; /dev/null &amp;&amp; echo "ls succeeded"</span>
+ls succeeded
+<span class="pr">$</span> <span class="cmd">ls /nope || echo "runs because ls failed"</span>
+ls: cannot access '/nope': No such file or directory
+runs because ls failed</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>כל פקודה מחזירה מספר: 0 = הצלחה, כל דבר אחר = כישלון. <code>$?</code> הוא הקוד של הפקודה האחרונה.</li><li><code>A &amp;&amp; B</code>: <bdi dir="ltr">B</bdi> רץ רק אם <bdi dir="ltr">A</bdi> החזיר 0.</li><li><code>A ; B</code>: <bdi dir="ltr">B</bdi> רץ בכל מקרה.</li><li><code>A || B</code>: <bdi dir="ltr">B</bdi> רץ רק אם <bdi dir="ltr">A</bdi> נכשל.</li><li><code>/dev/null</code> הוא "פח": מה שנכתב אליו נעלם. שימושי כשרק קוד היציאה מעניין.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> אותו היגיון של קיצור-דרך כמו <code>&amp;&amp;</code> ו-<code>||</code> ב-<bdi dir="ltr">C</bdi>, רק ש-0 פירושו "הצלחה".</div>
+</article>
+<article class="lab" id="lab-t-strace" data-group="term">
+<header class="lab-h"><h3><bdi dir="ltr">strace</bdi>: לראות את קריאות המערכת</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#syscalls" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות בעיניים מה תוכנית מבקשת מהקרנל: מה <code>printf</code> הופך להיות, ומה קורה ב-<code>fork</code> וב-<code>exec</code>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">st.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    printf("hello\n");
+    if (fork() == 0) {
+        char *args[] = { "echo", "from child", NULL };
+        execvp(args[0], args);
+    }
+    wait(NULL);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc st.c -Wall -o st</span>
+<span class="pr">$</span> <span class="cmd">strace -f -o trace.txt -e trace=write,clone,execve,wait4,exit_group ./st</span>
+hello
+from child
+<span class="pr">$</span> <span class="cmd">cat trace.txt</span>
+2068  execve("./st", ["./st"], 0x7ffe8d747038 /* 23 vars */) = 0
+2068  write(1, "hello\n", 6)            = 6
+2068  clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd348bd6a10) = 2069
+2068  wait4(-1,  &lt;unfinished ...&gt;
+2069  execve("/usr/local/sbin/echo", ["echo", "from child"], 0x7fffb216b0a8 /* 23 vars */) = -1 ENOENT (No such file or directory)
+2069  execve("/usr/local/bin/echo", ["echo", "from child"], 0x7fffb216b0a8 /* 23 vars */) = -1 ENOENT (No such file or directory)
+2069  execve("/usr/sbin/echo", ["echo", "from child"], 0x7fffb216b0a8 /* 23 vars */) = -1 ENOENT (No such file or directory)
+2069  execve("/usr/bin/echo", ["echo", "from child"], 0x7fffb216b0a8 /* 23 vars */) = 0
+2069  write(1, "from child\n", 11)      = 11
+2069  exit_group(0)                     = ?
+2069  +++ exited with 0 +++
+2068  &lt;... wait4 resumed&gt;NULL, 0, NULL) = 2069
+2068  --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=2069, si_uid=30033, si_status=0, si_utime=0, si_stime=0} ---
+2068  exit_group(0)                     = ?
+2068  +++ exited with 0 +++</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>strace</code> מריץ את התוכנית ורושם כל קריאת מערכת. <code>-f</code> עוקב גם אחרי ילדים, <code>-o trace.txt</code> שומר את הרישום לקובץ (כדי שלא יתערבב עם הפלט של התוכנית עצמה), ו-<code>-e trace=</code> מסנן רק את הקריאות שמעניינות אותנו. כל שורה מתחילה ב-<bdi dir="ltr">PID</bdi> של התהליך שביצע אותה.</li><li>השורה הראשונה היא <code>execve</code> של <code>./st</code> עצמה: גם ה-<bdi dir="ltr">shell</bdi> הריץ אותנו ב-<code>exec</code>.</li><li><code>printf("hello\n")</code> הפך ל-<code>write(1, "hello\n", 6)</code>: כתיבה ל-<bdi dir="ltr">FD 1</bdi>. זו ההוכחה ש-<code>printf</code> היא פונקציית ספרייה מעל קריאת מערכת.</li><li><code>fork</code> מופיע כ-<code>clone</code>: ב-<bdi dir="ltr">Linux</bdi> <code>fork</code> ממומש מעליו. הערך שחזר הוא ה-<bdi dir="ltr">PID</bdi> של הילד.</li><li><code>execvp</code> הפך ל-<code>execve</code> עם נתיב מלא: <code>execvp</code> חיפש את <code>echo</code> בתיקיות של <code>PATH</code>. ניסיון שנכשל מופיע עם <code>ENOENT</code>.</li><li><code>wait</code> הוא <code>wait4</code> שמחכה, ולבסוף <code>exit_group</code> – הסיום.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>strace</code> הוא הדרך לבדוק מה תוכנית באמת עושה ברמת מערכת ההפעלה. שימושי במיוחד כשמשהו "לא קורה" ולא ברור למה.</div>
+</article>
+<article class="lab" id="lab-t-diff" data-group="term">
+<header class="lab-h"><h3><bdi dir="ltr">diff</bdi>: השוואה מדויקת של פלטים</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/workenv.html#check" target="_blank">פרק 2 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להשוות את הפלט שלכם לפלט צפוי, ולמצוא הבדלים שלא רואים בעין.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">expected.txt</bdi></div><pre><code class="nohighlight">$$ 
+hello
+$$ </code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">actual.txt</bdi></div><pre><code class="nohighlight">$$ 
+hello 
+$$</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">cat expected.txt</span>
+$$ 
+hello
+$$ 
+<span class="pr">$</span> <span class="cmd">cat actual.txt</span>
+$$ 
+hello 
+$$
+<span class="pr">$</span> <span class="cmd">diff expected.txt actual.txt</span>
+2,3c2,3
+&lt; hello
+&lt; $$ 
+---
+&gt; hello 
+&gt; $$
+<span class="pr">$</span> <span class="cmd">cat -A actual.txt</span>
+$$ $
+hello $
+$$$
+<span class="pr">$</span> <span class="cmd">diff expected.txt expected.txt &amp;&amp; echo "identical"</span>
+identical</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>שני הקבצים <strong>נראים</strong> זהים, אבל <code>diff</code> מוצא שני הבדלים: רווח מיותר אחרי <code>hello</code>, ורווח חסר אחרי ה-<bdi dir="ltr">prompt</bdi> השני.</li><li><code>2,3c2,3</code> = שורות 2–3 בקובץ הראשון הוחלפו בשורות 2–3 בשני. <code>&lt;</code> מהראשון, <code>&gt;</code> מהשני.</li><li><code>cat -A</code> חושף תווים נסתרים: <code>$</code> בסוף כל שורה מסמן את ה-<code>\n</code>, כך שרואים רווחים בסוף שורה. (תו <code>\r</code> מ-<bdi dir="ltr">Windows</bdi> היה מופיע כ-<code>^M</code>.)</li><li>אין פלט מ-<code>diff</code> וקוד יציאה 0 = זהים לגמרי.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> "נראה אותו דבר" זה לא "זהה". הבדיקה האוטומטית משווה תו-לתו, וכך גם <code>diff</code>.</div>
+</article>
+</div>
+<div class="lab-group" data-group="intro">
+<h2 id="g-intro">פרק 1: התוכניות מההרצאה הראשונה</h2>
+<p>ארבע התוכניות שמדגימות את שלושת הנושאים של הקורס: וירטואליזציה, מקביליות ואחסון.</p>
+<article class="lab" id="lab-c-cpu" data-group="intro">
+<header class="lab-h"><h3><bdi dir="ltr">cpu.c</bdi>: וירטואליזציה של המעבד</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/intro.html" target="_blank">פרק 1 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להראות שארבע תוכניות רצות "בבת אחת" על מעבד אחד: מערכת ההפעלה מחלקת ביניהן את הזמן.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">cpu.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+double GetTime() {
+    struct timeval t;
+    int rc = gettimeofday(&amp;t, NULL);
+    assert(rc == 0);
+    return (double) t.tv_sec + (double) t.tv_usec/1e6;
+}
+
+void Spin(int howlong) {
+    double t = GetTime();
+    while ((GetTime() - t) &lt; (double) howlong)
+    ; // do nothing in loop
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        fprintf(stderr, "usage: cpu &lt;string&gt;\n");
+        exit(1);
+    }
+    while (1) {
+        Spin(1);
+        printf("%s\n", argv[1]);
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc cpu.c -Wall -o cpu</span>
+<span class="pr">$</span> <span class="cmd">./cpu A &amp; ./cpu B &amp;</span>
+A
+B
+A
+B
+A
+B</code></pre></div>
+<p class="lab-note">עצרתי את שתיהן אחרי כ-3 שניות עם <code>kill</code>. בלי זה הן רצות לנצח.</p>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>Spin(1)</code> היא לולאה "ריקה" שבודקת את השעון עד שעוברת שנייה – היא מעסיקה את המעבד כל הזמן, בלי לישון.</li><li>בכל שנייה כל עותק מדפיס את הארגומנט שלו. <code>&amp;</code> מריץ את שתיהן ברקע, כך שהן רצות במקביל.</li><li>שתיהן מתקדמות בקצב של שורה לשנייה, למרות שכל אחת "רוצה" את המעבד כל הזמן. המתזמן מחליף ביניהן מהר מאוד, ולכל אחת נראה שיש לה מעבד משלה.</li><li>הסדר בין <code>A</code> ל-<code>B</code> בכל שנייה לא קבוע: זה תלוי במתזמן.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> זו וירטואליזציה של המעבד: כל תהליך מתנהג כאילו המעבד כולו שלו. איך המתזמן מחליט – פרק 4.</div>
+</article>
+<article class="lab" id="lab-c-mem" data-group="intro">
+<header class="lab-h"><h3><bdi dir="ltr">mem.c</bdi>: לכל תהליך מרחב כתובות משלו</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/intro.html" target="_blank">פרק 1 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להראות ששני תהליכים יכולים להשתמש באותה כתובת ולראות ערכים שונים – הכתובות וירטואליות.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">mem.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+double GetTime() {
+    struct timeval t;
+    int rc = gettimeofday(&amp;t, NULL);
+    assert(rc == 0);
+    return (double) t.tv_sec + (double) t.tv_usec/1e6;
+}
+
+
+void Spin(int howlong) {
+    double t = GetTime();
+    while ((GetTime() - t) &lt; (double) howlong)
+    ; // do nothing in loop
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) { 
+        fprintf(stderr, "usage: mem &lt;value&gt;\n"); 
+        exit(1); 
+    } 
+    
+    int *p; 
+    p = malloc(sizeof(int));
+    assert(p != NULL);
+    printf("(%d) addr pointed to by p: %p\n", (int) getpid(), p);
+    *p = atoi(argv[1]); // assign value to addr stored in p
+    while (1) {
+        Spin(1);
+        *p = *p + 1;
+        printf("(%d) value of p: %d\n", getpid(), *p);
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc mem.c -Wall -o mem</span>
+<span class="pr">$</span> <span class="cmd">setarch -R ./mem 0 &amp; setarch -R ./mem 100 &amp;</span>
+(1114) addr pointed to by p: 0x5555555592a0
+(1115) addr pointed to by p: 0x5555555592a0
+(1114) value of p: 1
+(1115) value of p: 101
+(1114) value of p: 2
+(1115) value of p: 102
+(1114) value of p: 3
+(1115) value of p: 103</code></pre></div>
+<p class="lab-note"><code>setarch -R</code> מבטל את ההגרלה של כתובות <bdi dir="ltr">(ASLR)</bdi>, כמו שעשו בהדגמה בהרצאה. בלי זה כל הרצה מקבלת כתובת אחרת, וקשה לראות את הנקודה. עצרתי את שתיהן אחרי כ-3 שניות.</p>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>כל תהליך מקצה <code>int</code> עם <code>malloc</code> ומדפיס את הכתובת שלו. שני התהליכים מדפיסים <strong>את אותה כתובת</strong>.</li><li>כל אחד מגדיל את הערך שבכתובת הזו פעם בשנייה: אחד מתחיל מ-0 והשני מ-100, ו<strong>אף אחד לא משפיע על השני</strong>.</li><li>אם זה היה אותו מקום בזיכרון הפיזי, הערכים היו מתערבבים. הם לא, כי זו כתובת <strong>וירטואלית</strong>: מערכת ההפעלה ממפה אותה למקום פיזי אחר בכל תהליך.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> כתובת שתוכנית רואה היא וירטואלית. התרגום לכתובת פיזית – פרק 7.</div>
+</article>
+<article class="lab" id="lab-c-threads" data-group="intro">
+<header class="lab-h"><h3><bdi dir="ltr">threads.c</bdi>: מקביליות ותוצאה שגויה</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/intro.html" target="_blank">פרק 1 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להראות ששני <bdi dir="ltr">threads</bdi> שמגדילים מונה משותף מאבדים עדכונים.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">threads.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#include &lt;pthread.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;sched.h&gt;
+
+#define Pthread_create(thread, attr, start_routine, arg) assert(pthread_create(thread, attr, start_routine, arg) == 0);
+#define Pthread_join(thread, value_ptr)                  assert(pthread_join(thread, value_ptr) == 0);
+
+double GetTime() {
+    struct timeval t;
+    int rc = gettimeofday(&amp;t, NULL);
+    assert(rc == 0);
+    return (double) t.tv_sec + (double) t.tv_usec/1e6;
+}
+
+
+void Spin(int howlong) {
+    double t = GetTime();
+    while ((GetTime() - t) &lt; (double) howlong)
+    ; // do nothing in loop
+}
+
+volatile int counter = 0; 
+int loops;
+
+void *worker(void *arg) {
+    int i;
+    for (i = 0; i &lt; loops; i++) {
+        counter++;
+    }
+    return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) { 
+    fprintf(stderr, "usage: threads &lt;loops&gt;\n"); 
+    exit(1); 
+    } 
+    loops = atoi(argv[1]);
+    pthread_t p1, p2;
+    printf("Initial value : %d\n", counter);
+    Pthread_create(&amp;p1, NULL, worker, NULL); 
+    Pthread_create(&amp;p2, NULL, worker, NULL);
+    Pthread_join(p1, NULL);
+    Pthread_join(p2, NULL);
+    printf("Final value   : %d\n", counter);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc threads.c -Wall -o threads -pthread</span>
+<span class="pr">$</span> <span class="cmd">./threads 1000</span>
+Initial value : 0
+Final value   : 2000
+<span class="pr">$</span> <span class="cmd">./threads 100000</span>
+Initial value : 0
+Final value   : 115041
+<span class="pr">$</span> <span class="cmd">./threads 1000000</span>
+Initial value : 0
+Final value   : 1262572
+<span class="pr">$</span> <span class="cmd">./threads 1000000</span>
+Initial value : 0
+Final value   : 1252234</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>שני <bdi dir="ltr">threads</bdi> רצים באותו תהליך ורואים את אותו <code>counter</code>. כל אחד מגדיל אותו <code>loops</code> פעמים, אז הציפייה היא <code>2 × loops</code>.</li><li>עם 1000 זה בדרך כלל יוצא נכון: כל <bdi dir="ltr">thread</bdi> מסיים לפני שהשני מספיק להתחיל.</li><li>במספרים גדולים התוצאה קטנה מהצפוי, ושונה בכל הרצה (עם 100000 זה קורה ברוב ההרצות, ועם מיליון כמעט תמיד). <code>counter++</code> הוא שלוש פעולות מעבד (קריאה, הוספה, כתיבה), ואם החלפה קורית באמצע – עדכון אחד נבלע.</li><li>מקמפלים עם <code>-pthread</code> כדי לקשר את ספריית ה-<bdi dir="ltr">threads</bdi>.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> זיכרון משותף + פעולה לא אטומית = תוצאה לא צפויה. זה הבסיס לנושא הסנכרון.</div>
+</article>
+<article class="lab" id="lab-c-io" data-group="intro">
+<header class="lab-h"><h3><bdi dir="ltr">io.c</bdi>: כתיבה לקובץ עם קריאות מערכת</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/intro.html" target="_blank">פרק 1 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לכתוב לקובץ ישירות עם <code>open</code>, <code>write</code> ו-<code>close</code>, בלי <code>printf</code>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">io.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        fprintf(stderr, "usage: io &lt;file&gt;\n");
+        exit(1);
+    }
+    
+    int fd = open(argv[1], O_WRONLY|O_CREAT, S_IRWXU);
+    assert(fd &gt;= 0);
+    char buffer[20] = { "hello world\n" };
+    int rc = write(fd, buffer, strlen(buffer));
+    assert(rc == strlen(buffer));
+    close(fd);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc io.c -Wall -o io</span>
+<span class="pr">$</span> <span class="cmd">./io out.txt</span>
+<span class="pr">$</span> <span class="cmd">cat out.txt</span>
+hello world
+<span class="pr">$</span> <span class="cmd">ls -l out.txt</span>
+-rwx------ 1 vagrant vagrant 12 Nov 12 23:44 out.txt
+<span class="pr">$</span> <span class="cmd">./io</span>
+usage: io &lt;file&gt;</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>open</code> מחזירה מספר קטן, <bdi dir="ltr">file descriptor</bdi>, וכל פעולה אחר כך עוברת דרכו. <code>O_CREAT</code> יוצר את הקובץ אם הוא לא קיים, ו-<code>S_IRWXU</code> נותן לבעלים <code>rwx</code>.</li><li><code>write</code> כותבת בדיוק את מספר הבתים שביקשנו (12) ומחזירה כמה נכתבו בפועל. <code>assert</code> עוצר את התוכנית אם זה לא מה שציפינו.</li><li>ב-<code>ls -l</code> רואים: 12 בתים והרשאות <code>rwx------</code> – בדיוק מה שביקשנו מ-<code>open</code>.</li><li>בלי ארגומנט התוכנית מדפיסה הודעת שימוש ל-<code>stderr</code> ויוצאת עם קוד 1.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> המידע נשאר אחרי שהתוכנית מסתיימת – זה ה"אחסון" <bdi dir="ltr">(persistence)</bdi>. <code>printf</code> בסוף עושה בדיוק <code>write</code> ל-<bdi dir="ltr">FD 1</bdi>.</div>
+</article>
+</div>
+<div class="lab-group" data-group="proc">
+<h2 id="g-proc">פרק 3: <bdi dir="ltr">fork, wait, exec</bdi></h2>
+<p>יצירת תהליכים, המתנה להם, והחלפת התוכנית שרצה בהם.</p>
+<article class="lab" id="lab-c-fork" data-group="proc">
+<header class="lab-h"><h3><bdi dir="ltr">fork</bdi>: מי מדפיס מה</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות ש-<code>fork</code> מחזירה ערך שונה להורה ולילד, ושהמשתנים הועתקו.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">fork1.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    pid_t pid1 = getpid();
+    pid_t pid2 = fork();
+    printf("getpid()=%d pid1=%d pid2=%d\n", getpid(), pid1, pid2);
+    wait(NULL);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc fork1.c -Wall -o fork1</span>
+<span class="pr">$</span> <span class="cmd">./fork1</span>
+getpid()=1163 pid1=1163 pid2=1164
+getpid()=1164 pid1=1163 pid2=0</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>pid1</code> נשמר <strong>לפני</strong> ה-<code>fork</code>, ולכן גם הילד מקבל את אותו ערך – ה-<bdi dir="ltr">PID</bdi> של ההורה.</li><li><code>fork</code> חוזרת פעמיים: בהורה עם ה-<bdi dir="ltr">PID</bdi> של הילד, ובילד עם 0. כך כל אחד יודע מי הוא.</li><li><code>getpid()</code> אחרי ה-<code>fork</code> שונה: לכל תהליך ה-<bdi dir="ltr">PID</bdi> שלו.</li><li>ה-<code>wait(NULL)</code> בסוף לא משנה את הפלט כאן, רק דואג שההורה לא יסיים לפני הילד (אצל הילד <code>wait</code> פשוט מחזיר <bdi dir="ltr">-1</bdi> כי אין לו ילדים).</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> אחרי <code>fork</code> יש שני תהליכים שמריצים את אותו קוד מאותה שורה. ההבדל היחיד ביניהם הוא הערך ש-<code>fork</code> החזירה.</div>
+</article>
+<article class="lab" id="lab-c-waitx" data-group="proc">
+<header class="lab-h"><h3>עותק פרטי של הזיכרון</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להוכיח ששינוי משתנה אצל הילד לא משפיע על ההורה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">waitx.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    int x = 0;
+    int rc = fork();
+    if (rc) wait(NULL);   // parent: waits for the child
+    else    x += 3;       // child: changes only its own copy
+    printf("%s: x = %d\n", rc ? "parent" : "child", x);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc waitx.c -Wall -o waitx</span>
+<span class="pr">$</span> <span class="cmd">./waitx</span>
+child: x = 3
+parent: x = 0</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הילד מגדיל את <code>x</code> ל-3 ומדפיס. ההורה, שחיכה לו, מדפיס 0.</li><li>אחרי <code>fork</code> לכל תהליך יש עותק משלו של כל המשתנים. השינוי של הילד קרה בעותק שלו בלבד.</li><li>בזכות ה-<code>wait</code> הסדר תמיד זהה: קודם הילד, אחר כך ההורה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>fork</code> מעתיק. אין "משתנים משותפים" בין הורה לילד – לתקשורת ביניהם צריך מנגנון אחר (צינור, קובץ, סיגנל).</div>
+</article>
+<article class="lab" id="lab-c-waitall" data-group="proc">
+<header class="lab-h"><h3>לחכות לכל הילדים</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> ליצור כמה ילדים ולחכות לכולם, ולראות שהם מסתיימים בסדר שלהם ולא בסדר היצירה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">waitall.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    for (int i = 3; i &gt;= 1; i--) {
+        if (fork() == 0) {          // child i sleeps i seconds
+            sleep(i);
+            _exit(i);
+        }
+    }
+    int status;
+    pid_t pid;
+    while ((pid = wait(&amp;status)) != -1)
+        printf("child %d finished with code %d\n", pid, WEXITSTATUS(status));
+    printf("no more children\n");
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc waitall.c -Wall -o waitall</span>
+<span class="pr">$</span> <span class="cmd">./waitall</span>
+child 1192 finished with code 1
+child 1191 finished with code 2
+child 1190 finished with code 3
+no more children</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הילד הראשון שנוצר ישן 3 שניות, השני 2 והאחרון 1. לכן הם מסתיימים בסדר <strong>הפוך</strong> ליצירה.</li><li><code>wait</code> מחזירה את הילד <strong>הבא שמסתיים</strong>, מי שזה לא יהיה. ה-<bdi dir="ltr">PID</bdi>-ים מודפסים מהגבוה לנמוך.</li><li>כל ילד יוצא עם קוד אחר (<code>_exit(i)</code>), ו-<code>WEXITSTATUS</code> שולף אותו מ-<code>status</code>.</li><li>כשלא נשארו ילדים, <code>wait</code> מחזירה <bdi dir="ltr">-1</bdi> והלולאה נגמרת.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>while (wait(...) != -1)</code> = לחכות לכולם. לילד מסוים – <code>waitpid(pid, ...)</code>.</div>
+</article>
+<article class="lab" id="lab-c-status" data-group="proc">
+<header class="lab-h"><h3>איך הילד הסתיים: קוד יציאה או סיגנל</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לפענח את <code>status</code> שמחזירה <code>wait</code>: יציאה רגילה מול הריגה בסיגנל.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">status.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/wait.h&gt;
+
+void report(int status) {
+    if (WIFEXITED(status))
+        printf("exited normally, code %d\n", WEXITSTATUS(status));
+    else if (WIFSIGNALED(status))
+        printf("killed by signal %d\n", WTERMSIG(status));
+}
+
+int main() {
+    int status;
+    if (fork() == 0) exit(42);              // child 1: exits with 42
+    wait(&amp;status);
+    report(status);
+
+    pid_t pid = fork();
+    if (pid == 0) { while (1) sleep(1); }   // child 2: never ends by itself
+    kill(pid, SIGKILL);
+    waitpid(pid, &amp;status, 0);
+    report(status);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc status.c -Wall -o status</span>
+<span class="pr">$</span> <span class="cmd">./status</span>
+exited normally, code 42
+killed by signal 9</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>status</code> הוא מספר אחד שמקודדים בו כמה דברים, ולכן לא קוראים אותו ישירות אלא עם המאקרואים.</li><li>הילד הראשון קרא ל-<code>exit(42)</code>: <code>WIFEXITED</code> אמת, ו-<code>WEXITSTATUS</code> מחזיר 42.</li><li>הילד השני נהרג ב-<bdi dir="ltr">SIGKILL</bdi> לפני שהספיק לסיים: <code>WIFSIGNALED</code> אמת, ו-<code>WTERMSIG</code> מחזיר 9.</li><li>זה גם מה שה-<bdi dir="ltr">shell</bdi> מציג ב-<code>$?</code>: 42 ביציאה רגילה, ו-128 + 9 = 137 בהריגה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>status</code> עונה על "איך" הילד הסתיים. <code>NULL</code> כשזה לא מעניין.</div>
+</article>
+<article class="lab" id="lab-c-exec" data-group="proc">
+<header class="lab-h"><h3><bdi dir="ltr">exec.c</bdi>: הילד הופך לתוכנית אחרת</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> הדפוס הבסיסי של כל <bdi dir="ltr">shell</bdi>: <code>fork</code>, ואז <code>exec</code> בילד ו-<code>wait</code> בהורה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">exec.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    int rc = fork();
+    if (rc &lt; 0) { fprintf(stderr, "fork failed\n"); exit(1); }
+    else if (rc == 0) {                      // child
+        char *args[] = { "wc", "-l", "exec.c", NULL };
+        execvp(args[0], args);
+        printf("this shouldn't print out\n"); // only if exec failed
+    } else {                                 // parent
+        int rc_wait = wait(NULL);
+        printf("I am parent of %d (rc_wait:%d) (pid:%d)\n", rc, rc_wait, getpid());
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc exec.c -Wall -o exec</span>
+<span class="pr">$</span> <span class="cmd">./exec</span>
+18 exec.c
+I am parent of 1221 (rc_wait:1221) (pid:1220)
+<span class="pr">$</span> <span class="cmd">wc -l exec.c</span>
+18 exec.c</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הילד בונה מערך ארגומנטים: הראשון הוא שם התוכנית, והאחרון <code>NULL</code>.</li><li><code>execvp</code> מחליפה את כל הזיכרון של הילד בתוכנית <code>wc</code>. השורה שאחריה לא מודפסת – <code>exec</code> שהצליחה לא חוזרת.</li><li>הפלט של <code>wc</code> זהה לזה שמתקבל מהטרמינל: <code>exec</code> לא שינתה את ה-<bdi dir="ltr">PID</bdi> ולא את הקבצים הפתוחים, ולכן <code>wc</code> כותבת לאותו מסך.</li><li>ההורה מחכה, ואז מדפיס: <code>rc</code> ו-<code>rc_wait</code> שווים – זה אותו ילד.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>fork</code> יוצרת תהליך, <code>exec</code> מחליפה את התוכנית שבו. ה-<bdi dir="ltr">shell</bdi> עושה את שתיהן לכל פקודה.</div>
+</article>
+<article class="lab" id="lab-c-myprog" data-group="proc">
+<header class="lab-h"><h3><bdi dir="ltr">exec</bdi> עם ארגומנטים, באותו <bdi dir="ltr">PID</bdi></h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#api" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות ש-<code>exec</code> לא יוצרת תהליך חדש, ואיך ארגומנטים עוברים לתוכנית החדשה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">someprog.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+void myfunc() { printf("(%d) myfunc\n", getpid()); }
+
+int main(int argc, char *argv[]) {
+    printf("my pid is %d\n", getpid());
+    myfunc();
+    char* args[4] = { "./myprog", "hello", "world", NULL };
+    execvp(args[0], args);
+    printf("this shouldn't print out");
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">myprog.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(int argc, char *argv[]) {
+    printf("(%d) received %d args\n", getpid(), argc - 1);
+    for (int i = 1; i &lt; argc; ++i)
+        printf("(%d)\t%d: %s\n", getpid(), i, argv[i]);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc someprog.c -Wall -o someprog</span>
+<span class="pr">$</span> <span class="cmd">gcc myprog.c -Wall -o myprog</span>
+<span class="pr">$</span> <span class="cmd">./someprog</span>
+my pid is 1238
+(1238) myfunc
+(1238) received 2 args
+(1238)	1: hello
+(1238)	2: world</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>כל השורות מודפסות עם <strong>אותו <bdi dir="ltr">PID</bdi></strong>: <code>someprog</code> הפכה ל-<code>myprog</code> בתוך אותו תהליך.</li><li>מה שנכתב ב-<code>args</code> מגיע ל-<code>myprog</code> כ-<code>argv</code>. <code>argc</code> הוא 3 (שם + שני ארגומנטים), ולכן היא מדווחת על 2.</li><li>השם <code>./myprog</code> מתחיל ב-<code>./</code>, ולכן <code>execvp</code> לא מחפשת ב-<code>PATH</code> אלא לוקחת את הקובץ מהתיקייה הנוכחית.</li><li>השורה האחרונה של <code>someprog</code> לא מודפסת.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>exec</code> = אותו תהליך, תוכנית אחרת. ה-<bdi dir="ltr">PID</bdi>, ההורה והקבצים הפתוחים נשארים.</div>
+</article>
+<article class="lab" id="lab-c-orfork" data-group="proc">
+<header class="lab-h"><h3><bdi dir="ltr">fork() || fork()</bdi></h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#shortc" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות איך קיצור-דרך ב-<code>||</code> קובע מי יוצר תהליך נוסף.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">orfork.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    int r = fork() || fork();
+    printf("r=%d pid=%d ppid=%d\n", r, getpid(), getppid());
+    while (wait(NULL) &gt; 0) ;
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc orfork.c -Wall -o orfork</span>
+<span class="pr">$</span> <span class="cmd">./orfork</span>
+r=1 pid=1249 ppid=1243
+r=1 pid=1250 ppid=1249
+r=0 pid=1251 ppid=1250</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>ההורה מקבל מה-<code>fork</code> הראשון ערך חיובי – "אמת" – ולכן ה-<code>fork</code> השני <strong>לא</strong> מתבצע אצלו. <code>r = 1</code>.</li><li>הילד הראשון מקבל 0 – "שקר" – ולכן <strong>הוא</strong> מבצע את ה-<code>fork</code> השני, ויוצר נכד. אצלו <code>r = 1</code>.</li><li>הנכד מקבל 0 גם מה-<code>fork</code> השני: <code>r = 0</code>.</li><li>ב-<code>ppid</code> רואים את השרשרת: הנכד הוא ילד של הילד, לא של ההורה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> סה"כ 3 תהליכים. לכל תהליך עוברים על הביטוי בנפרד, עם ערכי ההחזרה שלו.</div>
+</article>
+<article class="lab" id="lab-c-badexec" data-group="proc">
+<header class="lab-h"><h3>כש-<bdi dir="ltr">exec</bdi> נכשל, הילד ממשיך בקוד של ההורה</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#badexec" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות מה קורה אחרי <code>execvp</code> לתוכנית שלא קיימת.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">badexec.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    if (fork() == 0) {
+        char *args[] = { "no_such_prog", NULL };
+        execvp(args[0], args);
+        perror("execvp");
+    }
+    printf("who am I? %d\n", getpid());
+    wait(NULL);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc badexec.c -Wall -o badexec</span>
+<span class="pr">$</span> <span class="cmd">./badexec</span>
+who am I? 1686
+execvp: No such file or directory
+who am I? 1687</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>execvp</code> לא מצאה את התוכנית, ולכן <strong>חזרה</strong> עם <bdi dir="ltr">-1</bdi>. הזיכרון של הילד לא השתנה.</li><li><code>perror</code> מדפיסה את הסיבה: <code>No such file or directory</code>.</li><li>הילד יוצא מה-<code>if</code> וממשיך לשורה הבאה – ולכן <code>who am I?</code> מודפס פעמיים, עם שני <bdi dir="ltr">PID</bdi>-ים.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> אחרי <code>exec</code> בילד תמיד צריך טיפול בכישלון שמסיים את הילד. אחרת הוא ממשיך להריץ את הקוד של ההורה.</div>
+</article>
+</div>
+<div class="lab-group" data-group="shell">
+<h2 id="g-shell">קלט: קריאת שורות ופיצול למילים</h2>
+<p>שתי אבני הבניין של כל <bdi dir="ltr">shell</bdi>, לפני ה-<code>fork</code>.</p>
+<article class="lab" id="lab-c-fgets" data-group="shell">
+<header class="lab-h"><h3>לקרוא שורות עד סוף הקלט</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#shellloop" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לולאת קלט שעוצרת כשהקלט נגמר – מקלדת (<bdi dir="ltr">Ctrl+D</bdi>) או סוף קובץ.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">numbered.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    char line[200];
+    int n = 0;
+    setbuf(stdout, NULL);
+    printf("&gt; ");
+    while (fgets(line, sizeof(line), stdin) != NULL) {
+        n++;
+        printf("line %d: %s", n, line);   // line already ends with \n
+        printf("&gt; ");
+    }
+    printf("\ntotal: %d lines\n", n);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">in.txt</bdi></div><pre><code class="nohighlight">ls -la /tmp
+hello</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc numbered.c -Wall -o numbered</span>
+<span class="pr">$</span> <span class="cmd">./numbered &lt; in.txt</span>
+&gt; line 1: ls -la /tmp
+&gt; line 2: hello
+&gt; 
+total: 2 lines</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>fgets</code> קוראת שורה אחת, כולל ה-<code>\n</code> שבסופה, ולכן ב-<code>printf</code> אין <code>\n</code> נוסף.</li><li>כשהקלט נגמר <code>fgets</code> מחזירה <code>NULL</code>, והלולאה נעצרת.</li><li>כשהקלט מגיע מקובץ, מה ש"הוקלד" לא מופיע על המסך – רק מה שהתוכנית הדפיסה. לכן ה-<bdi dir="ltr">prompt</bdi> צמוד לשורה שאחריו.</li><li>ה-<bdi dir="ltr">prompt</bdi> האחרון מודפס לפני ש-<code>fgets</code> מגלה שהקלט נגמר, וה-<code>\n</code> בהודעה האחרונה מוריד שורה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>fgets(...) != NULL</code> = "יש עוד קלט". בדיקה עם קובץ קלט מדמה <bdi dir="ltr">Ctrl+D</bdi> בסוף.</div>
+</article>
+<article class="lab" id="lab-c-strtok" data-group="shell">
+<header class="lab-h"><h3>לפצל שורה למילים</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/processes.html#shellloop" target="_blank">פרק 3 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להפוך שורת קלט למערך מילים שמסתיים ב-<code>NULL</code> – הפורמט ש-<code>execvp</code> מקבלת.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">words.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#define SEP " \t\n"
+
+int main() {
+    char line[200];
+    while (fgets(line, sizeof(line), stdin) != NULL) {
+        char *w[50];
+        int n = 0;
+        w[0] = strtok(line, SEP);
+        while (w[n] != NULL) {
+            n++;
+            w[n] = strtok(NULL, SEP);
+        }
+        if (n == 0) continue;                  // empty line: no words at all
+        if (strcmp(w[0], "quit") == 0) break;  // strcmp returns 0 when equal
+        printf("%d words, first=[%s], last=[%s]\n", n, w[0], w[n - 1]);
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">in.txt</bdi></div><pre><code class="nohighlight">ls   -la    /tmp
+
+  echo one two three  
+quit
+never</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc words.c -Wall -o words</span>
+<span class="pr">$</span> <span class="cmd">cat -A in.txt</span>
+ls   -la^I/tmp$
+$
+  echo one two three  $
+quit$
+never$
+<span class="pr">$</span> <span class="cmd">./words &lt; in.txt</span>
+3 words, first=[ls], last=[/tmp]
+4 words, first=[echo], last=[three]</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>cat -A</code> מראה את הקלט כמו שהוא: <code>^I</code> הוא טאב ו-<code>$</code> סוף שורה. יש רווחים כפולים, שורה ריקה ורווחים בקצוות.</li><li><code>strtok</code> מדלגת על רצף מפרידים, ולכן <code>ls   -la</code> נותן שתי מילים ולא מילים ריקות.</li><li>השורה הריקה נותנת <code>n == 0</code> ומדולגת. בלי הבדיקה, <code>w[0]</code> היה <code>NULL</code> ו-<code>strcmp</code> הייתה קורסת.</li><li><code>strcmp</code> מחזירה 0 כשהמחרוזות שוות. אחרי <code>quit</code> הלולאה נעצרת, ו-<code>never</code> לא נקרא.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> המילה האחרונה היא <code>w[n - 1]</code>, ו-<code>w[n]</code> הוא <code>NULL</code>. שורה ריקה היא מקרה שחייבים לטפל בו.</div>
+</article>
+</div>
+<div class="lab-group" data-group="sig">
+<h2 id="g-sig">פרק 5: באפרים, יתומים, זומבים וסיגנלים</h2>
+<p>מה קורה סביב סיום של תהליך, ואיך תהליכים שולחים הודעות זה לזה.</p>
+<article class="lab" id="lab-c-buffer" data-group="sig">
+<header class="lab-h"><h3><bdi dir="ltr">Good afternoon</bdi>: באפר שהועתק ב-<bdi dir="ltr">fork</bdi></h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#buf" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להבין למה שורה שנכתבה <strong>לפני</strong> ה-<code>fork</code> מודפסת ארבע פעמים.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">buffer.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(int argc, char *argv[])
+{
+    printf("Good afternoon");
+    fork();
+    printf(", good evening");
+    fork();
+    printf(", and good night\n");
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">buffer2.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    setbuf(stdout, NULL);   // no buffer: every printf goes out at once
+    printf("Good afternoon");
+    fork();
+    printf(", good evening");
+    fork();
+    printf(", and good night\n");
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc buffer.c -Wall -o buffer</span>
+<span class="pr">$</span> <span class="cmd">./buffer</span>
+Good afternoon, good evening, and good night
+Good afternoon, good evening, and good night
+Good afternoon, good evening, and good night
+Good afternoon, good evening, and good night
+<span class="pr">$</span> <span class="cmd">gcc buffer2.c -Wall -o buffer2</span>
+<span class="pr">$</span> <span class="cmd">./buffer2</span>
+Good afternoon, good evening, good evening, and good night, and good night
+, and good night
+, and good night</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>printf</code> לא כותבת מיד למסך: היא שומרת בבאפר בזיכרון התהליך, ושולחת אותו בירידת שורה, ב-<code>fflush</code>, או ביציאה.</li><li>"Good afternoon" לא נגמר ב-<code>\n</code>, אז הוא עדיין בבאפר כשמגיע ה-<code>fork</code>. <code>fork</code> מעתיקה את כל הזיכרון – <strong>כולל הבאפר</strong>.</li><li>אחרי שני <code>fork</code> יש ארבעה תהליכים, ולכל אחד באפר שמכיל את כל המשפט. כל אחד מדפיס שורה שלמה: ארבע שורות זהות.</li><li>עם <code>setbuf(stdout, NULL)</code> כל <code>printf</code> יוצאת מיד, ושום דבר לא מועתק: "Good afternoon" פעם אחת, "good evening" פעמיים, "good night" ארבע פעמים, מעורבבים לפי התזמון.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> לפני <code>fork</code>, באפר לא ריק = הדפסה כפולה. <code>setbuf(stdout, NULL)</code> בתחילת <code>main</code> מונע את זה.</div>
+</article>
+<article class="lab" id="lab-c-orphan" data-group="sig">
+<header class="lab-h"><h3>יתום: ההורה מסיים קודם</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#zombie" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות מה קורה ל-<bdi dir="ltr">PPID</bdi> של ילד כשההורה שלו כבר לא קיים.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">orphan.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(int argc, char *argv[])
+{
+    printf("PID: %d\n", getpid());
+    int rc = fork();
+    if (rc &lt; 0) {
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    }
+    else if (rc == 0) {
+        // child (new process)
+        printf("Child %d of parent %d\n", getpid(), getppid());
+        sleep(1);
+    }
+    else {
+        // parent
+        printf("Parent %d of child %d\n", getpid(), rc);
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">orphan2.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    if (fork() == 0) {
+        printf("child: my parent is %d\n", getppid());
+        sleep(1);
+        printf("child: now my parent is %d\n", getppid());
+        return 0;
+    }
+    printf("parent %d: exiting\n", getpid());
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc orphan.c -Wall -o orphan</span>
+<span class="pr">$</span> <span class="cmd">./orphan</span>
+PID: 1322
+Child 1323 of parent 1322
+Parent 1322 of child 1323
+<span class="pr">$</span> <span class="cmd">./orphan &gt; out.txt; sleep 1.2; cat out.txt</span>
+PID: 1324
+Parent 1324 of child 1325
+PID: 1324
+Child 1325 of parent 1
+<span class="pr">$</span> <span class="cmd">gcc orphan2.c -Wall -o orphan2</span>
+<span class="pr">$</span> <span class="cmd">./orphan2</span>
+parent 1334: exiting
+child: my parent is 1334
+child: now my parent is 1</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>בתוכנית מהקורס הילד ישן שנייה, ולכן ההורה כמעט תמיד מסיים קודם. ה-<bdi dir="ltr">prompt</bdi> חוזר, והילד ממשיך לרוץ לבד.</li><li>כשמפנים את הפלט לקובץ, <code>PID:</code> מודפס פעמיים: בלי מסך הבאפר מתרוקן רק ביציאה, והוא הועתק ב-<code>fork</code> – אותה תופעה כמו ב-Good afternoon.</li><li>ב-<code>orphan2</code> הילד מדפיס את ה-<bdi dir="ltr">PPID</bdi> לפני ואחרי שההורה מת. אחרי – ה-<bdi dir="ltr">PPID</bdi> השתנה: מישהו "אימץ" אותו.</li><li>כאן המאמץ הוא <code>init</code> <bdi dir="ltr">(PID 1)</bdi>, כמו בהרצאה. (בחלק מההתקנות של <bdi dir="ltr">Ubuntu</bdi> עם ממשק גרפי המאמץ הוא תהליך אחר, ואז יופיע מספר אחר.)</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> יתום לא נשאר בלי הורה: הוא מאומץ, והמאמץ גם אוסף אותו כשהוא מסתיים.</div>
+</article>
+<article class="lab" id="lab-c-zombie" data-group="sig">
+<header class="lab-h"><h3>זומבי ב-<bdi dir="ltr">ps</bdi></h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#zombie" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות זומבי אמיתי: ילד שסיים, וההורה עוד לא אסף אותו.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">zombie.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    pid_t pid = fork();
+    if (pid == 0) _exit(0);           // child ends at once
+    printf("parent %d, child %d\n", getpid(), pid);
+    sleep(3);                          // child is a zombie meanwhile
+    wait(NULL);                        // now it is reaped
+    sleep(3);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc zombie.c -Wall -o zombie</span>
+<span class="pr">$</span> <span class="cmd">./zombie &amp;</span>
+parent 1348, child 1350
+<span class="pr">$</span> <span class="cmd">ps -o pid,ppid,stat,cmd</span>
+  PID  PPID STAT CMD
+ 1342  1341 Ss+  bash -s
+ 1348  1342 S+   ./zombie
+ 1350  1348 Z+   [zombie] &lt;defunct&gt;
+ 1352  1342 R+   ps -o pid,ppid,stat,cmd
+<span class="pr">$</span> <span class="cmd">ps -o pid,ppid,stat,cmd<span class="cm">   # 3 seconds later</span></span>
+  PID  PPID STAT CMD
+ 1342  1341 Ss+  bash -s
+ 1348  1342 S+   ./zombie
+ 1357  1342 R+   ps -o pid,ppid,stat,cmd</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הילד יוצא מיד, אבל ההורה ישן 3 שניות לפני ה-<code>wait</code>. בזמן הזה הילד הוא זומבי.</li><li>ב-<code>ps</code>: <bdi dir="ltr">STAT</bdi> = <code>Z</code>, והפקודה מסומנת <code>&lt;defunct&gt;</code>. הוא לא רץ ולא תופס זיכרון, אבל הרשומה שלו בטבלת התהליכים קיימת – כדי שההורה יוכל לקבל את קוד היציאה.</li><li>אחרי ה-<code>wait</code> הזומבי נעלם מהרשימה. ההורה עצמו עדיין ישן (<code>S</code>).</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> כל ילד שמסתיים הופך לזומבי עד שאוספים אותו. תהליך שרץ הרבה זמן ולא אוסף – צובר זומבים.</div>
+</article>
+<article class="lab" id="lab-c-kill" data-group="sig">
+<header class="lab-h"><h3><bdi dir="ltr">kill.c</bdi>: ההורה הורג את הילד</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#signals" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לשלוח סיגנל מתהליך לתהליך עם <code>kill</code>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">kill.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;signal.h&gt;
+
+int main(int argc, char *argv[])
+{
+    int rc = fork();
+    if (rc &lt; 0) {
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    }
+    else if (rc == 0) {
+        while (1) {
+            sleep(1);
+            printf("Child %d active\n", getpid());
+        }
+    }
+    else {
+        printf("Parent %d active\n", getpid());
+        sleep(5);
+        kill(rc, SIGKILL);
+        printf("Parent %d done\n", getpid());
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc kill.c -Wall -o kill</span>
+<span class="pr">$</span> <span class="cmd">./kill</span>
+Parent 1370 active
+Child 1371 active
+Child 1371 active
+Child 1371 active
+Child 1371 active
+Parent 1370 done</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הילד בלולאה אינסופית: ישן שנייה ומדפיס. הוא לא יסתיים לבד.</li><li>ההורה מדפיס, ישן 5 שניות, ואז <code>kill(rc, SIGKILL)</code>: <code>rc</code> הוא ה-<bdi dir="ltr">PID</bdi> של הילד, כפי ש-<code>fork</code> החזירה להורה.</li><li><bdi dir="ltr">SIGKILL</bdi> לא ניתן לתפיסה או להתעלמות – הקרנל מסיים את הילד מיד.</li><li>מספר השורות של הילד (4 או 5) תלוי בתזמון: הוא מדפיס בכל שנייה, וההורה הורג אותו בערך בשנייה החמישית.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>kill</code> שולחת סיגנל כלשהו, לא רק הורגת. ההורה יודע את ה-<bdi dir="ltr">PID</bdi> של הילד מה-<code>fork</code>.</div>
+</article>
+<article class="lab" id="lab-c-sigint" data-group="sig">
+<header class="lab-h"><h3>תוכנית ש-<bdi dir="ltr">Ctrl+C</bdi> לא עוצר</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#signals" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להחליף את טיפול ברירת המחדל בסיגנל ב-<bdi dir="ltr">handler</bdi> משלנו.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">sigint.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;signal.h&gt;
+
+void sigint_handler(int sig) {
+    printf("SIGINT ignored: %d\n", getpid());
+}
+
+int main(int argc, char *argv[])
+{
+    struct sigaction act;
+    sigemptyset(&amp;act.sa_mask);
+    act.sa_handler = sigint_handler;
+    act.sa_flags = 0;
+
+    if (sigaction (SIGINT, &amp;act, NULL) == -1) {
+        fprintf(stderr, "sigaction failed\n");
+        exit(1);
+    }
+
+    printf("%d ignoring SIGINT\n", getpid());
+    while (1);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc sigint.c -Wall -o sigint</span>
+<span class="pr">$</span> <span class="cmd">./sigint &amp;</span>
+1388 ignoring SIGINT
+<span class="pr">$</span> <span class="cmd">kill -INT 1388<span class="cm">      # = Ctrl+C</span></span>
+SIGINT ignored: 1388
+<span class="pr">$</span> <span class="cmd">kill -INT 1388<span class="cm">      # = Ctrl+C</span></span>
+SIGINT ignored: 1388
+<span class="pr">$</span> <span class="cmd">kill -9 1388</span>
+exit code: 137</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>sigaction</code> מחליפה את הטיפול ב-<bdi dir="ltr">SIGINT</bdi> בפונקציה <code>sigint_handler</code>. ברירת המחדל הייתה לסיים את התהליך.</li><li><bdi dir="ltr">Ctrl+C</bdi> בטרמינל שולח <bdi dir="ltr">SIGINT</bdi>. כאן שלחתי אותו עם <code>kill -INT</code> – זה אותו סיגנל. כל פעם הפונקציה רצה, מדפיסה, והתוכנית ממשיכה.</li><li><code>sigemptyset(&amp;act.sa_mask)</code>: בזמן שה-<bdi dir="ltr">handler</bdi> רץ, לא חוסמים סיגנלים נוספים.</li><li><code>kill -9</code> שולח <bdi dir="ltr">SIGKILL</bdi>, שאי אפשר לתפוס, והתוכנית מסתיימת. קוד היציאה 137 = 128 + 9.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> אפשר לתפוס כמעט כל סיגנל. <bdi dir="ltr">SIGKILL</bdi> ו-<bdi dir="ltr">SIGSTOP</bdi> – לא.</div>
+</article>
+<article class="lab" id="lab-c-sigchld" data-group="sig">
+<header class="lab-h"><h3><bdi dir="ltr">SIGCHLD</bdi> קוטע את <bdi dir="ltr">sleep</bdi></h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#bg" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות שסיגנל מעיר תהליך שחסום בקריאת מערכת, ולמה הקוד ישן בלולאה.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">sigchld.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;signal.h&gt;
+
+void sigchld_handler(int signal) {
+    int rc = wait(NULL);
+    printf("%d: Child %d terminated\n", getpid(), rc);
+}
+int main(int argc, char *argv[])
+{
+    struct sigaction act;
+    sigemptyset(&amp;act.sa_mask);
+    act.sa_handler = sigchld_handler; //or: act.sa_handler = SIG_IGN;
+    act.sa_flags = 0;
+
+    if (sigaction(SIGCHLD, &amp;act, NULL) == -1) {
+        fprintf(stderr, "sigaction failed\n");
+        exit(1);
+    }
+
+    while (1) {
+        if (!fork()) {
+            sleep(1);
+            break;
+        }
+        int slp = 5;
+        while (slp) {
+            slp = sleep(5);
+        }
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc sigchld.c -Wall -o sigchld</span>
+<span class="pr">$</span> <span class="cmd">./sigchld</span>
+1404: Child 1405 terminated
+1404: Child 1412 terminated</code></pre></div>
+<p class="lab-note">התוכנית רצה לנצח; עצרתי אותה אחרי 8 שניות.</p>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>ההורה יוצר ילד שישן שנייה ומסתיים, ואז רוצה לישון 5 שניות שלמות.</li><li>אחרי שנייה הילד מסתיים, הקרנל שולח <bdi dir="ltr">SIGCHLD</bdi>, וה-<bdi dir="ltr">handler</bdi> אוסף אותו ומדפיס.</li><li>ה-<code>sleep(5)</code> של ההורה <strong>נקטע</strong> באמצע, ומחזיר כמה שניות נשארו. הלולאה <code>while (slp)</code> ממשיכה לישון את השאר.</li><li>לכן יש שורה כל 5 שניות בערך: ילד חדש, שנייה, סיום, ועוד 4 שניות של שינה.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> סיגנל עם <bdi dir="ltr">handler</bdi> קוטע קריאה חוסמת. <code>sleep</code> מדווחת כמה נשאר; <code>read</code> ו-<code>waitpid</code> מחזירות <bdi dir="ltr">-1</bdi> עם <code>EINTR</code>.</div>
+</article>
+<article class="lab" id="lab-c-wrongwait" data-group="sig">
+<header class="lab-h"><h3><bdi dir="ltr">wait</bdi> שאוסף את הילד הלא נכון</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#bg" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות למה לחזית מחכים עם <code>waitpid</code> ל-<bdi dir="ltr">PID</bdi> מסוים.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">wrongwait.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    pid_t bg = fork();
+    if (bg == 0) _exit(0);                 // "background" child: ends at once
+    sleep(1);
+    pid_t fg = fork();
+    if (fg == 0) { sleep(2); _exit(0); }   // "foreground" child: 2 seconds
+    pid_t got = wait(NULL);                // meant to wait for fg...
+    printf("bg=%d fg=%d wait returned %d\n", bg, fg, got);
+    printf("waitpid(fg) returned %d\n", waitpid(fg, NULL, 0));
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc wrongwait.c -Wall -o wrongwait</span>
+<span class="pr">$</span> <span class="cmd">time ./wrongwait</span>
+bg=1427 fg=1429 wait returned 1427
+waitpid(fg) returned 1429
+
+real	0m3.005s
+user	0m0.004s
+sys	0m0.000s</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>ילד ה"רקע" מסתיים מיד והופך לזומבי. אחרי שנייה נוצר ילד "חזית" שרץ 2 שניות.</li><li><code>wait(NULL)</code> אוסף <strong>ילד כלשהו</strong> – והזומבי כבר מחכה. היא חוזרת מיד עם הילד מהרקע, בזמן שהילד מהחזית עוד רץ.</li><li><code>waitpid(fg, NULL, 0)</code> מחכה דווקא לילד הנכון. <code>time</code> מראה כ-3 שניות: שנייה לפני ה-<code>fork</code> השני, ועוד שתיים של ההמתנה לחזית.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> לחזית: <code>waitpid</code> עם ה-<bdi dir="ltr">PID</bdi>. <code>wait</code> רגיל יכול "לגנוב" ילד מהרקע.</div>
+</article>
+<article class="lab" id="lab-c-workers" data-group="sig">
+<header class="lab-h"><h3>איסוף בלי לחסום: <bdi dir="ltr">WNOHANG</bdi></h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#bg" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> הורה שממשיך לעבוד, ובכל סיבוב אוסף את מי שסיים – בלי לחכות ובלי סיגנלים.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">workers.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    setbuf(stdout, NULL);
+    for (int i = 1; i &lt;= 3; i++) {
+        pid_t pid = fork();
+        if (pid &lt; 0) { perror("fork"); return 1; }
+        if (pid == 0) { sleep(i); _exit(0); }   // worker i runs i seconds
+        printf("started worker %d\n", pid);
+    }
+    int left = 3;
+    while (left &gt; 0) {
+        printf("parent busy...\n");
+        sleep(1);
+        pid_t done;
+        while ((done = waitpid(-1, NULL, WNOHANG)) &gt; 0) {   // collect everyone who finished
+            printf("worker %d finished\n", done);
+            left--;
+        }
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc workers.c -Wall -o workers</span>
+<span class="pr">$</span> <span class="cmd">./workers</span>
+started worker 1443
+started worker 1444
+started worker 1445
+parent busy...
+worker 1443 finished
+parent busy...
+worker 1444 finished
+parent busy...
+worker 1445 finished</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>שלושה עובדים: הראשון רץ שנייה, השני שתיים, השלישי שלוש.</li><li><code>waitpid(-1, NULL, WNOHANG)</code>: <code>-1</code> = כל ילד, ו-<code>WNOHANG</code> = לא לחכות. היא מחזירה <bdi dir="ltr">PID</bdi> אם אספה מישהו, 0 אם כולם עוד רצים, ו-<bdi dir="ltr">-1</bdi> אם אין ילדים.</li><li>הלולאה הפנימית אוספת את <strong>כל</strong> מי שסיים מאז הסיבוב הקודם, לא רק אחד.</li><li>ההורה לא נחסם אף פעם בגלל העובדים, ואף עובד לא נשאר זומבי יותר מסיבוב.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> שלושה ערכי החזרה: <bdi dir="ltr">&gt; 0</bdi> נאסף, 0 עוד רצים, <bdi dir="ltr">-1</bdi> אין ילדים. בודקים בנקודה קבועה בלולאה.</div>
+</article>
+<article class="lab" id="lab-c-eintr" data-group="sig">
+<header class="lab-h"><h3><bdi dir="ltr">EINTR</bdi>: קריאה חוסמת שנקטעה</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#bg" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לראות ש-<bdi dir="ltr">handler</bdi> ל-<bdi dir="ltr">SIGCHLD</bdi> גורם ל-<code>read</code> ול-<code>waitpid</code> להיכשל באמצע.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">eintr.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+void on_child(int sig) { while (waitpid(-1, NULL, WNOHANG) &gt; 0) ; }
+
+int main() {
+    struct sigaction sa;
+    memset(&amp;sa, 0, sizeof(sa));
+    sa.sa_handler = on_child;              /* no SA_RESTART */
+    sigaction(SIGCHLD, &amp;sa, NULL);
+
+    pid_t bg = fork();
+    if (bg == 0) { sleep(1); _exit(0); }   /* ends after 1 second */
+    pid_t fg = fork();
+    if (fg == 0) { sleep(2); _exit(0); }   /* ends after 2 seconds */
+
+    pid_t r = waitpid(fg, NULL, 0);        /* blocked here when bg ends */
+    if (r &lt; 0) perror("waitpid");
+    else printf("waitpid returned %d\n", r);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc eintr.c -Wall -o eintr</span>
+<span class="pr">$</span> <span class="cmd">./eintr</span>
+waitpid: Interrupted system call</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>ההורה חסום ב-<code>waitpid(fg, ...)</code> ומחכה לילד שרץ 2 שניות.</li><li>אחרי שנייה הילד השני מסתיים. <bdi dir="ltr">SIGCHLD</bdi> מגיע, ה-<bdi dir="ltr">handler</bdi> רץ ואוסף אותו.</li><li>כשה-<bdi dir="ltr">handler</bdi> חוזר, ה-<code>waitpid</code> לא ממשיך לחכות: הוא נכשל עם <bdi dir="ltr">-1</bdi>, ו-<code>errno</code> = <code>EINTR</code> – <code>Interrupted system call</code>.</li><li>הילד מהחזית עדיין רץ! תוכנית שלא בודקת את זה תמשיך כאילו הוא הסתיים.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> מי שמשתמש ב-<bdi dir="ltr">handler</bdi> צריך לצפות ל-<code>EINTR</code> בכל קריאה חוסמת. החלופה: לאסוף עם <code>WNOHANG</code> בנקודה קבועה, בלי סיגנלים.</div>
+</article>
+<article class="lab" id="lab-c-ex5" data-group="sig">
+<header class="lab-h"><h3>הפתרון מהקורס לתרגיל הסיגנלים</h3><span class="lab-tags"><span class="lab-tag course">מהקורס</span><a class="lab-tag" href="https://eliorch.github.io/ossum/signals.html#ex5" target="_blank">פרק 5 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> <bdi dir="ltr">handler</bdi> אחד לשני סיגנלים, והחלפה בין טיפול בזומבים לברירת מחדל בכל <bdi dir="ltr">Ctrl+C</bdi>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">ex5.c</bdi></div><pre><code class="language-c">#include &lt;sys/time.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;time.h&gt;
+
+pid_t last_child = 0;
+struct sigaction act1;
+struct sigaction act2;
+
+void create_child() {
+    last_child = fork();
+    if (!last_child) {
+        // child process
+        printf("%d [%d] Child running\n", getpid(), getppid());
+        sleep(5);
+        exit(0);
+    }
+}
+
+void signal_handler(int signal) {
+    if (signal == SIGINT) {
+        if (last_child) {
+            printf("%d stopping child %d\n", getpid(), last_child);
+            kill(last_child, SIGKILL);
+            last_child = 0;
+        }
+        else {
+            create_child();
+        }
+        struct sigaction tmp = act1;
+        act1 = act2;
+        act2 = act1;
+        if (act1.sa_handler == signal_handler)
+            printf("%d handling SIGCHLD\n", getpid());
+        else
+            printf("%d default SIGCHLD\n", getpid());
+
+        if (sigaction(SIGCHLD, &amp;act1, &amp;act2) == -1) {
+            fprintf(stderr, "sigaction SIGCHLD failed\n");
+            exit(1);
+        }
+    }
+    else if (signal == SIGCHLD) {
+        int rc = wait(NULL);
+        printf("%d: Child %d terminated\n", getpid(), rc);
+        last_child = 0;
+        create_child();
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    sigemptyset(&amp;act1.sa_mask);
+    act1.sa_handler = signal_handler; //or: act.sa_handler = SIG_IGN;
+    act1.sa_flags = 0;
+
+    if (sigaction(SIGCHLD, &amp;act1, &amp;act2) == -1) {
+        fprintf(stderr, "sigaction SIGCHLD failed\n");
+        exit(1);
+    }
+    if (sigaction(SIGINT, &amp;act1, NULL) == -1) {
+        fprintf(stderr, "sigaction SIGINIT failed\n");
+        exit(1);
+    }
+
+    while (1) {
+        sleep(1);
+    }
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc ex5.c -Wall -o ex5</span>
+ex5.c: In function ‘signal_handler’:
+ex5.c:36:34: warning: unused variable ‘tmp’ [-Wunused-variable]
+   36 |                 struct sigaction tmp = act1;
+      |                                  ^~~
+<span class="pr">$</span> <span class="cmd">./ex5 &amp;</span>
+<span class="pr">$</span> <span class="cmd">kill -INT 1698<span class="cm">      # Ctrl+C #1</span></span>
+1698 default SIGCHLD
+1702 [1698] Child running
+<span class="pr">$</span> <span class="cmd">kill -INT 1698<span class="cm">      # Ctrl+C #2</span></span>
+1698 stopping child 1702
+1698 handling SIGCHLD
+<span class="pr">$</span> <span class="cmd">kill -INT 1698<span class="cm">      # Ctrl+C #3</span></span>
+1698 default SIGCHLD
+1712 [1698] Child running
+<span class="pr">$</span> <span class="cmd">kill -9 1698</span></code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>הקומפילציה עם <code>-Wall</code> מזהירה על <code>tmp</code> שלא בשימוש. ההחלפה האמיתית נעשית דרך הארגומנט השלישי של <code>sigaction</code>: הוא כותב לתוך <code>act2</code> את הטיפול הקודם.</li><li><bdi dir="ltr">Ctrl+C</bdi> הראשון: אין ילד, אז נוצר ילד, והטיפול ב-<bdi dir="ltr">SIGCHLD</bdi> עובר לברירת מחדל. אחרי 5 שניות הילד מסתיים – ואין מי שיטפל בזה, כי ברירת המחדל של <bdi dir="ltr">SIGCHLD</bdi> היא התעלמות.</li><li>השני: <code>last_child</code> עדיין מכיל את ה-<bdi dir="ltr">PID</bdi> (ההורה לא ידע שהילד מת), אז הוא "עוצר" אותו – <code>kill</code> לזומבי לא עושה כלום – והטיפול עובר ל-<bdi dir="ltr">handler</bdi>.</li><li>השלישי: אין ילד, נוצר ילד חדש, והטיפול חוזר לברירת מחדל.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>sigaction</code> עם ארגומנט שלישי מחזירה את הטיפול הקודם – כך מחליפים הלוך ושוב. ומשתנה גלובלי הוא "מה שההורה יודע", לא בהכרח המציאות.</div>
+</article>
+</div>
+<div class="lab-group" data-group="files">
+<h2 id="g-files">פרק 6: קבצים, הפניות וצינורות</h2>
+<p>איך <code>&gt;</code> ו-<code>|</code> עובדים מבפנים.</p>
+<article class="lab" id="lab-c-dup" data-group="files">
+<header class="lab-h"><h3><bdi dir="ltr">dup</bdi>: המספר הפנוי הנמוך ביותר</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להבין איך <code>printf</code> יכולה לכתוב לקובץ: <bdi dir="ltr">FD 1</bdi> מצביע לקובץ במקום למסך.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">dup.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    int f = open("x.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int a = dup(f);
+    fprintf(stderr, "f=%d a=%d\n", f, a);
+    close(1);
+    int b = dup(f);
+    fprintf(stderr, "b=%d\n", b);
+    printf("to file\n");
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc dup.c -Wall -o dup</span>
+<span class="pr">$</span> <span class="cmd">./dup</span>
+f=3 a=4
+b=1
+<span class="pr">$</span> <span class="cmd">cat x.txt</span>
+to file</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><bdi dir="ltr">FD</bdi> 0, 1, 2 תפוסים (<bdi dir="ltr">stdin, stdout, stderr</bdi>), ולכן <code>open</code> מחזירה 3.</li><li><code>dup(f)</code> יוצר עוד מספר שמצביע לאותו קובץ, ותמיד לוקח <strong>את המספר הפנוי הנמוך ביותר</strong>: 4.</li><li>אחרי <code>close(1)</code> המספר הפנוי הנמוך ביותר הוא 1, ולכן <code>dup</code> מחזירה 1. עכשיו <bdi dir="ltr">FD 1</bdi> מצביע ל-<code>x.txt</code>.</li><li><code>printf</code> כותבת תמיד ל-<bdi dir="ltr">FD 1</bdi>, בלי לדעת לאן הוא מוביל – ולכן "to file" לא מופיע על המסך אלא בקובץ. ההדפסות הקודמות הלכו ל-<code>stderr</code> כדי שנראה אותן.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> ככה ה-<bdi dir="ltr">shell</bdi> מממש <code>&gt;</code>: סוגר את 1 ומשכפל לתוכו את הקובץ. <code>dup2(fd, 1)</code> עושה את שני השלבים בפעולה אחת.</div>
+</article>
+<article class="lab" id="lab-c-redirect" data-group="files">
+<header class="lab-h"><h3>הפניית הפלט של ילד לקובץ</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לממש <code>ls &gt; out.txt</code> בעצמנו: <code>fork</code>, <code>dup2</code> ואז <code>exec</code>.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">redirect.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    pid_t rc = fork();
+    if (rc == 0) {
+        int fd = open("out.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd == -1) { perror("open"); exit(1); }
+        dup2(fd, STDOUT_FILENO);   // FD 1 now points to out.txt
+        close(fd);                 // the copy in FD 1 is enough
+        char *args[] = { "ls", NULL };
+        execvp(args[0], args);     // ls writes to FD 1 without knowing
+        perror("execvp"); exit(1);
+    }
+    waitpid(rc, NULL, 0);
+    printf("parent: ls is done, its output is in out.txt\n");
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc redirect.c -Wall -o redirect</span>
+<span class="pr">$</span> <span class="cmd">./redirect</span>
+parent: ls is done, its output is in out.txt
+<span class="pr">$</span> <span class="cmd">cat out.txt</span>
+out.txt
+redirect
+redirect.c</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>ההפניה נעשית <strong>בילד, אחרי <code>fork</code> ולפני <code>exec</code></strong>. זו בדיוק הסיבה ש-<code>fork</code> ו-<code>exec</code> הן שתי קריאות נפרדות.</li><li><code>dup2(fd, 1)</code> גורם ל-<bdi dir="ltr">FD 1</bdi> להצביע לקובץ. את <code>fd</code> המקורי סוגרים, כי כבר לא צריך אותו.</li><li><code>exec</code> לא משנה את טבלת הקבצים הפתוחים, ולכן <code>ls</code> כותב ל-<bdi dir="ltr">FD 1</bdi> – לקובץ – בלי לדעת שום דבר על ההפניה.</li><li>ההורה לא נגע ב-<bdi dir="ltr">FD 1</bdi> שלו, ולכן ההודעה שלו מגיעה למסך. <code>out.txt</code> עצמו מופיע ברשימה, כי הוא נוצר לפני ש-<code>ls</code> רץ.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> <code>cmd &gt; file</code> = <code>fork</code> ← בילד <code>open</code> + <code>dup2</code> ← <code>exec</code>.</div>
+</article>
+<article class="lab" id="lab-c-pipe" data-group="files">
+<header class="lab-h"><h3>צינור בין שני תהליכים: <bdi dir="ltr">ls | wc -l</bdi></h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> לממש צינור: הפלט של ילד אחד הוא הקלט של ילד שני.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">pipe.c</bdi></div><pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main() {
+    int fd[2];
+    pipe(fd);                          // fd[0] = read end, fd[1] = write end
+    if (fork() == 0) {                 // first child: ls
+        dup2(fd[1], STDOUT_FILENO);
+        close(fd[0]); close(fd[1]);
+        execlp("ls", "ls", NULL);
+        perror("ls"); exit(1);
+    }
+    if (fork() == 0) {                 // second child: wc -l
+        dup2(fd[0], STDIN_FILENO);
+        close(fd[0]); close(fd[1]);
+        execlp("wc", "wc", "-l", NULL);
+        perror("wc"); exit(1);
+    }
+    close(fd[0]); close(fd[1]);        // parent must close too
+    while (wait(NULL) &gt; 0);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc pipe.c -Wall -o pipe</span>
+<span class="pr">$</span> <span class="cmd">./pipe</span>
+2
+<span class="pr">$</span> <span class="cmd">ls | wc -l</span>
+2</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li><code>pipe(fd)</code> יוצר צינור עם שני קצוות: <code>fd[1]</code> לכתיבה ו-<code>fd[0]</code> לקריאה. ה-<code>fork</code>-ים מעתיקים את שניהם לילדים.</li><li>הילד הראשון מחבר את <bdi dir="ltr">FD 1</bdi> שלו לקצה הכתיבה, והשני את <bdi dir="ltr">FD 0</bdi> שלו לקצה הקריאה. אחר כך כל אחד הופך לתוכנית שלו.</li><li>כל תהליך סוגר את כל הקצוות שהוא לא משתמש בהם – <strong>כולל ההורה</strong>. <code>wc</code> מסיים רק כשהוא רואה סוף קלט, וזה קורה רק כשכל מי שמחזיק את קצה הכתיבה סגר אותו.</li><li>התוצאה זהה ל-<code>ls | wc -l</code> מהטרמינל.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> קצה כתיבה ששכחו לסגור = <code>wc</code> מחכה לנצח. זו הטעות הכי נפוצה בצינורות.</div>
+</article>
+<article class="lab" id="lab-c-lseek" data-group="files">
+<header class="lab-h"><h3><bdi dir="ltr">lseek</bdi>: חור בקובץ</h3><span class="lab-tags"><a class="lab-tag" href="https://eliorch.github.io/ossum/redir.html" target="_blank">פרק 6 ↗</a></span></header>
+<p class="lab-goal"><strong>המטרה:</strong> להבין את מיקום הקריאה/כתיבה בקובץ, ומה קורה כשקופצים אחרי הסוף.</p>
+<div class="lab-block"><div class="lab-label"><bdi dir="ltr">hole.c</bdi></div><pre><code class="language-c">#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    int f = open("s.bin", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    write(f, "AB", 2);
+    lseek(f, 5, SEEK_END);   // 5 bytes past the end
+    write(f, "C", 1);
+    close(f);
+    return 0;
+}</code></pre></div>
+<div class="lab-block"><div class="lab-label">בטרמינל</div><pre class="term"><code class="nohighlight"><span class="pr">$</span> <span class="cmd">gcc hole.c -Wall -o hole</span>
+<span class="pr">$</span> <span class="cmd">./hole</span>
+<span class="pr">$</span> <span class="cmd">ls -l s.bin</span>
+-rw-r--r-- 1 vagrant vagrant 8 Nov 12 23:45 s.bin
+<span class="pr">$</span> <span class="cmd">od -c s.bin</span>
+0000000   A   B  \0  \0  \0  \0  \0   C
+0000010</code></pre></div>
+<div class="lab-what"><div class="lab-sub">מה קורה כאן</div><ol><li>אחרי <code>write(f, "AB", 2)</code> המיקום בקובץ הוא 2, והקובץ באורך 2.</li><li><code>lseek(f, 5, SEEK_END)</code> מזיז את המיקום ל-5 בתים <strong>אחרי הסוף</strong>: למיקום 7.</li><li>הכתיבה של <code>C</code> במיקום 7 מאריכה את הקובץ ל-8 בתים. הבתים 2–6, שאף אחד לא כתב, נקראים כאפסים.</li><li><code>od -c</code> מציג כל בית: <code>\0</code> הוא בית אפס.</li></ol></div>
+<div class="lab-take"><span class="lab-take-k">השורה התחתונה</span> לכל קובץ פתוח יש מיקום נוכחי, ו-<code>read</code>/<code>write</code> מתקדמות ממנו. <code>lseek</code> מזיזה אותו.</div>
+</article>
+</div>
+</section>
+<script>
+(function () {
+  var q = document.getElementById('lab-q'), chips = [].slice.call(document.querySelectorAll('.lab-bar .chip'));
+  var labs = [].slice.call(document.querySelectorAll('article.lab')), groups = [].slice.call(document.querySelectorAll('.lab-group'));
+  var on = {};
+  function norm(s) { return (s || '').toLowerCase(); }
+  function apply() {
+    var term = norm(q.value).trim(), anyG = Object.keys(on).some(function (k) { return on[k]; }), shown = 0;
+    labs.forEach(function (a) {
+      var ok = (!anyG || on[a.dataset.group]) && (!term || norm(a.textContent).indexOf(term) >= 0);
+      a.hidden = !ok; if (ok) shown++;
+    });
+    groups.forEach(function (g) { g.hidden = !g.querySelector('article.lab:not([hidden])'); });
+    document.getElementById('lab-count').textContent = shown + ' מתוך ' + labs.length;
+    document.getElementById('lab-empty').style.display = shown ? 'none' : 'block';
+  }
+  chips.forEach(function (c) { c.onclick = function () { on[c.dataset.g] = !on[c.dataset.g]; c.setAttribute('aria-pressed', String(!!on[c.dataset.g])); apply(); }; });
+  q.addEventListener('input', apply);
+  apply();
+})();
+</script>
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script>
+try { hljs.highlightAll(); } catch (e) {}
+
+/* ---------- scheduler core ---------- */
+function simulate(jobs, alg, q) {
+  jobs = jobs.map((j, i) => ({ name: j.name, arr: +j.arr, burst: +j.burst, idx: i, rem: +j.burst, first: null, done: null }));
+  const seg = []; let t = 0;
+  const push = (name, s, e) => { if (e <= s) return; const l = seg[seg.length - 1]; if (l && l.name === name && l.e === s) l.e = e; else seg.push({ name, s, e }); };
+  const byArr = (a, b) => a.arr - b.arr || a.idx - b.idx;
+  const left = () => jobs.some(j => j.rem > 0);
+  if (alg === 'FCFS' || alg === 'SJF') {
+    while (left()) {
+      const ready = jobs.filter(j => j.rem > 0 && j.arr <= t);
+      if (!ready.length) { const nx = Math.min(...jobs.filter(j => j.rem > 0).map(j => j.arr)); push('idle', t, nx); t = nx; continue; }
+      ready.sort(alg === 'SJF' ? (a, b) => a.burst - b.burst || byArr(a, b) : byArr);
+      const j = ready[0]; j.first = t; push(j.name, t, t + j.rem); t += j.rem; j.rem = 0; j.done = t;
+    }
+  } else if (alg === 'SRTF') {
+    while (left()) {
+      const ready = jobs.filter(j => j.rem > 0 && j.arr <= t);
+      if (!ready.length) { const nx = Math.min(...jobs.filter(j => j.rem > 0).map(j => j.arr)); push('idle', t, nx); t = nx; continue; }
+      ready.sort((a, b) => a.rem - b.rem || byArr(a, b));
+      const j = ready[0]; if (j.first === null) j.first = t;
+      const nextArr = Math.min(Infinity, ...jobs.filter(x => x.rem > 0 && x.arr > t).map(x => x.arr));
+      const run = Math.min(j.rem, nextArr - t);
+      push(j.name, t, t + run); t += run; j.rem -= run; if (!j.rem) j.done = t;
+    }
+  } else { // RR
+    q = Math.max(1, +q || 1);
+    const pending = jobs.slice().sort(byArr); const queue = [];
+    const admit = (upto) => { while (pending.length && pending[0].arr <= upto) queue.push(pending.shift()); };
+    admit(t);
+    while (queue.length || pending.length) {
+      if (!queue.length) { const nx = pending[0].arr; push('idle', t, nx); t = nx; admit(t); continue; }
+      const j = queue.shift(); if (j.first === null) j.first = t;
+      const run = Math.min(q, j.rem); push(j.name, t, t + run); t += run; j.rem -= run;
+      admit(t);
+      if (j.rem > 0) queue.push(j); else j.done = t;
+    }
+  }
+  const rows = jobs.map(j => ({ name: j.name, arr: j.arr, burst: j.burst, tat: j.done - j.arr, resp: j.first - j.arr }));
+  const avg = k => rows.reduce((s, r) => s + r[k], 0) / rows.length;
+  return { seg, rows, avgTat: avg('tat'), avgResp: avg('resp'), end: t };
+}
+
+/* ---------- rendering ---------- */
+const palette = ['var(--example)', 'var(--theory)', 'var(--exercise)', 'var(--formula)', 'var(--warn)', 'var(--summary)'];
+function colorOf(name, names) { return name === 'idle' ? 'var(--sunk)' : palette[names.indexOf(name) % palette.length]; }
+function fmt(x) { return Number.isInteger(x) ? String(x) : x.toFixed(2); }
+function gantt(res, names, title) {
+  const W = 560, L = 10, H = 34, scale = (W - 2 * L) / Math.max(1, res.end);
+  const step = res.end <= 20 ? 1 : res.end <= 40 ? 5 : res.end <= 100 ? 10 : Math.ceil(res.end / 10);
+  let s = `<svg viewBox="0 0 ${W} ${H + 40}" width="${W}" role="img" aria-label="Gantt">`;
+  res.seg.forEach(g => {
+    const x = L + g.s * scale, w = (g.e - g.s) * scale;
+    s += `<rect x="${x}" y="8" width="${w}" height="${H}" fill="${colorOf(g.name, names)}" stroke="var(--surface)" stroke-width="1"/>`;
+    if (w > 14 && g.name !== 'idle') s += `<text x="${x + w / 2}" y="${8 + H / 2 + 5}" text-anchor="middle" font-size="13" class="mono" fill="var(--surface)">${g.name}</text>`;
+  });
+  for (let v = 0; v <= res.end; v += step) {
+    const x = L + v * scale;
+    s += `<line x1="${x}" y1="${H + 8}" x2="${x}" y2="${H + 14}" stroke="var(--muted)"/><text x="${x}" y="${H + 28}" text-anchor="middle" font-size="11" class="mono" fill="var(--muted)">${v}</text>`;
+  }
+  s += '</svg>';
+  let tbl = '<div class="tbl"><table><tr><th>עבודה</th><th>הגעה</th><th>אורך</th><th>Turnaround</th><th>Response</th></tr>';
+  res.rows.forEach(r => tbl += `<tr><td class="mono">${r.name}</td><td class="num">${r.arr}</td><td class="num">${r.burst}</td><td class="num">${r.tat}</td><td class="num">${r.resp}</td></tr>`);
+  tbl += `<tr><th>ממוצע</th><td></td><td></td><td class="num">${fmt(res.avgTat)}</td><td class="num">${fmt(res.avgResp)}</td></tr></table></div>`;
+  return `<figure>${title ? `<figcaption style="margin:0 0 6px">${title}</figcaption>` : ''}${s}${tbl}</figure>`;
+}
+
+const presets = [
+  { label: 'FCFS · 10/10/10', alg: 'FCFS', jobs: [['A', 0, 10], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'FCFS · A=60', alg: 'FCFS', jobs: [['A', 0, 60], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'SJF · A=60', alg: 'SJF', jobs: [['A', 0, 60], ['B', 0, 10], ['C', 0, 10]] },
+  { label: 'SJF · B,C at t=10', alg: 'SJF', jobs: [['A', 0, 60], ['B', 10, 10], ['C', 10, 10]] },
+  { label: 'SRTF · B,C at t=10', alg: 'SRTF', jobs: [['A', 0, 60], ['B', 10, 10], ['C', 10, 10]] },
+  { label: 'RR · 5/5/5, q=1', alg: 'RR', q: 1, jobs: [['A', 0, 5], ['B', 0, 5], ['C', 0, 5]] },
+];
+const toJobs = p => p.jobs.map(([name, arr, burst]) => ({ name, arr, burst }));
+
+/* lecture figures */
+(function () {
+  const box = document.getElementById('lec-gantts'); if (!box) return;
+  const L = x => '<bdi dir="ltr">' + x + '</bdi>';
+  const caps = [L('FCFS') + ': שלוש עבודות של 10, ממוצע 20', L('FCFS') + ': עבודה ' + L('A') + ' הארוכה ראשונה, ממוצע 70', L('SJF') + ': אותן עבודות, ממוצע 36.67', L('SJF') + ': ' + L('B') + ' ו-' + L('C') + ' מגיעות בזמן 10, ממוצע 63.33', L('SRTF') + ': אותו מקרה, ממוצע 36.67'];
+  let html = '';
+  presets.slice(0, 5).forEach((p, i) => { const j = toJobs(p); html += gantt(simulate(j, p.alg, p.q), j.map(x => x.name), caps[i]); });
+  box.innerHTML = html;
+  const rr = presets[5], rj = toJobs(rr);
+  document.getElementById('rr-gantt').innerHTML = gantt(simulate(rj, 'RR', 1), rj.map(x => x.name));
+})();
+
+/* interactive simulator */
+(function () {
+  const jobsEl = document.getElementById('jobs'), out = document.getElementById('out');
+  if (!jobsEl) return;
+  const alg = document.getElementById('alg'), q = document.getElementById('q');
+  let jobs = toJobs(presets[4]), uid = 0;
+  function renderJobs() {
+    jobsEl.innerHTML = '';
+    jobs.forEach((j, i) => {
+      const d = document.createElement('div'); d.className = 'job'; const id = 'j' + (uid++);
+      d.innerHTML = `<strong>${j.name}</strong><label for="${id}a">הגעה</label><input id="${id}a" type="number" min="0" value="${j.arr}"><label for="${id}b">אורך</label><input id="${id}b" type="number" min="1" value="${j.burst}"><button class="ghost" type="button" aria-label="הסר ${j.name}">×</button>`;
+      d.querySelector(`#${id}a`).oninput = e => { j.arr = Math.max(0, +e.target.value || 0); };
+      d.querySelector(`#${id}b`).oninput = e => { j.burst = Math.max(1, +e.target.value || 1); };
+      d.querySelector('button').onclick = () => { if (jobs.length > 1) { jobs.splice(i, 1); renderJobs(); run(); } };
+      jobsEl.appendChild(d);
+    });
+  }
+  function run() {
+    q.disabled = alg.value !== 'RR';
+    const res = simulate(jobs, alg.value, q.value);
+    out.innerHTML = gantt(res, jobs.map(j => j.name), alg.value + (alg.value === 'RR' ? ` · quantum ${q.value}` : ''));
+  }
+  document.getElementById('add').onclick = () => { if (jobs.length >= 6) return; jobs.push({ name: 'ABCDEF'[jobs.length] || 'X', arr: 0, burst: 5 }); renderJobs(); run(); };
+  document.getElementById('run').onclick = run;
+  alg.onchange = run; q.oninput = run;
+  const pc = document.getElementById('presets');
+  presets.forEach(p => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = p.label;
+    b.onclick = () => { jobs = toJobs(p); alg.value = p.alg; if (p.q) q.value = p.q; renderJobs(); run(); }; pc.appendChild(b); });
+  alg.value = 'SRTF'; renderJobs(); run();
+})();
+
+/* ================= dry-run tracer ================= */
+(function () {
+  const C = x => '<code>' + x + '</code>';
+  const E = x => '<bdi dir="ltr">' + x + '</bdi>';
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const PCOL = ['var(--example)', 'var(--theory)', 'var(--exercise)', 'var(--formula)', 'var(--warn)', 'var(--summary)'];
+  const ST = { running: 'רץ', ready: 'מוכן', blocked: 'חסום', zombie: 'זומבי', reaped: 'נאסף', kernel: 'בקרנל' };
+
+  /* ---- builder ---- */
+  function B(code) {
+    const t = { code, procs: [], out: [], steps: [] };
+    const P = pid => t.procs.find(p => p.pid === pid);
+    const api = {
+      proc(pid, ppid, line, vars, extra) { t.procs.push(Object.assign({ pid, ppid, line, vars: vars || {}, state: 'running', prog: null, buf: '' }, extra || {})); return api; },
+      fork(par, child) { const p = P(par); t.procs.push({ pid: child, ppid: par, line: p.line, vars: JSON.parse(JSON.stringify(p.vars)), state: 'ready', prog: p.prog, buf: p.buf }); return api; },
+      at(pid, line) { P(pid).line = line; return api; },
+      v(pid, k, val) { P(pid).vars[k] = val; return api; },
+      st(pid, s) { P(pid).state = s; if (s === 'reaped' || s === 'zombie') P(pid).line = null; return api; },
+      ppid(pid, pp) { P(pid).ppid = pp; return api; },
+      prog(pid, name) { P(pid).prog = name; return api; },
+      buf(pid, s) { P(pid).buf = s; return api; },
+      print(pid, text) { t.out.push({ pid, text }); return api; },
+      snap(active, note) {
+        t.steps.push({ procs: JSON.parse(JSON.stringify(t.procs)), out: t.out.slice(), active, note });
+        t.procs.forEach(p => { if (p.state === 'running' && p.pid !== active) p.state = 'ready'; });
+        return api;
+      },
+      run(pid) { t.procs.forEach(p => { if (p.state === 'running') p.state = 'ready'; }); P(pid).state = 'running'; return api; },
+      done() { return t; }
+    };
+    return api;
+  }
+
+  const KF = (par, child) => `<strong>מאחורי הקלעים:</strong> ${C('fork')} היא קריאת מערכת, ולכן ${E(par)} מבצע ${E('trap')} ועובר לקרנל. הקרנל מקצה ${E('PID')} חדש (${child}), יוצר ${E('PCB')} חדש בטבלת התהליכים ומעתיק לתוכו את מרחב הכתובות של ההורה, את האוגרים ואת הקבצים הפתוחים. בפועל ההעתקה עצלה, בשיטת ${E('copy-on-write')}. שני התהליכים נמצאים עכשיו באותה נקודה בקוד.`;
+  const RET = (par, child) => `הקרנל קובע ערך החזרה שונה לכל אחד: ההורה ${E(par)} מקבל ${child} (ה-${E('PID')} של הילד), והילד ${E(child)} מקבל 0. מכאן הם ממשיכים בנפרד, וכל אחד עובד על <strong>העותק שלו</strong> של המשתנים.`;
+
+  const traces = {};
+
+  /* 1. basic fork */
+  traces.basic = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['int main() {', '    pid_t pid1 = getpid();', '    pid_t pid2 = fork();', '    printf("%d\\n", getpid());', '    printf("%d\\n", pid1);', '    printf("%d\\n", pid2);', '}']);
+    b.proc(5, 1, 1).snap(5, `יש תהליך אחד, ${E('PID 5')}. הוא מתחיל לרוץ ב-${C('main')}.`);
+    b.at(5, 2).v(5, 'pid1', 5).snap(5, `${C('getpid()')} מחזירה 5, והערך נשמר ב-${C('pid1')}. שימו לב: זה קורה <strong>לפני</strong> ה-${C('fork')}, ולכן העותק של הילד יקבל את אותו ערך.`);
+    b.at(5, 3).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'pid2', 6).v(6, 'pid2', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 4).print(5, '5\n').snap(5, `המתזמן ממשיך להריץ את ההורה. ${C('getpid()')} מחזירה לו 5.`);
+    b.at(5, 5).print(5, '5\n').snap(5, `${C('pid1')} של ההורה הוא 5.`);
+    b.at(5, 6).print(5, '6\n').snap(5, `${C('pid2')} של ההורה הוא 6, ה-${E('PID')} של הילד.`);
+    b.at(5, 7).st(5, 'reaped').run(6).at(6, 4).print(6, '6\n').snap(6, `ההורה סיים. הילד, שהיה במצב "מוכן", מקבל עכשיו את המעבד וממשיך משורה 4 – בדיוק מאיפה ש-${C('fork')} חזר אליו. ${C('getpid()')} מחזירה לו 6.`);
+    b.ppid(6, 1).at(6, 5).print(6, '5\n').snap(6, `${C('pid1')} של הילד הוא 5: הערך הועתק מההורה. וכיוון שההורה כבר מת, הילד נעשה <strong>יתום</strong>, ולכן אומץ ע"י ${C('init')} וה-${E('PPID')} שלו הוא עכשיו 1.`);
+    b.at(6, 6).print(6, '0\n').snap(6, `${C('pid2')} של הילד הוא 0 – הערך ש-${C('fork')} החזיר לו.`);
+    b.at(6, 7).st(6, 'reaped').snap(null, `גם הילד סיים, ו-${C('init')} אוסף אותו. סדר אחר (הילד רץ ראשון, או החלפות באמצע) היה נותן סדר שורות אחר, אבל אותן שש שורות.`);
+    return b.done(); })() }];
+
+  /* 2. fork + wait, private copy */
+  traces.waitx = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int x = 0;', 'int rc = fork();', 'if (rc) {', '    wait(NULL);', '} else {', '    x += 3;', '}', 'printf("%d\\n", x);']);
+    b.proc(5, 1, 1, { x: 0 }).snap(5, `${E('PID 5')} מאתחל ${C('x = 0')}.`);
+    b.at(5, 2).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'rc', 6).v(6, 'rc', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 4).st(5, 'blocked').snap(5, `ההורה: ${C('rc')} הוא 6, כלומר "אמת", ונכנס ל-${C('if')}. ${C('wait')} היא קריאת מערכת: הקרנל בודק אם יש ילד שכבר הסתיים. אין, ולכן ההורה עובר למצב <strong>חסום</strong> ולא מקבל מעבד עד שילד יסתיים.`);
+    b.run(6).at(6, 6).v(6, 'x', 3).snap(6, `המתזמן מריץ את הילד. אצלו ${C('rc')} הוא 0, ולכן הוא ב-${C('else')} ומגדיל את ${C('x')} ל-3. זה משנה <strong>רק את העותק שלו</strong> – ה-${C('x')} של ההורה עדיין 0.`);
+    b.at(6, 8).print(6, '3\n').snap(6, `הילד מדפיס 3.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `הילד מסיים. הקרנל לא מוחק אותו מיד: הוא הופך ל<strong>זומבי</strong> (נשאר בטבלה עם סטטוס היציאה), שולח ${E('SIGCHLD')} להורה ומעיר אותו – ההורה עובר מ"חסום" ל"מוכן".`);
+    b.run(5).st(6, 'reaped').snap(5, `ה-${C('wait')} של ההורה חוזר עם 6 ו<strong>אוסף</strong> את הזומבי – הרשומה שלו נמחקת מטבלת התהליכים.`);
+    b.at(5, 8).print(5, '0\n').snap(5, `ההורה מדפיס את ה-${C('x')} שלו: 0. בזכות ה-${C('wait')} הסדר תמיד 3 ואז 0.`);
+    b.st(5, 'reaped').snap(null, `סוף.`);
+    return b.done(); })() }];
+
+  /* 3. exec */
+  traces.exec = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int rc = fork();', 'if (rc == 0) {', '    char *args[] = { "wc", "-l", "exec.c", NULL };', '    execvp(args[0], args);', '    printf("this shouldn\'t print out\\n");', '} else {', '    int rc_wait = wait(NULL);', '    printf("I am parent of %d (rc_wait:%d)\\n", rc, rc_wait);', '}']);
+    b.proc(5, 1, 1, {}, { prog: 'exec_demo' }).st(5, 'kernel').fork(5, 6).snap(5, KF(5, 6));
+    b.v(5, 'rc', 6).v(6, 'rc', 0).st(5, 'running').snap(5, RET(5, 6));
+    b.at(5, 7).st(5, 'blocked').snap(5, `ההורה נכנס ל-${C('else')} ונחסם ב-${C('wait')} עד שהילד יסתיים.`);
+    b.run(6).at(6, 3).v(6, 'args', '{wc, -l, exec.c}').snap(6, `הילד בונה את מערך הארגומנטים. האיבר הראשון הוא שם התוכנית, והמערך מסתיים ב-${C('NULL')}.`);
+    b.at(6, 4).st(6, 'kernel').snap(6, `${C('execvp')} היא קריאת מערכת. הקרנל טוען את התוכנית ${C('wc')} מהדיסק <strong>לתוך אותו תהליך.</strong> הוא זורק את ה-${E('Text')}, ה-${E('Data')}, ה-${E('Heap')} וה-${E('Stack')} של הילד, וטוען את אלה של ${C('wc')}. ה-${E('PID')}, ה-${E('PPID')} והקבצים הפתוחים לא משתנים.`);
+    b.prog(6, 'wc').at(6, null).st(6, 'running').v(6, 'args', undefined).v(6, 'rc', undefined).snap(6, `עכשיו תהליך 6 מריץ את ה-${C('main')} של ${C('wc')}. הקוד שלנו כבר לא קיים בזיכרון שלו, ולכן אין לו שורה מסומנת – ושורה 5 <strong>לעולם לא תרוץ</strong>, כי ${C('exec')} שהצליח לא חוזר.`);
+    b.print(6, '27 exec.c\n').snap(6, `${C('wc -l')} מדפיס את מספר השורות בקובץ.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `${C('wc')} מסיים, תהליך 6 הופך לזומבי וההורה מתעורר.`);
+    b.run(5).st(6, 'reaped').v(5, 'rc_wait', 6).snap(5, `${C('wait')} מחזיר 6 ואוסף את הזומבי.`);
+    b.at(5, 8).print(5, 'I am parent of 6 (rc_wait:6)\n').snap(5, `ההורה מדפיס. ${C('rc')} ו-${C('rc_wait')} שווים, כי זה אותו ילד.`);
+    b.st(5, 'reaped').snap(null, `כך בדיוק ה-${E('shell')} מריץ כל פקודה: ${C('fork')}, בילד ${C('exec')}, ובהורה ${C('wait')}.`);
+    return b.done(); })() }];
+
+  /* 4. SB20 */
+  traces.sb20 = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['int i = 0;', 'if (fork()) {', '    ++i;', '    fork();', '}', 'else if (fork())', '    ++i;', 'printf("%d", i);']);
+    b.proc(5, 1, 1, { i: 0 }).snap(5, `${C('i = 0')}.`);
+    b.at(5, 2).fork(5, 6).snap(5, `${C('fork')} ראשון: נוצר תהליך 6 עם ${C('i = 0')}. להורה הוחזר 6 (אמת), לילד 0 (שקר).`);
+    b.at(5, 3).v(5, 'i', 1).snap(5, `ההורה נכנס ל-${C('if')} ומגדיל את ה-${C('i')} שלו ל-1.`);
+    b.at(5, 4).fork(5, 7).snap(5, `${C('fork')} שני, בתוך הבלוק: נוצר 7 – עותק של 5, ולכן גם אצלו ${C('i = 1')}. ערך ההחזרה לא נשמר, אז שניהם פשוט ממשיכים.`);
+    b.at(5, 8).print(5, '1').snap(5, `5 מדלג על ה-${C('else')} ומדפיס 1.`);
+    b.st(5, 'reaped').run(7).at(7, 8).print(7, '1').snap(7, `7 מדפיס 1.`);
+    b.st(7, 'reaped').run(6).at(6, 6).fork(6, 8).snap(6, `עכשיו 6. אצלו ה-${C('fork')} הראשון החזיר 0, ולכן הוא ב-${C('else if (fork())')} – ומבצע ${C('fork')} נוסף: נוצר 8 עם ${C('i = 0')}.`);
+    b.at(6, 7).v(6, 'i', 1).snap(6, `ל-6 הוחזר 8 (אמת), ולכן הוא מגדיל את ${C('i')} ל-1.`);
+    b.at(6, 8).print(6, '1').snap(6, `6 מדפיס 1.`);
+    b.st(6, 'reaped').run(8).at(8, 8).print(8, '0').snap(8, `ל-8 הוחזר 0, אז הוא לא מגדיל, ומדפיס 0.`);
+    b.st(8, 'reaped').snap(null, `פלט: ${C('1110')}. בסדר הרצה אחר ה-0 יכול להופיע בכל מקום, אבל תמיד יהיו שלושה 1 ואפס אחד.`);
+    return b.done(); })() }];
+
+  /* 5. SA20 with three schedules */
+  function sa20(order) {
+    const b = B(['fork();', 'if (fork() == 0) {', '    printf("B");', '} else {', '    wait(NULL);', '    printf("A");', '}']);
+    b.proc(5, 1, 1).fork(5, 6).snap(5, `${C('fork')} ראשון: יש עכשיו 5 ו-6. ערך ההחזרה לא נשמר, אז שניהם ממשיכים לשורה 2.`);
+    b.at(5, 2).fork(5, 7).snap(5, `5 מבצע את ה-${C('fork')} השני ויוצר את 7. ל-7 הוחזר 0, ולכן הוא ידפיס ${C('B')}.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `5 קיבל ערך חיובי, נכנס ל-${C('else')} ונחסם ב-${C('wait')}. שימו לב: <strong>יש לו שני ילדים</strong> – 6 ו-7 – ו-${C('wait')} יחזור כשאחד מהם, לא משנה איזה, יסתיים.`);
+    b.run(6).at(6, 2).fork(6, 8).snap(6, `6 מגיע לשורה 2 ויוצר את 8, שידפיס ${C('B')}.`);
+    b.at(6, 5).st(6, 'blocked').snap(6, `6 נחסם ב-${C('wait')}. לו יש ילד אחד: 8.`);
+    if (order === 'BBAA') {
+      b.run(7).at(7, 3).print(7, 'B').snap(7, `7 מדפיס ${C('B')}.`);
+      b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים והופך לזומבי. 5 מתעורר.`);
+      b.run(8).at(8, 3).print(8, 'B').snap(8, `לפני ש-5 מספיק לרוץ, המתזמן מריץ את 8, שמדפיס ${C('B')}.`);
+      b.st(8, 'zombie').st(6, 'ready').snap(null, `8 מסיים. 6 מתעורר.`);
+      b.run(5).st(7, 'reaped').at(5, 6).print(5, 'A').snap(5, `5 רץ: ${C('wait')} אסף את 7, ו-5 מדפיס ${C('A')}.`);
+      b.st(5, 'reaped').run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'reaped').snap(null, `פלט: ${C('BBAA')} – הסדר הנפוץ.`);
+    } else if (order === 'BABA') {
+      b.run(7).at(7, 3).print(7, 'B').snap(7, `7 מדפיס ${C('B')}.`);
+      b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים והופך לזומבי. 5 מתעורר.`);
+      b.run(5).st(7, 'reaped').at(5, 6).print(5, 'A').snap(5, `הפעם 5 רץ מיד: ${C('wait')} אוסף את 7, ו-5 מדפיס ${C('A')}.`);
+      b.st(5, 'reaped').ppid(6, 1).run(8).at(8, 3).print(8, 'B').snap(8, `5 מסיים; 6 נעשה יתום ומאומץ ע"י ${C('init')}. עכשיו 8 מדפיס ${C('B')}.`);
+      b.st(8, 'zombie').run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 מתעורר, אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'reaped').snap(null, `פלט: ${C('BABA')}.`);
+    } else {
+      b.run(8).at(8, 3).print(8, 'B').snap(8, `המתזמן מריץ קודם את 8, שמדפיס ${C('B')}. 7 עדיין לא רץ בכלל.`);
+      b.st(8, 'zombie').st(6, 'ready').snap(null, `8 מסיים והופך לזומבי; 6 מתעורר.`);
+      b.run(6).st(8, 'reaped').at(6, 6).print(6, 'A').snap(6, `6 אוסף את 8 ומדפיס ${C('A')}.`);
+      b.st(6, 'zombie').st(5, 'ready').snap(null, `<strong>כאן המלכודת:</strong> 6 מסיים, והוא ילד של 5. הקרנל מעיר את 5 – כי ${C('wait')} מחכה לילד <em>כלשהו</em>, ו-6 הוא ילד שהסתיים.`);
+      b.run(5).st(6, 'reaped').at(5, 6).print(5, 'A').snap(5, `${C('wait')} של 5 חוזר עם 6 (לא עם 7!), ו-5 מדפיס ${C('A')} – בזמן ש-7 עוד לא הדפיס כלום.`);
+      b.st(5, 'reaped').ppid(7, 1).run(7).at(7, 3).print(7, 'B').snap(7, `5 מסיים, 7 נעשה יתום ומאומץ ע"י ${C('init')}. רק עכשיו 7 רץ ומדפיס ${C('B')}.`);
+      b.st(7, 'reaped').snap(null, `פלט: ${C('BAAB')}. נדיר, אבל חוקי לגמרי.`);
+    }
+    return b.done();
+  }
+  traces.sa20 = () => [{ label: 'BBAA', t: sa20('BBAA') }, { label: 'BABA', t: sa20('BABA') }, { label: 'BAAB', t: sa20('BAAB') }];
+
+  /* 6. AA24 */
+  traces.aa24 = () => [{ label: 'הרצה אחת אפשרית', t: (() => {
+    const b = B(['char *str = "hello";', 'if (fork() && fork()) {', '    wait(NULL);', '    printf("1: %s\\n", str);', '    wait(NULL);', '    printf("1: %s\\n", str);', '} else {', '    wait(NULL);', '    printf("0: %s\\n", str);', '    str = "goodbye";', '    wait(NULL);', '    printf("0: %s\\n", str);', '}']);
+    b.proc(5, 1, 1, { str: '"hello"' }).snap(5, `${C('str')} מצביע ל-${C('"hello"')}.`);
+    b.at(5, 2).fork(5, 6).snap(5, `ה-${C('fork')} השמאלי ב-${C('&&')}: נוצר 6. ל-5 הוחזר 6 (אמת), ל-6 הוחזר 0 (שקר).`);
+    b.fork(5, 7).snap(5, `כי האופרנד הראשון אמת אצל 5, הוא מחשב גם את השני: עוד ${C('fork')}, ונוצר 7. ל-5 הוחזר 7, ל-7 הוחזר 0.`);
+    b.at(5, 3).st(5, 'blocked').snap(5, `אצל 5 שני האופרנדים אמת, אז הוא ב-${C('if')}, ונחסם ב-${C('wait')} הראשון.`);
+    b.run(6).at(6, 8).snap(6, `אצל 6 האופרנד הראשון 0 (שקר), ולכן ה-${C('fork')} השני <strong>לא בוצע בכלל</strong> (קיצור של ${C('&&')}). 6 ב-${C('else')}. ל-6 אין ילדים, אז ${C('wait')} מחזיר מיד ${E('-1')} ולא חוסם.`);
+    b.at(6, 9).print(6, '0: hello\n').snap(6, `6 מדפיס.`);
+    b.at(6, 10).v(6, 'str', '"goodbye"').snap(6, `6 משנה את ה-${C('str')} <strong>שלו</strong>. ל-5 ול-7 יש עותקים משלהם, והם עדיין ${C('"hello"')}.`);
+    b.at(6, 12).print(6, '0: goodbye\n').snap(6, `עוד ${C('wait')} שחוזר מיד, והדפסה.`);
+    b.st(6, 'zombie').st(5, 'ready').snap(null, `6 מסיים, הופך לזומבי ומעיר את 5.`);
+    b.run(5).st(6, 'reaped').at(5, 4).print(5, '1: hello\n').snap(5, `${C('wait')} של 5 אסף את 6. 5 מדפיס את ה-${C('str')} שלו – ${C('hello')}.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `${C('wait')} השני: 7 עדיין חי, אז 5 נחסם שוב.`);
+    b.run(7).at(7, 9).print(7, '0: hello\n').snap(7, `7 (ה-${C('fork')} השני החזיר לו 0) ב-${C('else')}, ה-${C('wait')} שלו חוזר מיד, והוא מדפיס.`);
+    b.at(7, 12).v(7, 'str', '"goodbye"').print(7, '0: goodbye\n').snap(7, `7 משנה את העותק שלו ומדפיס.`);
+    b.st(7, 'zombie').st(5, 'ready').snap(null, `7 מסיים ומעיר את 5.`);
+    b.run(5).st(7, 'reaped').at(5, 6).print(5, '1: hello\n').snap(5, `5 אוסף את 7 ומדפיס שוב ${C('hello')}. השורה הזו תמיד אחרונה: היא באה אחרי ${C('wait')} שני, כלומר אחרי ששני הילדים סיימו.`);
+    b.st(5, 'reaped').snap(null, `סוף. שש שורות.`);
+    return b.done(); })() }];
+
+  /* 7. stdout buffer */
+  function bufTrace(unbuf) {
+    const b = B(['printf("Good afternoon");', 'fork();', 'printf(", good evening");', 'fork();', 'printf(" and good night\\n");']);
+    const W = (pid, s, line, nl) => {
+      b.at(pid, line);
+      if (unbuf) { b.print(pid, s); return; }
+      const cur = b.done().procs.find(p => p.pid === pid).buf + s;
+      if (nl) { b.print(pid, cur); b.buf(pid, ''); } else b.buf(pid, cur);
+    };
+    b.proc(5, 1, 1);
+    W(5, 'Good afternoon', 1, false);
+    b.snap(5, unbuf ? `עם ${C('setbuf(stdout, NULL)')} אין באפר: הטקסט נשלח למסך מיד.` : `${C('printf')} לא כותב למסך. הוא מעתיק את הטקסט ל<strong>באפר</strong> בתוך הזיכרון של התהליך (עמודת "באפר"). בלי ${C('\\n')} הבאפר לא נשלח.`);
+    b.at(5, 2).fork(5, 6).snap(5, unbuf ? `${C('fork')}: נוצר 6. הבאפר ריק, אז אין מה להעתיק.` : `${C('fork')} מעתיק את כל הזיכרון של 5 – <strong>כולל הבאפר</strong>. עכשיו ל-6 יש עותק של "${E('Good afternoon')}" שעוד לא הודפס.`);
+    W(5, ', good evening', 3, false); W(6, ', good evening', 3, false);
+    b.snap(5, `שניהם מוסיפים "${E(', good evening')}".`);
+    b.at(5, 4).at(6, 4).fork(5, 7).fork(6, 8).snap(5, unbuf ? `עוד ${C('fork')} בכל תהליך: 4 תהליכים, כולם עם באפר ריק.` : `עוד ${C('fork')} בכל אחד: 7 מקבל עותק של הבאפר של 5, ו-8 של 6. ארבעה תהליכים, ובכל אחד אותו משפט חלקי.`);
+    [5, 6, 7, 8].forEach(p => W(p, ' and good night\n', 5, true));
+    b.snap(null, unbuf ? `כל תהליך מדפיס את השורה האחרונה. סך הכל: ${E('Good afternoon')} פעם אחת, ${E('good evening')} פעמיים, ${E('and good night')} ארבע פעמים.` : `כל אחד מוסיף את סוף המשפט עם ${C('\\n')} – ושורה חדשה גורמת לבאפר להישלח. כל אחד מארבעת התהליכים מדפיס את <strong>כל</strong> המשפט.`);
+    [5, 6, 7, 8].forEach(p => b.st(p, 'reaped'));
+    b.snap(null, unbuf ? `לכן בקורס תמיד מניחים ${C('setbuf(stdout, NULL)')}.` : `ארבע שורות זהות. זה מה שבלבל בשקף – והסיבה שתמיד משתמשים ב-${C('setbuf')}.`);
+    return b.done();
+  }
+  traces.buf = () => [{ label: 'עם באפר (ברירת מחדל)', t: bufTrace(false) }, { label: 'עם setbuf', t: bufTrace(true) }];
+
+  /* 8. zombie */
+  traces.zombie = () => [{ label: 'הרצה', t: (() => {
+    const b = B(['int rc = fork();', 'if (rc == 0) {', '    exit(0);', '}', 'sleep(10);', 'wait(NULL);']);
+    b.proc(5, 1, 1).fork(5, 6).v(5, 'rc', 6).v(6, 'rc', 0).snap(5, `${C('fork')}: נוצר 6.`);
+    b.at(5, 5).st(5, 'blocked').snap(5, `ההורה מדלג על ה-${C('if')} ונכנס ל-${C('sleep(10)')} – חסום ל-10 שניות.`);
+    b.run(6).at(6, 3).snap(6, `הילד נכנס ל-${C('if')} וקורא ל-${C('exit(0)')}.`);
+    b.st(6, 'zombie').snap(null, `הילד סיים, אבל <strong>לא נמחק</strong>. הקרנל משחרר את הזיכרון שלו, אבל משאיר את הרשומה בטבלת התהליכים – ה-${E('PID')} וסטטוס היציאה – כי ההורה עלול לבקש אותם ב-${C('wait')}. זה זומבי. ב-${C('ps')} הוא מופיע עם מצב ${E('Z')} או ${E('&lt;defunct&gt;')}. הקרנל גם שולח ${E('SIGCHLD')} להורה, אבל ברירת המחדל היא להתעלם ממנו.`);
+    b.snap(null, `ההורה עדיין ישן. כל עוד הוא לא קורא ל-${C('wait')}, הזומבי תופס רשומה בטבלה. הורה שרץ הרבה זמן ויוצר הרבה ילדים בלי לאסוף אותם ימלא את הטבלה בזומבים.`);
+    b.run(5).at(5, 6).st(6, 'reaped').snap(5, `ההורה מתעורר וקורא ל-${C('wait')}. יש ילד זומבי, אז ${C('wait')} חוזר מיד עם 6 ו<strong>אוסף</strong> אותו: הרשומה נמחקת. פתרון בלי לחכות: handler ל-${E('SIGCHLD')} שקורא ל-${C('waitpid')} (בהמשך הפרק).`);
+    b.st(5, 'reaped').snap(null, `סוף.`);
+    return b.done(); })() }];
+
+  /* ---- renderer ---- */
+  function colorOfPid(pid, all) { return PCOL[all.indexOf(pid) % PCOL.length]; }
+  function hl(line) {
+    try { return hljs.highlight(line, { language: 'c', ignoreIllegals: true }).value; } catch (e) { return esc(line); }
+  }
+  function treeSvg(procs, all) {
+    const nodes = procs.map(p => ({ pid: p.pid, par: p.ppid, state: p.state, c: [] }));
+    const byPid = Object.fromEntries(nodes.map(n => [n.pid, n]));
+    const roots = [];
+    // draw by original parent (first ppid seen) so the tree keeps its shape after adoption
+    nodes.forEach(n => { const op = (procs.find(p => p.pid === n.pid).origPpid) ?? n.par; const pn = byPid[op]; if (pn) pn.c.push(n); else roots.push(n); });
+    let leaf = 0; const all2 = [];
+    (function lay(list, d) { list.forEach(n => { n.d = d; if (n.c.length) { lay(n.c, d + 1); n.x = (n.c[0].x + n.c[n.c.length - 1].x) / 2; } else n.x = leaf++; all2.push(n); }); })(roots, 0);
+    const dx = 62, dy = 56, W = Math.max(leaf, 1) * dx, H = (Math.max(0, ...all2.map(n => n.d)) + 1) * dy;
+    const X = n => n.x * dx + dx / 2, Y = n => n.d * dy + 24;
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="עץ תהליכים">`;
+    all2.forEach(n => n.c.forEach(k => s += `<line x1="${X(n)}" y1="${Y(n)}" x2="${X(k)}" y2="${Y(k)}" stroke="var(--line)" stroke-width="1.6"/>`));
+    all2.forEach(n => {
+      const gone = n.state === 'reaped', z = n.state === 'zombie';
+      s += `<circle cx="${X(n)}" cy="${Y(n)}" r="17" fill="${gone ? 'var(--sunk)' : 'var(--surface)'}" stroke="${colorOfPid(n.pid, all)}" stroke-width="${n.state === 'running' ? 3.5 : 2}" ${gone || z ? 'stroke-dasharray="4 3"' : ''}/>`;
+      s += `<text x="${X(n)}" y="${Y(n) + 5}" text-anchor="middle" font-size="14" class="mono" fill="${gone ? 'var(--muted)' : 'var(--fg)'}">${n.pid}</text>`;
+      if (z) s += `<text x="${X(n)}" y="${Y(n) - 21}" text-anchor="middle" font-size="10" fill="var(--warn)" class="mono">Z</text>`;
+    });
+    return s + '</svg>';
+  }
+  function render(el, variants) {
+    let vi = 0, si = 0;
+    el.innerHTML = `<div class="tr-head"><span class="tr-title">הרצה יבשה</span><span class="tr-vars"></span></div>
+      <div class="tr-body">
+        <div class="tr-vis">
+          <div class="tr-grid"><div class="tr-code"></div><div class="tr-side"><div class="tr-procs"></div><div class="tr-tree"></div></div></div>
+          <div class="tr-outwrap"><div class="tr-label">פלט על המסך</div><pre class="tr-out"></pre></div>
+          <div class="tr-ctrl"><button type="button" class="ghost tr-reset">מההתחלה</button><button type="button" class="ghost tr-prev">הקודם</button><span class="tr-count"></span><button type="button" class="tr-next">הבא</button></div>
+        </div>
+        <div class="tr-note" aria-live="polite"></div>
+      </div>`;
+    const q = c => el.querySelector(c);
+    const vars = q('.tr-vars');
+    if (variants.length > 1) variants.forEach((v, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.innerHTML = /[א-ת]/.test(v.label) ? v.label.replace(/([A-Za-z]+)/g, '<bdi dir="ltr">$1</bdi>') : `<bdi dir="ltr">${v.label}</bdi>`;
+      b.onclick = () => { vi = i; si = 0; draw(); }; vars.appendChild(b);
+    });
+    function draw() {
+      const t = variants[vi].t, step = t.steps[si];
+      // remember the first parent of each process for tree shape
+      const firstPar = {}; t.steps.forEach(s => s.procs.forEach(p => { if (!(p.pid in firstPar)) firstPar[p.pid] = p.ppid; }));
+      const all = []; t.steps.forEach(s => s.procs.forEach(p => { if (!all.includes(p.pid)) all.push(p.pid); }));
+      [...vars.children].forEach((b, i) => b.classList.toggle('on', i === vi));
+      // code with markers
+      const live = step.procs.filter(p => p.line != null && p.state !== 'reaped' && p.state !== 'zombie');
+      let ch = '<pre class="tr-pre"><code>';
+      t.code.forEach((line, i) => {
+        const here = live.filter(p => p.line === i + 1);
+        const act = here.some(p => p.pid === step.active);
+        ch += `<span class="tr-ln${act ? ' act' : ''}"><span class="tr-num">${i + 1}</span><span class="tr-src">${hl(line) || ' '}</span><span class="tr-mk">${here.map(p => `<span class="tr-pid${p.pid === step.active ? ' on' : ''}" style="--pc:${colorOfPid(p.pid, all)}">${p.pid}</span>`).join('')}</span></span>`;
+      });
+      ch += '</code></pre>';
+      q('.tr-code').innerHTML = ch;
+      // process table
+      const keys = []; step.procs.forEach(p => Object.keys(p.vars).forEach(k => { if (p.vars[k] !== undefined && !keys.includes(k)) keys.push(k); }));
+      const showBuf = t.steps.some(s => s.procs.some(p => p.buf));
+      const showProg = t.steps.some(s => s.procs.some(p => p.prog));
+      let tb = '<div class="tbl"><table class="tr-table"><tr><th>PID</th><th>PPID</th><th>מצב</th>' + (showProg ? '<th>תוכנית</th>' : '') + keys.map(k => `<th class="num">${k}</th>`).join('') + (showBuf ? '<th>באפר</th>' : '') + '</tr>';
+      step.procs.forEach(p => {
+        tb += `<tr class="st-${p.state}${p.pid === step.active ? ' act' : ''}"><td class="num"><span class="tr-dot" style="--pc:${colorOfPid(p.pid, all)}"></span>${p.pid}</td><td class="num">${p.ppid}</td><td><span class="tr-st">${ST[p.state]}</span></td>` +
+          (showProg ? `<td class="num">${p.prog || ''}</td>` : '') +
+          keys.map(k => `<td class="num">${p.vars[k] === undefined ? '—' : esc(String(p.vars[k]))}</td>`).join('') +
+          (showBuf ? `<td class="num tr-buf">${p.buf ? esc(p.buf.replace(/\n/g, '\\n')) : '∅'}</td>` : '') + '</tr>';
+      });
+      q('.tr-procs').innerHTML = tb + '</table></div>';
+      // tree
+      const tp = step.procs.map(p => Object.assign({}, p, { origPpid: firstPar[p.pid] }));
+      q('.tr-tree').innerHTML = treeSvg(tp, all);
+      // output
+      const o = q('.tr-out');
+      o.innerHTML = step.out.length ? step.out.map((x, i) => `<span class="tr-o${i === step.out.length - 1 && si > 0 && t.steps[si - 1].out.length < step.out.length ? ' new' : ''}" style="--pc:${colorOfPid(x.pid, all)}" title="PID ${x.pid}">${esc(x.text)}</span>`).join('') : '<span class="tr-empty">(עדיין ריק)</span>';
+      q('.tr-note').innerHTML = step.note;
+      q('.tr-count').textContent = `שלב ${si + 1} מתוך ${t.steps.length}`;
+      q('.tr-prev').disabled = si === 0; q('.tr-next').disabled = si === t.steps.length - 1;
+    }
+    q('.tr-next').onclick = () => { if (si < variants[vi].t.steps.length - 1) { si++; draw(); } };
+    q('.tr-prev').onclick = () => { if (si > 0) { si--; draw(); } };
+    q('.tr-reset').onclick = () => { si = 0; draw(); };
+    el.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') q('.tr-next').click(); if (e.key === 'ArrowRight') q('.tr-prev').click(); });
+    draw();
+    /* lock sizes: measure every step of every variant, keep the max, so nothing moves between steps */
+    const PARTS = ['.tr-note', '.tr-code', '.tr-procs', '.tr-tree', '.tr-out'];
+    function lock() {
+      if (!el.offsetParent) return;                    // hidden (closed <details>): lock when shown
+      const box = PARTS.map(c => q(c));
+      box.forEach(b => { b.style.minHeight = ''; });
+      const max = box.map(() => 0), keepV = vi, keepS = si;
+      variants.forEach((v, i) => v.t.steps.forEach((_, j) => {
+        vi = i; si = j; draw();
+        box.forEach((b, k) => { max[k] = Math.max(max[k], b.getBoundingClientRect().height); });
+      }));
+      vi = keepV; si = keepS; draw();
+      box.forEach((b, k) => { b.style.minHeight = Math.ceil(max[k]) + 'px'; });
+    }
+    el._lock = lock;
+    lock();
+  }
+  window.__traces = traces;
+  document.querySelectorAll('.trace[data-trace]').forEach(el => {
+    const f = traces[el.dataset.trace]; if (!f) return;
+    el.tabIndex = 0; el.setAttribute('role', 'group'); el.setAttribute('aria-label', 'הרצה יבשה');
+    try { render(el, f()); } catch (e) { el.textContent = 'שגיאה בטעינת ההרצה היבשה'; console.error(e); }
+  });
+  const relock = () => document.querySelectorAll('.trace').forEach(t => t._lock && t._lock());
+  document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => { if (d.open) d.querySelectorAll('.trace').forEach(t => t._lock && t._lock()); }));
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relock, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relock);
+})();
+
+/* fork trees */
+document.querySelectorAll('.tree').forEach(el => {
+  let spec; try { spec = JSON.parse(el.dataset.tree); } catch (e) { return; }
+  const nodes = []; let leaf = 0;
+  (function lay(n, d) { n.d = d; if (n.c) { n.c.forEach(k => lay(k, d + 1)); n.x = (n.c[0].x + n.c[n.c.length - 1].x) / 2; } else n.x = leaf++; nodes.push(n); })(spec, 0);
+  const depth = Math.max(...nodes.map(n => n.d)), dx = 110, dy = 64, W = Math.max(leaf, 1) * dx, H = (depth + 1) * dy;
+  const X = n => n.x * dx + dx / 2, Y = n => n.d * dy + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="עץ תהליכים">`;
+  nodes.forEach(n => (n.c || []).forEach((k, i) => s += `<line x1="${X(n)}" y1="${Y(n)}" x2="${X(k)}" y2="${Y(k)}" stroke="${i === 0 ? 'var(--theory)' : 'var(--example)'}" stroke-width="1.6"/>`));
+  nodes.forEach(n => { s += `<rect x="${X(n) - 46}" y="${Y(n) - 14}" width="92" height="28" rx="14" fill="${n.c ? 'var(--surface)' : 'var(--sunk)'}" stroke="var(--line)"/><text x="${X(n)}" y="${Y(n) + 5}" text-anchor="middle" font-size="13" class="mono" fill="var(--fg)">${n.n}</text>`; });
+  s += '</svg>';
+  el.innerHTML = `<figure>${s}<figcaption>כחול = ענף ההורה (fork החזיר <bdi dir="ltr">&gt; 0</bdi>) · ירוק = ענף הילד (0)</figcaption></figure>`;
+});
+
+
+/* active section in sidebar (current page only) */
+(function () {
+  const links = [...document.querySelectorAll('nav.side a[data-id]')];
+  const map = new Map(links.map(a => [a.dataset.id, a]));
+  const targets = [...map.keys()].map(id => document.getElementById(id)).filter(Boolean);
+  if (!targets.length) return;
+  function upd() {
+    let cur = targets[0];
+    for (const t of targets) if (t.getBoundingClientRect().top < 120) cur = t;
+    links.forEach(a => a.classList.remove('active'));
+    const a = map.get(cur.id); if (a) a.classList.add('active');
+  }
+  addEventListener('scroll', upd, { passive: true }); upd();
+})();
+</script>
+
+<script id="gloss2">
+/* ===== glossary tooltips =====
+   Hovering (or tapping) a course term shows a short definition.
+   Only the first occurrence of each term in every section (h2) is marked, so the text stays calm.
+   One floating tip on <body> (position:fixed), clamped to the viewport. */
+(function () {
+  const DEFS = [
+    // [definition, ...term variants]   — Hebrew variants may take prefixes ו/ה/ב/ל/כ/מ/ש
+    // --- מבוא ומצבי מעבד
+    ['Central Processing Unit — המעבד: מריץ את הפקודות של התהליכים, אחת אחרי השנייה.', 'CPU'],
+    ['Random Access Memory — הזיכרון הראשי (הפיזי) של המחשב. מהיר, אבל נמחק כשהמחשב כבוי.', 'RAM'],
+    ['Input/Output — קלט ופלט: גישה לדיסק, למקלדת, לרשת וכו׳. איטי מאוד ביחס למעבד.', 'I/O'],
+    ['Kernel — הגרעין של מערכת ההפעלה: רץ ב-kernel mode ומנהל את החומרה, הזיכרון והתהליכים.', 'kernel', 'Kernel', 'קרנל'],
+    ['מצב מעבד עם הרשאות מלאות: אפשר לגשת לחומרה ולבצע פקודות מוגנות. רק הקרנל רץ בו.', 'kernel mode', 'Kernel mode', 'Kernel Mode'],
+    ['מצב מעבד מוגבל: אין גישה ישירה לחומרה. פעולה רגישה דורשת קריאת מערכת.', 'user mode', 'User mode', 'User Mode'],
+    ['קריאת מערכת — בקשה של תהליך מהקרנל לבצע פעולה מוגנת (למשל read או fork). המעבר לקרנל נעשה בפקודת trap.', 'system call', 'syscall', 'System call', 'קריאת מערכת', 'קריאות מערכת', 'קריאות המערכת'],
+    ['פקודה שמעבירה את המעבד ל-kernel mode וקופצת לקוד קרנל שנקבע מראש (לפי טבלת ה-trap). כך מתבצעת קריאת מערכת.', 'trap', 'Trap'],
+    ['החזרה מהקרנל לתהליך: משחזרת את הרגיסטרים ומחזירה את המעבד ל-user mode.', 'return-from-trap'],
+    ['פסיקה — אות מהחומרה (טיימר, דיסק, מקלדת) שעוצר את מה שרץ ומעביר את השליטה לקרנל.', 'interrupt', 'Interrupt', 'פסיקה', 'פסיקות', 'פסיקת טיימר'],
+    ['התהליך רץ ישירות על המעבד (מהיר), אבל עם שתי הגבלות: user mode, ופסיקת טיימר שמחזירה את השליטה לקרנל.', 'Limited Direct Execution'],
+    ['החלפת הקשר — שמירת המצב של התהליך הנוכחי (רגיסטרים) ב-PCB שלו, וטעינת המצב של תהליך אחר כדי להריץ אותו.', 'context switch', 'Context Switch', 'Context switch', 'החלפת הקשר', 'החלפות הקשר'],
+    // --- תהליכים
+    ['תהליך — תוכנית בזמן ריצה: עם מרחב כתובות, רגיסטרים וקבצים פתוחים משלו.', 'Process'],
+    ['Process Control Block — המבנה שבו הקרנל שומר את כל המידע על תהליך: מצב, PID, רגיסטרים שמורים, קבצים פתוחים.', 'PCB'],
+    ['Process ID — מספר מזהה ייחודי של תהליך.', 'PID'],
+    ['יוצר תהליך בן שהוא העתק של ההורה. מחזיר 0 לבן ואת ה-PID של הבן להורה; בכישלון מחזיר מספר שלילי.', 'fork', 'fork()'],
+    ['מחליף את התוכנית שרצה בתהליך בתוכנית חדשה. ה-PID נשאר. אם הצליח – לא חוזר.', 'exec', 'execvp', 'exec()', 'execvp()'],
+    ['ההורה מחכה שבן יסתיים ואוסף את סטטוס היציאה שלו (כך הבן לא נשאר זומבי). אם אין בנים – מחזיר מיד מספר שלילי.', 'wait', 'waitpid', 'wait()', 'waitpid()'],
+    ['מסיים את התהליך עם קוד יציאה, שההורה יכול לקבל ב-wait.', 'exit', 'exit()'],
+    ['זומבי — תהליך שהסתיים, אבל ההורה עוד לא אסף אותו ב-wait. נשארת ממנו רק רשומה בטבלת התהליכים.', 'zombie', 'Zombie', 'זומבי', 'זומבים'],
+    ['יתום — תהליך שההורה שלו הסתיים לפניו. init מאמץ אותו, ויאסוף אותו כשיסתיים.', 'orphan', 'יתום', 'יתומים'],
+    ['התהליך הראשון במערכת (PID 1). מאמץ יתומים ואוסף אותם.', 'init'],
+    ['תהליך שרץ ברקע, בלי טרמינל, ומספק שירות (למשל שרת).', 'daemon'],
+    ['תוכנית שקוראת פקודות מהמשתמש ומריצה אותן – בעזרת fork, exec ו-wait.', 'shell', 'Shell'],
+    ['מצב של תהליך: מוכן לרוץ, ומחכה שהמתזמן ייתן לו את המעבד.', 'Ready'],
+    ['מצב של תהליך: רץ עכשיו על המעבד.', 'Running'],
+    ['מצב של תהליך: מחכה לאירוע (למשל סיום I/O) ולא יכול לרוץ עד שיקרה.', 'Blocked'],
+    // --- תזמון
+    ['מתזמן — החלק בקרנל שמחליט איזה תהליך ירוץ עכשיו על המעבד.', 'scheduler', 'מתזמן', 'המתזמן'],
+    ['First In First Out — מי שהגיע ראשון מטופל ראשון. בתזמון: לפי סדר ההגעה, כל עבודה עד הסוף. בהחלפת דפים: מפנים את הדף שנטען הכי מוקדם.', 'FIFO'],
+    ['First Come First Served — שם נוסף ל-FIFO בתזמון: מריצים לפי סדר ההגעה, כל עבודה עד הסוף.', 'FCFS'],
+    ['Shortest Job First — מריצים קודם את העבודה הקצרה ביותר מבין אלה שכבר הגיעו. לא מפקיע.', 'SJF'],
+    ['Shortest Remaining Time First — כמו SJF, אבל מפקיע: כשמגיעה עבודה שנשאר לה פחות זמן, היא מקבלת את המעבד.', 'SRTF', 'STCF'],
+    ['Round Robin — כל עבודה רצה quantum אחד ועוברת לסוף התור. זמן תגובה טוב, turnaround גרוע.', 'Round Robin', 'RR'],
+    ['Multi-Level Feedback Queue — כמה תורים בעדיפויות שונות. עבודה שמנצלת quantum שלם יורדת בעדיפות, וכל פרק זמן מעלים את כולן למעלה (boost) כדי למנוע הרעבה.', 'MLFQ'],
+    ['פרק הזמן שתהליך רץ לפני שהמתזמן מחליף אותו (ב-RR וב-MLFQ). נקרא גם time slice.', 'quantum', 'time slice', 'קוונטום'],
+    ['הזמן מהגעת העבודה ועד שהיא מסתיימת: T_completion − T_arrival.', 'Turnaround', 'turnaround'],
+    ['הזמן מהגעת העבודה ועד שהיא רצה בפעם הראשונה: T_firstrun − T_arrival.', 'Response', 'response time'],
+    ['מפקיע — אלגוריתם שיכול לעצור עבודה באמצע ולתת את המעבד לעבודה אחרת.', 'preemptive', 'מפקיע'],
+    ['הרעבה — עבודה שמחכה בלי סוף, כי תמיד יש עבודה אחרת שקודמת לה.', 'starvation', 'הרעבה'],
+    ['תרשים זמנים: איזו עבודה רצה על המעבד בכל רגע.', 'Gantt'],
+    // --- סיגנלים
+    ['סיגנל — הודעה אסינכרונית לתהליך על אירוע. התהליך מגיב לפי ה-handler שרשם, או לפי ברירת המחדל.', 'signal', 'סיגנל', 'סיגנלים'],
+    ['פונקציה שהתהליך רושם (ב-signal או ב-sigaction) כדי לטפל בסיגנל מסוים.', 'handler'],
+    ['נשלח להורה כשבן שלו מסתיים (או נעצר). ברירת המחדל: התעלמות.', 'SIGCHLD'],
+    ['הורג את התהליך מיד. אי אפשר לתפוס, לחסום או להתעלם ממנו.', 'SIGKILL'],
+    ['נשלח כשלוחצים Ctrl+C בטרמינל. ברירת המחדל: סיום התהליך.', 'SIGINT'],
+    ['משהה את התהליך (עד SIGCONT). אי אפשר לתפוס או להתעלם ממנו.', 'SIGSTOP'],
+    ['קריאת מערכת שרושמת handler לסיגנל, עם שליטה מלאה (מסכה ודגלים).', 'sigaction'],
+    ['שליחת סיגנל לתהליך – לא בהכרח כדי להרוג אותו.', 'kill'],
+    // --- הפניות וצינורות
+    ['File Descriptor — מספר שמייצג קובץ פתוח בתהליך: אינדקס בטבלת הקבצים הפתוחים שלו. 0 = stdin, 1 = stdout, 2 = stderr.', 'fd', 'FD', 'file descriptor', 'descriptors'],
+    ['קלט סטנדרטי – fd 0. כברירת מחדל: המקלדת.', 'stdin'],
+    ['פלט סטנדרטי – fd 1. כברירת מחדל: הטרמינל.', 'stdout'],
+    ['פלט שגיאות – fd 2. כברירת מחדל: הטרמינל. בלי חוצץ.', 'stderr'],
+    ['dup2(oldfd, newfd) — סוגר את newfd (אם פתוח) וגורם לו להצביע לאותו קובץ כמו oldfd. כך עושים הפניה.', 'dup2', 'dup2()'],
+    ['יוצר עותק של fd, במספר הפנוי הנמוך ביותר.', 'dup', 'dup()'],
+    ['צינור — ערוץ חד-כיווני בין תהליכים, עם fd לקריאה ו-fd לכתיבה. read חוסם כשאין נתונים, ומחזיר 0 (EOF) רק כשכל צדי הכתיבה סגורים.', 'pipe', 'pipe()', 'צינור', 'צינורות'],
+    ['End Of File — read מחזיר 0: אין יותר מה לקרוא.', 'EOF'],
+    ['חוצץ — printf כותב קודם לחוצץ בזיכרון של התהליך. לטרמינל הוא נשפך בכל ירידת שורה; לקובץ או ל-pipe רק כשהוא מתמלא. fork משכפל גם את החוצץ.', 'buffer', 'חוצץ'],
+    ['קובע איך יעבוד החוצץ של stream. setbuf(stdout, NULL) מבטל אותו – כל printf נכתב מיד.', 'setbuf'],
+    ['מזיז את מיקום הקריאה/הכתיבה בקובץ פתוח.', 'lseek'],
+    // --- זיכרון וירטואלי
+    ['זיכרון וירטואלי — לכל תהליך נראה שיש לו מרחב כתובות פרטי ורציף משלו; החומרה והקרנל מתרגמים כל כתובת וירטואלית לפיזית.', 'VM', 'virtual memory', 'זיכרון וירטואלי'],
+    ['מרחב כתובות — כל הכתובות שתהליך רואה: קוד, נתונים, ערימה ומחסנית.', 'address space', 'מרחב כתובות', 'מרחב הכתובות'],
+    ['Memory Management Unit — רכיב חומרה שמתרגם כל כתובת וירטואלית לכתובת פיזית.', 'MMU'],
+    ['לכל תהליך רגיסטר base שמוסיפים לכל כתובת, ורגיסטר bounds שבודק שהכתובת בתחום.', 'Base and Bounds'],
+    ['חלוקת מרחב הכתובות לסגמנטים (קוד, ערימה, מחסנית), לכל אחד base ו-bounds משלו.', 'Segmentation', 'סגמנטציה'],
+    ['מקום פנוי שמפוזר בחורים קטנים בין הקצאות: בסך הכל יש מספיק, אבל אין רצף גדול מספיק.', 'External fragmentation', 'external fragmentation'],
+    ['מקום מבוזבז בתוך יחידה שהוקצתה (למשל סוף דף שלא נוצל).', 'Internal fragmentation', 'internal fragmentation'],
+    ['חלוקת הזיכרון הווירטואלי לדפים בגודל קבוע, והפיזי למסגרות באותו גודל. כל דף יכול לשבת בכל מסגרת.', 'Paging'],
+    ['דף — יחידה בגודל קבוע של הזיכרון הווירטואלי.', 'page', 'Page'],
+    ['מסגרת — יחידה של הזיכרון הפיזי, בגודל של דף.', 'frame', 'frames', 'מסגרת', 'מסגרות'],
+    ['טבלת דפים — טבלה (לכל תהליך) שממפה כל מספר דף וירטואלי (VPN) למספר מסגרת (PFN).', 'page table', 'Page table', 'טבלת דפים', 'טבלת הדפים', 'טבלאות דפים'],
+    ['Page Table Entry — כניסה בטבלת הדפים: ה-PFN, וביטים כמו valid, present, dirty והרשאות.', 'PTE'],
+    ['Virtual Page Number — הביטים העליונים של הכתובת הווירטואלית: מספר הדף.', 'VPN'],
+    ['Physical Frame Number — מספר המסגרת בזיכרון הפיזי.', 'PFN'],
+    ['היסט — הביטים התחתונים של הכתובת: המיקום בתוך הדף. לא משתנה בתרגום.', 'offset', 'היסט'],
+    ['האם הדף שייך בכלל למרחב הכתובות של התהליך. גישה לדף לא valid – segmentation fault.', 'valid'],
+    ['האם הדף נמצא עכשיו בזיכרון הפיזי (ולא ב-swap). גישה לדף לא present – page fault.', 'Present', 'present'],
+    ['האם הדף שונה מאז שנטען. דף dirty צריך לכתוב לדיסק לפני שמפנים אותו.', 'Dirty', 'dirty'],
+    ['Translation Lookaside Buffer — מטמון חומרה קטן של תרגומים אחרונים (VPN ← PFN). חוסך גישה לטבלת הדפים.', 'TLB'],
+    ['Address Space ID — מזהה תהליך בכל כניסה ב-TLB, כדי שלא צריך לרוקן את ה-TLB בכל החלפת הקשר.', 'ASID'],
+    ['הרמה העליונה בטבלה היררכית: מצביעה לדפים של טבלת הדפים. מקצים רק דפי טבלה שבשימוש.', 'Page Directory', 'PD'],
+    ['Page Directory Entry — כניסה ב-page directory: מצביעה לדף אחד של טבלת הדפים.', 'PDE'],
+    ['גישה לדף שלא נמצא בזיכרון (present = 0). הקרנל מביא אותו מה-swap, ואז מריץ שוב את הפקודה.', 'Page Fault', 'page fault', 'page faults'],
+    ['אזור בדיסק שאליו מפנים דפים כשאין מקום בזיכרון הפיזי.', 'swap', 'Swap', 'Swapping', 'swapping'],
+    ['האלגוריתם האופטימלי: מפנה את הדף שישמש הכי רחוק בעתיד. אי אפשר לממש אותו – משמש להשוואה.', 'OPT'],
+    ['Least Recently Used — מפנה את הדף שלא השתמשו בו הכי הרבה זמן.', 'LRU'],
+    ['קירוב ל-LRU: מחוג עובר על הדפים במעגל. דף עם ביט שימוש 1 מקבל הזדמנות שנייה (הביט מתאפס); דף עם 0 מפונה.', 'Clock'],
+    ['אנומליית Belady — ב-FIFO, הוספת מסגרות יכולה דווקא להגדיל את מספר ה-page faults.', 'Belady'],
+    ['אחרי fork, ההורה והבן חולקים את אותן מסגרות לקריאה בלבד. רק כשאחד מהם כותב לדף – מעתיקים אותו.', 'Copy-on-Write', 'copy-on-write'],
+    ['ערימה — אזור להקצאות דינמיות (malloc). גדל לכיוון הכתובות הגבוהות – לכיוון המחסנית.', 'Heap', 'heap', 'ערימה'],
+    ['מחסנית — אזור למשתנים מקומיים ולקריאות לפונקציות. גדל לכיוון הכתובות הנמוכות – לכיוון הערימה.', 'Stack', 'stack', 'מחסנית'],
+    ['הקוד של התוכנית. לקריאה ולהרצה בלבד, ולכן אפשר לשתף אותו בין תהליכים.', 'Text'],
+    ['החלק במערכת ההפעלה שטוען את הקובץ הבינארי לזיכרון ומכין את התהליך לריצה.', 'loader'],
+    // --- סביבת העבודה
+    ['תוכנה שמריצה מכונות וירטואליות – מחשב שלם בתוך המחשב שלך.', 'VirtualBox'],
+    ['כלי שמקים מכונה וירטואלית מוגדרת מראש, מתוך קובץ הגדרות אחד.', 'Vagrant'],
+    ['משנה את ההרשאות של קובץ (קריאה, כתיבה, הרצה).', 'chmod'],
+  ];
+
+  const HEBR = /[֐-׿]/;
+  const GLOSSARY = {}, KEY = {};
+  DEFS.forEach((row, k) => { for (let i = 1; i < row.length; i++) { GLOSSARY[row[i]] = row[0]; KEY[row[i]] = k; } });
+  const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const EN = Object.keys(GLOSSARY).filter(t => !HEBR.test(t)).sort((a, b) => b.length - a.length);
+  const HE = Object.keys(GLOSSARY).filter(t => HEBR.test(t)).sort((a, b) => b.length - a.length);
+  // English: whole word. Hebrew: optional one/two-letter prefix (ו ה ב ל כ מ ש) kept outside the mark.
+  const RE = new RegExp('(?<![A-Za-z0-9_])(' + EN.map(esc).join('|') + ')(?![A-Za-z0-9_])' +
+                        '|(?<![א-ת])([ובלכמהש]{0,2})(' + HE.map(esc).join('|') + ')(?![א-ת])', 'g');
+
+  const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'PRE', 'TEXTAREA', 'A', 'BUTTON', 'H1', 'H2', 'H3', 'NAV', 'SVG', 'INPUT', 'SELECT', 'LABEL', 'OPTION', 'TH']);
+  function skipped(el) {
+    for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+      if (SKIP_TAGS.has(n.tagName.toUpperCase())) return true;
+      if (n.classList && (n.classList.contains('gloss') || n.classList.contains('box-title') || n.classList.contains('pager') || n.classList.contains('sim') || n.classList.contains('drill'))) return true;
+    }
+    return false;
+  }
+
+  let tip = null, arrow = null, current = null, pinned = false;
+  function ensureTip() {
+    if (tip) return;
+    tip = document.createElement('div'); tip.id = 'gloss-tip'; tip.setAttribute('role', 'tooltip');
+    arrow = document.createElement('div'); arrow.className = 'arrow';
+    tip.appendChild(arrow); document.body.appendChild(tip);
+  }
+  function setContent(span) {
+    while (tip.childNodes.length > 1) tip.removeChild(tip.firstChild);
+    const text = span.getAttribute('data-tip') || '';
+    const head = document.createElement('b'); head.textContent = span.getAttribute('data-term');
+    head.dir = HEBR.test(head.textContent) ? 'rtl' : 'ltr';
+    const sep = text.indexOf(' — ');
+    const body = document.createElement('span');
+    if (sep > 0 && !HEBR.test(text.slice(0, sep))) {
+      const bdi = document.createElement('bdi'); bdi.dir = 'ltr'; bdi.textContent = text.slice(0, sep);
+      body.appendChild(bdi); body.appendChild(document.createTextNode(text.slice(sep)));
+    } else body.textContent = sep > 0 ? text.slice(sep + 3) : text;   // a Hebrew name before the dash repeats the heading
+    tip.insertBefore(body, tip.firstChild); tip.insertBefore(head, tip.firstChild);
+  }
+  function show(span) {
+    ensureTip(); current = span; setContent(span);
+    tip.classList.remove('above', 'below'); tip.classList.add('show');
+    const r = span.getBoundingClientRect(), vw = window.innerWidth, margin = 8, gap = 9;
+    tip.style.maxWidth = Math.min(340, vw - 2 * margin) + 'px';
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = Math.max(margin, Math.min(r.left + r.width / 2 - tw / 2, vw - tw - margin));
+    let top = r.top - th - gap;
+    if (top < margin) { top = r.bottom + gap; tip.classList.add('below'); } else tip.classList.add('above');
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    arrow.style.left = Math.max(10, Math.min(r.left + r.width / 2 - left - 6, tw - 22)) + 'px';
+  }
+  function hide() { current = null; if (tip) tip.classList.remove('show'); }
+  function mark(el, term) {
+    el.classList.add('gloss'); el.setAttribute('data-tip', GLOSSARY[term]); el.setAttribute('data-term', term);
+    el.tabIndex = 0;
+  }
+
+  function run() {
+    const root = document.querySelector('main') || document.body;
+    const h2s = [...root.querySelectorAll('h2')];
+    let hi = 0, seen = new Set();
+    const section = node => { while (hi < h2s.length && (h2s[hi].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING)) { hi++; seen = new Set(); } };
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
+      acceptNode(n) {
+        if (n.nodeType === 1) return SKIP_TAGS.has(n.tagName.toUpperCase()) || skipped(n) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        return n.nodeValue && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }
+    });
+    const jobs = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      section(n);
+      if (n.nodeType === 1) {
+        // <code>fork</code> – the whole element is a term
+        if (n.tagName === 'CODE') {
+          const t = n.textContent.trim();
+          if (GLOSSARY[t] !== undefined && !seen.has(KEY[t])) { seen.add(KEY[t]); jobs.push(['el', n, t]); }
+        }
+        continue;
+      }
+      if (n.parentElement && n.parentElement.closest('code')) continue;
+      const text = n.nodeValue, hits = [];
+      RE.lastIndex = 0; let m;
+      while ((m = RE.exec(text)) !== null) {
+        const term = m[1] || m[3], pre = m[1] ? '' : m[2];
+        if (seen.has(KEY[term])) continue;
+        seen.add(KEY[term]); hits.push([m.index + pre.length, term]);
+      }
+      if (hits.length) jobs.push(['txt', n, hits]);
+    }
+    for (const [kind, n, x] of jobs) {
+      if (kind === 'el') { mark(n, x); continue; }
+      const text = n.nodeValue, frag = document.createDocumentFragment(); let last = 0;
+      for (const [i, term] of x) {
+        if (i > last) frag.appendChild(document.createTextNode(text.slice(last, i)));
+        const s = document.createElement('span'); s.textContent = term; mark(s, term);
+        frag.appendChild(s); last = i + term.length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    }
+    document.addEventListener('mouseover', e => {
+      const g = e.target.closest && e.target.closest('.gloss');
+      if (g && g !== current) { show(g); pinned = false; } else if (!g && current && !pinned) hide();
+    });
+    document.addEventListener('click', e => {
+      const g = e.target.closest && e.target.closest('.gloss');
+      // a click pins the tip (a tap on a phone also fires mouseover first); a second click on the same term closes it
+      if (g) { if (g === current && pinned && tip.classList.contains('show')) { hide(); pinned = false; } else { show(g); pinned = true; } }
+      else { hide(); pinned = false; }
+    });
+    let pointer = false;   // keyboard focus shows the tip; a click/tap is handled by the click toggle above
+    document.addEventListener('pointerdown', () => { pointer = true; setTimeout(() => pointer = false, 400); });
+    document.addEventListener('focusin', e => { if (!pointer && e.target.classList && e.target.classList.contains('gloss')) show(e.target); });
+    document.addEventListener('focusout', hide);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+    window.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('resize', hide);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>
