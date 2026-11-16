@@ -297,3 +297,11 @@ html[data-fam="os"] .tr-ln{align-items:flex-start}
 html[data-fam="os"] .tr-src{white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
 html[data-fam="os"] .tr-mk{align-self:center}
 html[data-fam="os"] .fn-sig{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* enrichment pointers at the end of a chapter */
+.mta-enrich{display:flex;flex-direction:column;gap:2px;margin-top:40px;text-decoration:none;color:inherit;border:1.5px dashed var(--mta-acc);border-radius:10px;padding:13px 18px;background:color-mix(in srgb,var(--mta-acc) 7%,transparent)}
+.mta-enrich:hover{background:color-mix(in srgb,var(--mta-acc) 13%,transparent)}
+.mta-enrich .dir{font-size:13px;opacity:.72}
+.mta-enrich .nm{font-size:18px;font-weight:700;color:var(--mta-acc)}
+.mta-enrich+.mta-enrich{margin-top:10px}
+.mta-enrich+:is(.drill,.pager){margin-top:16px}
