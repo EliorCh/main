@@ -68,6 +68,7 @@
     ],
     os: [
       ["פרקים", [["1 · מבוא", "intro.html"], ["2 · סביבת העבודה", "workenv.html"], ["3 · תהליכים", "processes.html"], ["4 · תזמון", "scheduling.html"], ["5 · זומבים וסיגנלים", "signals.html"], ["6 · הפניות וצינורות", "redir.html"], ["7 · זיכרון וירטואלי", "vmem.html"]]],
+      ["העשרה", [["מעבדת קוד: מה כל קוד עושה ולמה", "codes.html"], ["חישובי זיכרון וירטואלי", "vmcalc.html"]]],
     ],
     db: [
       ["פרקים", [["1 · מודל ER", "er.html", "er-ex.html"], ["2 · מודל היחסים", "relational.html", "relational-ex.html"], ["3 · SQL", "sql.html", "sql-ex.html"], ["4 · תלויות פונקציונליות", "fd.html", "fd-ex.html"], ["5 · תיכון ונרמול", "norm.html", "norm-ex.html"], ["6 · אינדקסים ו־hashing", "indexing.html", "indexing-ex.html"], ["7 · בקרת בו־זמניות", "cc.html", "cc-ex.html"]]],
@@ -80,6 +81,7 @@
     comp: [
       ["חלק א׳ · שפות ותכנות", [["1 · מבוא, פונקציות חלקיות ועצים", "#ch1"], ["2 · שפת WHILE", "#ch2"], ["3 · מטה-תכנות", "#ch3"], ["4 · השוואה בין שפות", "#ch4"], ["5 · אלגוריתמי קומפילציה", "#ch5"], ["6 · שפת F", "#chF"], ["7 · שפות מלאות-סבירות", "#chRC"]]],
       ["חלק ב׳ · חשיבות והכרעה", [["8 · פונקציות חשיבות ולא חשיבות", "#chComp"], ["9 · בעיות הכרעה: R, RE, coRE", "#chDec"], ["10 · רדוקציות ומשפט רייס", "#chRed"], ["11 · מכונות טיורינג", "#chTM"], ["12 · בעיות הכרעה מפורסמות", "#chFam"]]],
+      ["העשרה", [["משוואות מטה-תוכניות, לאט", "meta.html"]]],
       ["תרגילים ומטלות", [["מטלה 1 · מפת עזרה", "#hw1"], ["מטלה 1 · פתרון מלא", "#hw1sol"]]],
     ],
   };
@@ -325,6 +327,7 @@
     var f = location.pathname.split("/").pop() || "index.html";
     return f;
   }
+  function hrefOf(u) { return u.charAt(0) === "#" && here() !== "index.html" ? "index.html" + u : u; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function currentItem(menu) {
     var f = here(), h = location.hash, best = null;
@@ -371,7 +374,7 @@
       document.body.appendChild(scrim);
       nav.addEventListener("click", function (e) { if (e.target.closest("a")) root.classList.remove("mta-menu-open"); });
     }
-    var cur = currentItem(menu), homeHref = cfg.course === "comp" ? "#home" : "index.html";
+    var cur = currentItem(menu), homeHref = cfg.course === "comp" ? hrefOf("#home") : "index.html";
     var isHome = !cur && (here() === "index.html" || (cfg.course === "comp" && (!location.hash || location.hash === "#home")));
     var h = '<a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
       '<div class="mta-menu-who">' + esc(C.who) + "</div>" +
@@ -382,7 +385,7 @@
       h += '<div class="mta-menu-group">' + esc(g[0]) + "</div>";
       g[1].forEach(function (it) {
         var on = it === cur;
-        h += '<a class="mta-menu-item' + (on ? " on" : "") + '" href="' + it[1] + '">' + esc(it[0]) + "</a>";
+        h += '<a class="mta-menu-item' + (on ? " on" : "") + '" href="' + hrefOf(it[1]) + '">' + esc(it[0]) + "</a>";
         if (on) {
           var ss = secsOf(it);
           if (ss.length) h += '<div class="mta-menu-secs">' + ss.map(function (s) { return '<a href="' + s[1] + '">' + esc(s[0]) + "</a>"; }).join("") + "</div>";
