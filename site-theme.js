@@ -72,7 +72,7 @@
     ],
     db: [
       ["פרקים", [["1 · מודל ER", "er.html", "er-ex.html"], ["2 · מודל היחסים", "relational.html", "relational-ex.html"], ["3 · SQL", "sql.html", "sql-ex.html"], ["4 · תלויות פונקציונליות", "fd.html", "fd-ex.html"], ["5 · תיכון ונרמול", "norm.html", "norm-ex.html"], ["6 · אינדקסים ו־hashing", "indexing.html", "indexing-ex.html"], ["7 · בקרת בו־זמניות", "cc.html", "cc-ex.html"]]],
-      ["תרגילים ומטלות", [["תרגיל 1 · מודל ER", "er-ex.html"], ["תרגיל 2 · מודל היחסים", "relational-ex.html"], ["תרגילים 3–4 · SQL", "sql-ex.html"], ["תרגיל 5 · תלויות פונקציונליות", "fd-ex.html"], ["תרגיל 6 · נרמול", "norm-ex.html"], ["תרגיל 7 · אינדקסים", "indexing-ex.html"], ["תרגיל 8 · בקרת בו־זמניות", "cc-ex.html"], ["מטלות תרגול נוספות", "practice.html"]]],
+      ["תרגילים ומטלות", [["תרגיל 1 · מודל ER", "er-ex.html"], ["תרגיל 2 · מודל היחסים", "relational-ex.html"], ["תרגיל 3 · SQL", "sql-ex.html"], ["תרגיל 4 · SQL מעשי", "sql-ex4.html"], ["תרגיל 5 · תלויות פונקציונליות", "fd-ex.html"], ["תרגיל 6 · נרמול", "norm-ex.html"], ["תרגיל 7 · אינדקסים", "indexing-ex.html"], ["תרגיל 8 · בקרת בו־זמניות", "cc-ex.html"], ["מטלות תרגול נוספות", "practice.html"]]],
     ],
     crypto: [
       ["פרקים", [["0 · ידע מקדים וסימונים", "ch0.html"], ["1 · מבוא לקריפטוגרפיה", "ch1.html"], ["2 · הצפנה אסימטרית ו־RSA", "ch2.html"], ["3 · לוג דיסקרטי ו־Diffie-Hellman", "ch3.html"], ["4 · הצפנה סימטרית: DES", "ch4.html"]]],
