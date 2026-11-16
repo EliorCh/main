@@ -306,3 +306,9 @@ html[data-fam="os"] .fn-sig{white-space:pre-wrap;overflow-wrap:anywhere}
 .mta-enrich .nm{font-size:18px;font-weight:700;color:var(--mta-acc)}
 .mta-enrich+.mta-enrich{margin-top:10px}
 .mta-enrich+:is(.drill,.pager){margin-top:16px}
+
+/* ---------- "what the lecturer stressed" boxes (from lecture recordings) ---------- */
+.lect{--c:#0f766e;--cb:#f0fdfa;--ce:#99f6e4}
+.box.lect .box-title::before{content:"";display:inline-block;width:.55em;height:.55em;border-radius:50%;background:currentColor;margin-inline-end:.45em;vertical-align:.08em}
+.box.lect ul{margin:0;padding-inline-start:1.2em}
+.box.lect li{margin:.25em 0}
