@@ -90,6 +90,7 @@
       ["שיעור 0 · מבוא", [["3 · פרספטרון 3×3", "perceptron.html"], ["4 · הכללה ודאטה", "generalization.html"], ["5 · ייצוג ו-LLM", "representation.html"], ["6 · מנוירון לרשת", "network.html"]]],
       ["שיעור 1 · fastai", [["7 · ציפור או יער", "fastai.html"], ["8 · DataBlock", "datablock.html"], ["9 · בחירת מודל ותרגיל 1", "fastai-more.html"]]],
       ["שיעור 1 · ממאפס", [["10 · רגרסיה, נוירון יחיד", "reg.html"], ["11 · 8 תכונות וצורות", "housing.html"], ["12 · learning rate ו-epochs", "lr.html"], ["13 · סיווג בינארי", "cls.html"], ["14 · וקטוריזציה", "vectorize.html"]]],
+      ["שיעור 2 · PyTorch", [["15 · PyTorch: טנזורים ו-autograd", "pytorch.html"]]],
       ["חומרי עזר", [["מלכודות נפוצות", "traps.html"]]],
       ["תרגול", [["תרגול עצמי ושאלות חזרה", "practice.html"]]],
     ],
