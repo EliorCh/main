@@ -28,6 +28,7 @@
     db:     { icon: "🗄️", name: "מערכות בסיסי נתונים", who: "פרופ׳ גדעון דרור", sem: "סמסטר א׳ · שנה ג׳", sum: "dbsum" },
     crypto: { icon: "🔐", name: "מבוא לקריפטוגרפיה שימושית", who: "ד״ר יותם אשכנזי", sem: "סמסטר א׳ · שנה ג׳", sum: "cryptosum" },
     comp:   { icon: "♾️", name: "חישוביות", who: "פרופ׳ עופר אריאלי", sem: "סמסטר א׳ · שנה ג׳", sum: "computsum", que: "computque" },
+    dl:     { icon: "🧠", name: "למידה עמוקה", num: "14219201", who: "פרופ׳ ראיד סעאבנה", sem: "סמסטר א׳ · שנה ג׳", sum: "dlsum" },
   };
   /* ---- the side menu of every summary site: chapters first, then reference sheets, then exercises ----
      each group: [title, [[label, href], ...]]; "ex" on a chapter = its exercise page (linked at the end of the chapter) */
@@ -83,6 +84,14 @@
       ["חלק ב׳ · חשיבות והכרעה", [["8 · פונקציות חשיבות ולא חשיבות", "#chComp"], ["9 · בעיות הכרעה: R, RE, coRE", "#chDec"], ["10 · רדוקציות ומשפט רייס", "#chRed"], ["11 · מכונות טיורינג", "#chTM"], ["12 · בעיות הכרעה מפורסמות", "#chFam"]]],
       ["העשרה", [["משוואות מטה-תוכניות, לאט", "meta.html"]]],
       ["תרגילים ומטלות", [["מטלה 1 · מפת עזרה", "#hw1"], ["מטלה 1 · פתרון מלא", "#hw1sol"]]],
+    ],
+    dl: [
+      ["יסודות", [["1 · מודל הלמידה ומושגים", "concepts.html"], ["2 · שיטת 7 הצעדים", "method.html"]]],
+      ["שיעור 0 · מבוא", [["3 · פרספטרון 3×3", "perceptron.html"], ["4 · הכללה ודאטה", "generalization.html"], ["5 · ייצוג ו-LLM", "representation.html"], ["6 · מנוירון לרשת", "network.html"]]],
+      ["שיעור 1 · fastai", [["7 · ציפור או יער", "fastai.html"], ["8 · DataBlock", "datablock.html"], ["9 · בחירת מודל ותרגיל 1", "fastai-more.html"]]],
+      ["שיעור 1 · ממאפס", [["10 · רגרסיה, נוירון יחיד", "reg.html"], ["11 · 8 תכונות וצורות", "housing.html"], ["12 · learning rate ו-epochs", "lr.html"], ["13 · סיווג בינארי", "cls.html"], ["14 · וקטוריזציה", "vectorize.html"]]],
+      ["חומרי עזר", [["מלכודות נפוצות", "traps.html"]]],
+      ["תרגול", [["תרגול עצמי ושאלות חזרה", "practice.html"]]],
     ],
   };
   /* each family's own side menu and menu buttons, hidden in favour of the shared menu */

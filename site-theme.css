@@ -17,6 +17,7 @@ html[data-course="stats"],.mta-c-stats{--mta-acc:#4d7c0f;--mta-acc-soft:#f7fee7;
 html[data-course="os"],.mta-c-os{--mta-acc:#be123c;--mta-acc-soft:#fff1f2;--mta-acc-ink:#9f1239;--mta-side1:#4c0519;--mta-side2:#881337}
 html[data-course="db"],.mta-c-db{--mta-acc:#1d4ed8;--mta-acc-soft:#eff6ff;--mta-acc-ink:#1e40af;--mta-side1:#172554;--mta-side2:#1e3a8a}
 html[data-course="comp"],.mta-c-comp{--mta-acc:#0f766e;--mta-acc-soft:#f0fdfa;--mta-acc-ink:#115e59;--mta-side1:#042f2e;--mta-side2:#134e4a}
+html[data-course="dl"],.mta-c-dl{--mta-acc:#a21caf;--mta-acc-soft:#fdf4ff;--mta-acc-ink:#86198f;--mta-side1:#4a044e;--mta-side2:#701a75}
 html[data-course="crypto"],.mta-c-crypto{--mta-acc:#475569;--mta-acc-soft:#f1f5f9;--mta-acc-ink:#334155;--mta-side1:#0f172a;--mta-side2:#1e293b}
 html[data-course="home"],.mta-c-home{--mta-acc:#44403c;--mta-acc-soft:#f5f5f4;--mta-acc-ink:#292524;--mta-side1:#1c1917;--mta-side2:#292524}
 
