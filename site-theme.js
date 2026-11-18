@@ -86,8 +86,8 @@
       ["תרגילים ומטלות", [["מטלה 1 · מפת עזרה", "#hw1"], ["מטלה 1 · פתרון מלא", "#hw1sol"]]],
     ],
     dl: [
-      ["נושאים", [["1 · מודל הלמידה ושיטת הפתרון", "basics.html"], ["2 · מהנוירון לרשת", "neuron.html"], ["3 · הכללה, דאטה וייצוג", "data.html"], ["4 · fastai", "fastai.html"], ["5 · אימון נוירון ממאפס", "scratch.html"], ["6 · PyTorch", "pytorch.html"]]],
-      ["חזרה", [["7 · חזרה ותרגול", "practice.html"]]],
+      ["נושאים", [["1 · מודל הלמידה ושיטת הפתרון", "basics.html"], ["2 · מהנוירון לרשת", "neuron.html"], ["3 · הכללה, דאטה וייצוג", "data.html"], ["4 · fastai", "fastai.html"], ["5 · אימון נוירון ממאפס", "scratch.html"], ["6 · PyTorch: טנזורים ו-autograd", "pytorch.html"], ["7 · PyTorch: בניית רשת ואימון", "pytorch-nn.html"], ["8 · סינון שיתופי ומערכות המלצה", "cf.html"]]],
+      ["חזרה", [["9 · חזרה ותרגול", "practice.html"]]],
     ],
   };
   /* each family's own side menu and menu buttons, hidden in favour of the shared menu */
