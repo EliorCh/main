@@ -69,7 +69,7 @@
     ],
     os: [
       ["פרקים", [["1 · מבוא", "intro.html"], ["2 · סביבת העבודה", "workenv.html"], ["3 · תהליכים", "processes.html"], ["4 · תזמון", "scheduling.html"], ["5 · זומבים וסיגנלים", "signals.html"], ["6 · הפניות וצינורות", "redir.html"], ["7 · זיכרון וירטואלי", "vmem.html"]]],
-      ["העשרה", [["חישובי זיכרון וירטואלי", "vmcalc.html"], ["מעבדת קוד: מה כל קוד עושה ולמה", "codes.html"]]],
+      ["העשרה", [["מעבדת עץ תהליכים: fork, exec, wait", "forklab.html"], ["חישובי זיכרון וירטואלי", "vmcalc.html"], ["מעבדת קוד: מה כל קוד עושה ולמה", "codes.html"]]],
     ],
     db: [
       ["פרקים", [["1 · מודל ER", "er.html", "er-ex.html"], ["2 · מודל היחסים", "relational.html", "relational-ex.html"], ["3 · SQL", "sql.html", "sql-ex.html"], ["4 · תלויות פונקציונליות", "fd.html", "fd-ex.html"], ["5 · תיכון ונרמול", "norm.html", "norm-ex.html"], ["6 · אינדקסים ו־hashing", "indexing.html", "indexing-ex.html"], ["7 · בקרת בו־זמניות", "cc.html", "cc-ex.html"]]],
