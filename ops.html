@@ -247,8 +247,14 @@
       $("#status").textContent = all.length + " דיווחים · עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
       chips(); draw();
     }).catch(function (e) {
-      $("#status").innerHTML = e.status === 404 ? '<span class="err">הריפו ops-inbox לא נמצא, או שעוד אין בו דיווחים.</span>' : '<span class="err">' + esc(e.message) + "</span>";
       all = []; chips(); draw();
+      if (e.status !== 404) { $("#status").innerHTML = '<span class="err">' + esc(e.message) + "</span>"; return; }
+      /* 404 on reports/: either no reports yet, or the repo is missing / not in this GitHub key */
+      api("/repos/" + OWNER + "/" + INBOX).then(function () {
+        $("#status").textContent = "אין עדיין דיווחים.";
+      }, function () {
+        $("#status").innerHTML = '<span class="err">מפתח ה־GitHub הזה לא רואה את הריפו ops-inbox. או שהריפו עוד לא נוצר (<a href="https://github.com/new?name=ops-inbox&visibility=private" target="_blank" rel="noopener">ליצירה ↗</a>, פרטי), או שהוא לא נבחר במפתח (<a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">עריכת המפתח ↗</a> ← Repository access ← להוסיף את ops-inbox).</span>';
+      });
     });
   }
   function stageOf(r) { return r.status === "fixed" || r.status === "rejected" ? "done" : (r.status || "new"); }
