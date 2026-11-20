@@ -482,6 +482,7 @@
           var err;
           if (status === 401 || status === 403) err = new Error("GoatCounter דחה את המפתח" + (m ? " (" + m + ")" : "") + ". צריך מפתח עם הרשאת Read statistics.");
           else if (status === 429) { err = new Error("GoatCounter מגביל את קצב הבקשות. לנסות שוב בעוד דקה."); err.retry = true; }
+          else if (status === 404) err = new Error("GoatCounter לא מצא את האתר eliorch (404). כדאי לבדוק שהכתובת של הדשבורד שלך היא eliorch.goatcounter.com, ושהמפתח נוצר באותו אתר.");
           else err = new Error("שגיאה מ־GoatCounter: " + status + (m ? " · " + m : ""));
           return err;
   }
@@ -543,15 +544,17 @@
       return putFile(INBOX, GFILE, JSON.stringify({ key: k, saved: new Date().toISOString() }, null, 1) + "\n", sha, "ops: GoatCounter key");
     }).catch(function () {});
   }
+  function gcheck() { var e = Date.now(); return gapi("/stats/total?start=" + iso(e - 864e5) + "&end=" + iso(e)); }
   function tryServer() {
     if (gtoken || !token) return Promise.resolve(false);
     return getFile(INBOX, GFILE).then(function (g) {
       var k = (JSON.parse(g.text).key || "").trim(); if (!k) throw new Error("empty");
-      gtoken = k; return gapi("/me").then(function () { try { localStorage.setItem(GK, k); } catch (e) {} return true; }, function (e) { gtoken = ""; throw e; });
+      gtoken = k; return gcheck().then(function () { try { localStorage.setItem(GK, k); } catch (e) {} return true; }, function (e) { gtoken = ""; throw e; });
     }).catch(function () { return relayKey(); });
   }
   function relayKey() {
-    return viaRelay("me").then(function () { gserver = true; return true; }, function (e) {
+    var was = relayOld;
+    return viaRelay("stats/total?start=" + iso(Date.now() - 864e5) + "&end=" + iso(Date.now())).finally(function () { relayOld = was; }).then(function () { gserver = true; return true; }, function (e) {
       gserver = false;
       gwhy = e.code === "no-gc-token" ? "בשירות השליחה בגוגל עוד לא הוגדר GC_TOKEN."
         : e.code === "not-owner" ? "שירות השליחה בגוגל לא זיהה את מפתח ה־GitHub כמפתח של הבעלים."
@@ -576,7 +579,7 @@
 '<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
       $("#glogin").onclick = function () {
         gtoken = $("#gtok").value.trim(); if (!gtoken) return;
-        gapi("/me").then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} saveGKey(gtoken); gwhy = ""; drawG(); loadG(); })
+        gcheck().then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} saveGKey(gtoken); gwhy = ""; drawG(); loadG(); })
           .catch(function (e) { gtoken = ""; gfail($("#gmsg"), e); });
       };
     }
