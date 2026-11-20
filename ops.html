@@ -535,8 +535,22 @@
     el.innerHTML = '<span class="err">' + esc(e.message) + '</span> <a href="https://eliorch.goatcounter.com" target="_blank" rel="noopener">לדשבורד של GoatCounter ↗</a>';
   }
   /* without a key in this browser, ask the relay once whether it holds one */
+  /* the GoatCounter key is also kept in the private inbox repo (settings/goatcounter.json),
+     so any browser that has the GitHub key gets it too */
+  var GFILE = "settings/goatcounter.json";
+  function saveGKey(k) {
+    return getFile(INBOX, GFILE).then(function (g) { return g.sha; }, function () { return undefined; }).then(function (sha) {
+      return putFile(INBOX, GFILE, JSON.stringify({ key: k, saved: new Date().toISOString() }, null, 1) + "\n", sha, "ops: GoatCounter key");
+    }).catch(function () {});
+  }
   function tryServer() {
     if (gtoken || !token) return Promise.resolve(false);
+    return getFile(INBOX, GFILE).then(function (g) {
+      var k = (JSON.parse(g.text).key || "").trim(); if (!k) throw new Error("empty");
+      gtoken = k; return gapi("/me").then(function () { try { localStorage.setItem(GK, k); } catch (e) {} return true; }, function (e) { gtoken = ""; throw e; });
+    }).catch(function () { return relayKey(); });
+  }
+  function relayKey() {
     return viaRelay("me").then(function () { gserver = true; return true; }, function (e) {
       gserver = false;
       gwhy = e.code === "no-gc-token" ? "בשירות השליחה בגוגל עוד לא הוגדר GC_TOKEN."
@@ -552,14 +566,17 @@
       c.innerHTML = '<span class="ok">מחובר ל־GoatCounter דרך שירות השליחה בגוגל</span>';
     } else if (gtoken) {
       c.innerHTML = '<span class="ok">מחובר ל־GoatCounter</span> <button class="btn" id="glogout" type="button">ניתוק</button>';
-      $("#glogout").onclick = function () { try { localStorage.removeItem(GK); } catch (e) {} gtoken = ""; drawG(); };
+      $("#glogout").onclick = function () {
+        try { localStorage.removeItem(GK); } catch (e) {} gtoken = ""; gwhy = ""; drawG();
+        getFile(INBOX, GFILE).then(function (g) { return api("/repos/" + OWNER + "/" + INBOX + "/contents/" + GFILE, { method: "DELETE", body: { message: "ops: remove GoatCounter key", sha: g.sha } }); }).catch(function () {});
+      };
     } else {
-      c.innerHTML = (gwhy ? '<div class="err">' + esc(gwhy) + ' בינתיים אפשר להתחבר עם מפתח בדפדפן הזה:</div>' : "") + '<b>חיבור חד־פעמי ל־GoatCounter.</b> <ol class="steps"><li><a href="https://eliorch.goatcounter.com/user/api" target="_blank" rel="noopener">יצירת מפתח API ב־GoatCounter ↗</a></li>' +
+      c.innerHTML = '<b>חיבור חד־פעמי ל־GoatCounter.</b> המפתח נשמר בריפו הפרטי ops-inbox, כך שבפעם הבאה הוא ייטען לבד בכל דפדפן שנכנסים ממנו עם מפתח ה־GitHub. <ol class="steps"><li><a href="https://eliorch.goatcounter.com/user/api" target="_blank" rel="noopener">יצירת מפתח API ב־GoatCounter ↗</a></li>' +
         '<li>לתת לו שם, לסמן רק את <b><bdi>Read statistics</bdi></b>, ללחוץ <bdi>Create</bdi>, ולהעתיק ולהדביק כאן:</li></ol>' +
 '<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
       $("#glogin").onclick = function () {
         gtoken = $("#gtok").value.trim(); if (!gtoken) return;
-        gapi("/me").then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} drawG(); loadG(); })
+        gapi("/me").then(function () { try { localStorage.setItem(GK, gtoken); } catch (e) {} saveGKey(gtoken); gwhy = ""; drawG(); loadG(); })
           .catch(function (e) { gtoken = ""; gfail($("#gmsg"), e); });
       };
     }

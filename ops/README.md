@@ -39,13 +39,11 @@ GitHub → Settings → Developer settings → Fine-grained tokens → Generate 
 
 מדביקים אותו בעמוד התפעול. הוא נשמר רק בדפדפן הזה.
 
-### 5. סטטיסטיקה בלי להתחבר כל פעם (GoatCounter)
-כדי שלשונית השימוש תעבוד אחרי הכניסה עם מפתח ה־GitHub בלבד, בכל דפדפן:
-1. ב־https://eliorch.goatcounter.com/user/api יוצרים מפתח API עם **Read statistics** בלבד.
-2. ב־Apps Script: Project Settings → Script properties → Add: `GC_TOKEN` = המפתח.
-3. מעדכנים את שירות השליחה לגרסה החדשה (הסעיף הבא).
+### 5. סטטיסטיקה (GoatCounter)
+בלשונית השימוש מדביקים פעם אחת מפתח API של GoatCounter (עם **Read statistics** בלבד, מ־https://eliorch.goatcounter.com/user/api).
+העמוד שומר אותו בריפו הפרטי `ops-inbox` (`settings/goatcounter.json`), כך שבכל דפדפן שנכנסים ממנו עם מפתח ה־GitHub הוא נטען לבד. "ניתוק" מוחק אותו גם משם.
 
-השירות משתמש במפתח הזה רק אחרי שהוא מוודא מול GitHub שהמפתח שנשלח מהעמוד שייך ל־EliorCh.
+רשות: אפשר במקום זה לשמור את המפתח בשירות השליחה בגוגל, כ־Script property בשם `GC_TOKEN` (ואז לעדכן את השירות, בסעיף הבא).
 
 ### עדכון שירות השליחה
 1. ב־Apps Script מוחקים את כל הקוד ומדביקים מחדש את `relay.gs` מהריפו. שומרים.
