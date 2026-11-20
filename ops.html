@@ -502,11 +502,20 @@
   /* first choice: ask through the report relay (Google's servers call GoatCounter, so nothing in the browser can block it) */
   var RELAY = "https://script.google.com/macros/s/AKfycbwe0X00W-l6fK2QrrsSmIme9NGE5iyO9IVR74VXYEeWYvLWF1RqNjhX4MqAW5wXkt47rg/exec";
   var relayMode = null, relayOld = false;
+  /* gserver: true once the relay answers with its own stored GoatCounter key (GC_TOKEN), unlocked by the GitHub key */
+  var gserver = null, gwhy = "";
   function viaRelay(path) {
-    return fetch(RELAY, { method: "POST", body: JSON.stringify({ action: "stats", gc: gtoken, paths: [path.replace(/^\//, "")] }) })
+    var body = { action: "stats", paths: [path.replace(/^\//, "")] };
+    if (gtoken) body.gc = gtoken; else body.gh = token;
+    return fetch(RELAY, { method: "POST", body: JSON.stringify(body) })
       .then(function (r) { return r.json(); })
       .then(function (j) {
-        if (!j.results) { relayOld = true; var o = new Error("old relay"); o.old = true; throw o; }
+        if (!body.gc && !(j.version >= 3)) { relayOld = true; var o0 = new Error("old relay"); o0.old = true; throw o0; }
+        if (!j.results) {
+          var o = new Error(j.error || "old relay"); o.old = true; o.code = j.error || "";
+          if (!j.version || j.version < 3) relayOld = true;
+          throw o;
+        }
         var x = j.results[0];
         if (x.status === 200) return JSON.parse(x.body);
         var m = ""; try { m = JSON.parse(x.body).error || ""; } catch (e) {}
@@ -514,6 +523,7 @@
       });
   }
   function gapi(path) {
+    if (!gtoken) return viaRelay(path);   /* no key in this browser: only the relay's stored key can answer */
     if (relayMode === false) return gdirect(path);
     return viaRelay(path).then(function (v) { relayMode = true; return v; }, function (e) {
       if (e.status) throw e;                 /* GoatCounter itself answered with an error: show it */
@@ -524,13 +534,27 @@
     if (relayOld) e = new Error(e.message + " · כדי לעקוף את זה, צריך לעדכן את שירות השליחה בגוגל לגרסה החדשה (המדריך, ״עדכון שירות השליחה״).");
     el.innerHTML = '<span class="err">' + esc(e.message) + '</span> <a href="https://eliorch.goatcounter.com" target="_blank" rel="noopener">לדשבורד של GoatCounter ↗</a>';
   }
+  /* without a key in this browser, ask the relay once whether it holds one */
+  function tryServer() {
+    if (gtoken || !token) return Promise.resolve(false);
+    return viaRelay("me").then(function () { gserver = true; return true; }, function (e) {
+      gserver = false;
+      gwhy = e.code === "no-gc-token" ? "בשירות השליחה בגוגל עוד לא הוגדר GC_TOKEN."
+        : e.code === "not-owner" ? "שירות השליחה בגוגל לא זיהה את מפתח ה־GitHub כמפתח של הבעלים."
+        : relayOld ? "שירות השליחה בגוגל עדיין בגרסה ישנה, צריך לפרסם אותו מחדש (Manage deployments ← עריכה ← New version)."
+        : e.status ? e.message : "שירות השליחה בגוגל לא ענה: " + e.message;
+      return false;
+    });
+  }
   function drawG() {
     var c = $("#gconn");
-    if (gtoken) {
+    if (!gtoken && gserver) {
+      c.innerHTML = '<span class="ok">מחובר ל־GoatCounter דרך שירות השליחה בגוגל</span>';
+    } else if (gtoken) {
       c.innerHTML = '<span class="ok">מחובר ל־GoatCounter</span> <button class="btn" id="glogout" type="button">ניתוק</button>';
       $("#glogout").onclick = function () { try { localStorage.removeItem(GK); } catch (e) {} gtoken = ""; drawG(); };
     } else {
-      c.innerHTML = '<b>חיבור חד־פעמי ל־GoatCounter.</b> <ol class="steps"><li><a href="https://eliorch.goatcounter.com/user/api" target="_blank" rel="noopener">יצירת מפתח API ב־GoatCounter ↗</a></li>' +
+      c.innerHTML = (gwhy ? '<div class="err">' + esc(gwhy) + ' בינתיים אפשר להתחבר עם מפתח בדפדפן הזה:</div>' : "") + '<b>חיבור חד־פעמי ל־GoatCounter.</b> <ol class="steps"><li><a href="https://eliorch.goatcounter.com/user/api" target="_blank" rel="noopener">יצירת מפתח API ב־GoatCounter ↗</a></li>' +
         '<li>לתת לו שם, לסמן רק את <b><bdi>Read statistics</bdi></b>, ללחוץ <bdi>Create</bdi>, ולהעתיק ולהדביק כאן:</li></ol>' +
 '<input id="gtok" type="password" placeholder="מפתח API" autocomplete="off"> <button class="btn pri" id="glogin" type="button">התחברות</button> <span id="gmsg"></span>';
       $("#glogin").onclick = function () {
@@ -544,7 +568,7 @@
   function iso(d) { d = new Date(d); d.setUTCMinutes(0, 0, 0); return d.toISOString().replace(/\.\d+Z$/, "Z"); }
   function siteOf(path) { var s = (path || "").split("/")[1] || "main"; return SITE_OF[s] || null; }
   function loadG() {
-    if (!gtoken) { ["#kpis", "#chart", "#sites", "#pages"].forEach(function (s) { $(s).innerHTML = ""; }); return; }
+    if (!gtoken && !gserver) { ["#kpis", "#chart", "#sites", "#pages"].forEach(function (s) { $(s).innerHTML = ""; }); return; }
     $("#gstatus").textContent = "טוען…";
     var end = Date.now(), start = end - days * 864e5, pstart = start - days * 864e5;
     var q = "start=" + iso(start) + "&end=" + iso(end);
@@ -628,7 +652,7 @@
     var u = location.hash === "#usage" && !!me, pv = location.hash === "#preview" && !!me;
     $("#view-issues").hidden = u || pv; $("#view-usage").hidden = !u; $("#view-preview").hidden = !pv;
     $("#tab-issues").setAttribute("aria-selected", String(!u && !pv)); $("#tab-usage").setAttribute("aria-selected", String(u)); $("#tab-preview").setAttribute("aria-selected", String(pv));
-    if (u && !gLoaded) { gLoaded = true; drawG(); loadG(); }
+    if (u && !gLoaded) { gLoaded = true; $("#gconn").textContent = "מתחבר…"; tryServer().then(function () { drawG(); loadG(); }); }
   }
   addEventListener("hashchange", route); route();
 })();
