@@ -172,7 +172,7 @@
      desaturated light accents. Works from the computed colors, so it also handles colors
      that are written directly into a site's pages, and keeps code, pictures and the menus as they are. */
   var DK = { on: false, list: [], seen: new WeakSet(), obs: null, busy: false };
-  var SKIP_DARK = ".mta-menu, .mta-menu-btn, .mta-expand, .mta-topbar, .mta-theme, .mta-keep, svg, img, video, canvas, picture, iframe, header.top, #nilv, .nil-float, script, style";
+  var SKIP_DARK = ".mta-menu, .mta-menu-btn, .mta-expand, .mta-srch-ov, .mta-srch-fab, .mta-topbar, .mta-theme, .mta-keep, svg, img, video, canvas, picture, iframe, header.top, #nilv, .nil-float, script, style";
   function rgbOf(s) {
     var k = /color\(srgb\s+([\d.e-]+)\s+([\d.e-]+)\s+([\d.e-]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/.exec(s || "");
     if (k) return [+k[1], +k[2], +k[3], k[4] === undefined ? 1 : (k[4].slice(-1) === "%" ? parseFloat(k[4]) / 100 : +k[4])];
@@ -394,6 +394,7 @@
       '<button type="button" class="mta-collapse" title="קיפול התפריט" aria-label="קיפול התפריט">⇥</button></div>' +
       '<div class="mta-menu-who">' + esc(C.who) + "</div>" +
       '<div class="mta-menu-meta">' + esc(C.sem) + " · MTA" + (C.num ? " · " + C.num : "") + "</div>";
+    h += '<button type="button" class="mta-menu-search"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>חיפוש באתר</span><kbd>Ctrl K</kbd></button>';
     if (C.que) h += '<a class="mta-menu-que" href="../' + C.que + '/">📝 לאתר התרגול</a>';
     h += '<a class="mta-menu-item' + (isHome ? " on" : "") + '" href="' + homeHref + '">דף הבית של הקורס</a>';
     menu.forEach(function (g) {
@@ -474,12 +475,23 @@
     if (b && !b.querySelector(".mta-brand-icon")) b.insertAdjacentHTML("afterbegin", '<span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span>");
   }
 
+  /* site-wide search: every summary site with a menu gets it; the pages to search are the menu's pages */
+  function searchBoot() {
+    var menu = SUMMARY_FAMS[cfg.fam] && MENUS[cfg.course];
+    if (!menu || !C || window.MTASearch || document.querySelector("script[src*='site-search.js']")) return;
+    var pages = [{ href: "index.html", label: "דף הבית" }];
+    menu.forEach(function (g) { g[1].forEach(function (it) { pages.push({ href: it[1].charAt(0) === "#" ? "index.html" : it[1], label: it[0] }); }); });
+    window.MTA_SITE = { course: cfg.course, name: C.name, pages: pages };
+    var base = me && me.src ? me.src.replace(/site-theme\.js.*$/, "") : "../main/";
+    var s = document.createElement("script"); s.src = base + "site-search.js"; document.body.appendChild(s);
+  }
   function boot() {
     osqBrand();
     hero();
     homeGrid();
     hideOld();
     buildMenu();
+    searchBoot();
     resizer();
     topbar();
     footer();
