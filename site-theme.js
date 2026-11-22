@@ -172,7 +172,7 @@
      desaturated light accents. Works from the computed colors, so it also handles colors
      that are written directly into a site's pages, and keeps code, pictures and the menus as they are. */
   var DK = { on: false, list: [], seen: new WeakSet(), obs: null, busy: false };
-  var SKIP_DARK = ".mta-menu, .mta-menu-btn, .mta-topbar, .mta-theme, .mta-keep, svg, img, video, canvas, picture, iframe, header.top, #nilv, .nil-float, script, style";
+  var SKIP_DARK = ".mta-menu, .mta-menu-btn, .mta-expand, .mta-topbar, .mta-theme, .mta-keep, svg, img, video, canvas, picture, iframe, header.top, #nilv, .nil-float, script, style";
   function rgbOf(s) {
     var k = /color\(srgb\s+([\d.e-]+)\s+([\d.e-]+)\s+([\d.e-]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/.exec(s || "");
     if (k) return [+k[1], +k[2], +k[3], k[4] === undefined ? 1 : (k[4].slice(-1) === "%" ? parseFloat(k[4]) / 100 : +k[4])];
@@ -377,11 +377,21 @@
       var scrim = document.createElement("div"); scrim.className = "mta-scrim";
       scrim.addEventListener("click", function () { root.classList.remove("mta-menu-open"); });
       document.body.appendChild(scrim);
-      nav.addEventListener("click", function (e) { if (e.target.closest("a")) root.classList.remove("mta-menu-open"); });
+      nav.addEventListener("click", function (e) {
+        if (e.target.closest(".mta-collapse")) { setCollapsed(true); return; }
+        if (e.target.closest("a")) root.classList.remove("mta-menu-open");
+      });
+      var ex = document.createElement("button");
+      ex.type = "button"; ex.className = "mta-expand"; ex.innerHTML = "☰ תפריט"; ex.title = "פתיחת התפריט";
+      ex.addEventListener("click", function () { setCollapsed(false); });
+      document.body.appendChild(ex);
+      var c0 = false; try { c0 = localStorage.getItem(CKEY) === "1"; } catch (e) {}
+      if (c0) root.classList.add("mta-menu-collapsed");
     }
     var cur = currentItem(menu), homeHref = cfg.course === "comp" ? hrefOf("#home") : "index.html";
     var isHome = !cur && (here() === "index.html" || (cfg.course === "comp" && (!location.hash || location.hash === "#home")));
-    var h = '<a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
+    var h = '<div class="mta-menu-head"><a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
+      '<button type="button" class="mta-collapse" title="קיפול התפריט" aria-label="קיפול התפריט">⇥</button></div>' +
       '<div class="mta-menu-who">' + esc(C.who) + "</div>" +
       '<div class="mta-menu-meta">' + esc(C.sem) + " · MTA" + (C.num ? " · " + C.num : "") + "</div>";
     if (C.que) h += '<a class="mta-menu-que" href="../' + C.que + '/">📝 לאתר התרגול</a>';
@@ -402,6 +412,13 @@
     var on = nav.querySelector(".mta-menu-item.on");
     if (on && on.offsetTop > nav.clientHeight - 80) nav.scrollTop = on.offsetTop - 120;
     exerciseLink(cur);
+  }
+  /* fold the side menu away (desktop) and bring it back; remembered per browser */
+  var CKEY = "mta-menu-collapsed";
+  function setCollapsed(on) {
+    if (on && window.matchMedia && window.matchMedia("(max-width:900px)").matches) { root.classList.remove("mta-menu-open"); return; }
+    root.classList.toggle("mta-menu-collapsed", on);
+    try { localStorage.setItem(CKEY, on ? "1" : "0"); } catch (e) {}
   }
   /* at the end of a chapter page: a pointer to that chapter's exercise */
   function exerciseLink(cur) {

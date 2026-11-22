@@ -216,6 +216,23 @@ html.mta-has-menu[data-fam="ind"] .wrap{max-width:1100px}
   html.mta-menu-open .mta-scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:58}
   html.mta-has-menu body{padding-top:44px!important}
 }
+
+/* fold-away side menu: button beside the course name, and a button to bring it back */
+.mta-menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.mta-collapse{flex:none;margin-top:2px;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.mta-collapse:hover{background:rgba(255,255,255,.16);border-color:var(--mta-hi)}
+.mta-expand{display:none}
+.mta-menu{transition:transform .22s ease}
+html.mta-has-menu body{transition:padding-right .22s ease}
+@media (min-width:901px){
+  html.mta-menu-collapsed .mta-menu{transform:translateX(105%)}
+  html.mta-menu-collapsed.mta-has-menu body{padding-right:0!important}
+  html.mta-menu-collapsed .mta-resize{display:none}
+  html.mta-menu-collapsed .mta-expand{display:block;position:fixed;top:10px;right:10px;z-index:59;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;
+    font:700 14px "Assistant",sans-serif;color:#fff;background:var(--mta-side2);box-shadow:0 2px 10px rgba(0,0,0,.2)}
+  html.mta-menu-collapsed .search-fab{inset-inline-start:22px!important}
+  html.mta-menu-collapsed.mta-has-menu body{padding-top:44px!important}
+}
 /* "go to this chapter's exercise" at the end of a chapter */
 .mta-ex-link{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;margin:48px 0 8px;padding:16px 20px;border-radius:14px;
   text-decoration:none;background:var(--mta-acc-soft);border:1px solid color-mix(in srgb,var(--mta-acc) 30%,transparent);color:var(--mta-acc-ink);font-size:16px}
