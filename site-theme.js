@@ -138,13 +138,23 @@
     return w;
   }
 
-  var COFFEE = "https://buymeacoffee.com/elior";
+  var COFFEE = "https://buymeacoffee.com/elior", PAYBOX = "https://links.payboxapp.com/juFsgRGlh8b";
   function coffee() {
     if (document.querySelector(".mta-coffee")) return;
-    var a = document.createElement("a");
-    a.className = "mta-coffee"; a.href = COFFEE; a.target = "_blank"; a.rel = "noopener";
-    a.setAttribute("dir", "rtl"); a.setAttribute("aria-label", "קנו לי קפה");
-    a.innerHTML = '<span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span>';
+    var a = document.createElement("div");
+    a.className = "mta-coffee"; a.setAttribute("dir", "rtl");
+    a.innerHTML =
+      '<div class="mta-coffee-pop" hidden>' +
+        '<p>האתר עזר לך? אפשר לפרגן בקפה ☕</p>' +
+        '<a class="mta-cf-pb" href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox<small>בשקלים, בלי עמלה</small></a>' +
+        '<a class="mta-cf-bmc" href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee<small>בכרטיס אשראי</small></a>' +
+      '</div>' +
+      '<button type="button" class="mta-coffee-btn" aria-expanded="false" aria-label="קנו לי קפה"><span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span></button>';
+    var btn = a.querySelector("button"), pop = a.querySelector(".mta-coffee-pop");
+    function show(on) { pop.hidden = !on; btn.setAttribute("aria-expanded", on ? "true" : "false"); }
+    btn.addEventListener("click", function (e) { e.stopPropagation(); show(pop.hidden); });
+    document.addEventListener("click", function (e) { if (!a.contains(e.target)) show(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") show(false); });
     document.body.appendChild(a);
     /* sit above anything else pinned to the bottom-left corner (theme switcher, a site's own floating button) */
     function lift() {
@@ -168,7 +178,7 @@
     f.setAttribute("dir", "rtl");
     f.innerHTML =
       '<p class="mta-by">נבנה על ידי אליאור חן · <a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a></p>' +
-      '<p class="mta-coffee-line">האתר עזר לך? <a href="' + COFFEE + '" target="_blank" rel="noopener">☕ אפשר לקנות לי קפה</a></p>' +
+      '<p class="mta-coffee-line">האתר עזר לך? ☕ אפשר לקנות לי קפה: <a href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox</a> · <a href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee</a></p>' +
       '<p class="mta-note">האתר נועד לעזור בלמידה ונבנה בעזרת בינה מלאכותית, ולכן ייתכנו בו טעויות. כדאי להצליב עם חומרי הקורס. השימוש באתר הוא באחריות הלומד.</p>';
     f.appendChild(switcher("mta-theme-inline"));
     var host = cfg.footer && document.querySelector(cfg.footer);
