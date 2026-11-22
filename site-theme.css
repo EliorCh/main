@@ -77,6 +77,9 @@ html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
 .mta-cf span{display:flex;flex-direction:column;align-items:flex-start}
 .mta-cf b{font-size:15px}
 .mta-cf small{font-size:12px;color:#78716c}
+html body:has(.mta-theme-float) .palfab{box-sizing:border-box;padding:0 6px;font-size:13px;font-weight:700;line-height:1.4;white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+html body.pal-open .palfab{display:none}
 .mta-foot .mta-coffee-line{font-weight:600;color:#57534e}
 
 /* ---------- 4. Family hooks: map the course color into each site family ---------- */

@@ -162,6 +162,12 @@
     document.body.appendChild(a);
     /* sit above anything else pinned to the bottom-left corner (theme switcher, a site's own floating button) */
     function lift() {
+      /* other floating corner buttons (dbsum's command store) get the switcher's size too */
+      var sw0 = document.querySelector(".mta-theme-float");
+      if (sw0 && sw0.offsetHeight) document.querySelectorAll(".palfab").forEach(function (f) {
+        f.style.height = sw0.offsetHeight + "px"; f.style.width = sw0.offsetWidth + "px";
+        f.style.bottom = (parseFloat(getComputedStyle(sw0).bottom) + sw0.offsetHeight + 8) + "px";
+      });
       var top = innerHeight - 14;
       document.querySelectorAll("body *").forEach(function (e) {
         if (e === a || a.contains(e) || e.closest(".mta-menu")) return;
