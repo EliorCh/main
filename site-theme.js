@@ -171,6 +171,10 @@
         top = Math.min(top, q.top);
       });
       a.style.bottom = Math.round(innerHeight - top + 8) + "px";
+      /* same height as the theme switcher below it */
+      var sw = document.querySelector(".mta-theme-float");
+      var cb = a.querySelector(".mta-coffee-btn");
+      if (sw && sw.offsetHeight) { cb.style.height = sw.offsetHeight + "px"; cb.style.width = sw.offsetWidth + "px"; }
     }
     lift(); setTimeout(lift, 900);
     addEventListener("resize", lift);

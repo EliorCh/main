@@ -60,12 +60,12 @@ html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
 @media print{.mta-theme-float,.mta-theme-inline,.mta-coffee{display:none}}
 /* Buy Me a Coffee / PayBox: floats above the theme switcher, opens a small chooser */
 .mta-coffee{position:fixed;left:14px;bottom:58px;z-index:90;direction:rtl;font-family:inherit}
-.mta-coffee-btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;padding:8px 15px 8px 13px;border-radius:999px;
-  background:#ffdd00;color:#1c1917;font:700 14px/1.2 inherit;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,.18);
+.mta-coffee-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 6px;border-radius:999px;white-space:nowrap;
+  background:#ffdd00;color:#1c1917;font:600 13px/1.4 inherit;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,.12);
   border:1px solid rgba(0,0,0,.08);transition:transform .15s,box-shadow .15s}
 .mta-coffee-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.22)}
 .mta-coffee-btn:focus-visible{outline:2px solid #1c1917;outline-offset:2px}
-.mta-coffee-i{font-size:17px;line-height:1}
+.mta-coffee-i{font-size:15px;line-height:1}
 .mta-coffee-pop{position:absolute;left:0;bottom:calc(100% + 8px);width:240px;background:#fff;color:#1c1917;border-radius:14px;padding:12px;
   box-shadow:0 8px 28px rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.08)}
 .mta-coffee-pop[hidden]{display:none}
@@ -78,7 +78,6 @@ html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
 .mta-cf b{font-size:15px}
 .mta-cf small{font-size:12px;color:#78716c}
 .mta-foot .mta-coffee-line{font-weight:600;color:#57534e}
-@media (max-width:640px){.mta-coffee-btn{padding:9px 10px}.mta-coffee-t{display:none}}
 
 /* ---------- 4. Family hooks: map the course color into each site family ---------- */
 
