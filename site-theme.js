@@ -413,6 +413,36 @@
     var on = nav.querySelector(".mta-menu-item.on");
     if (on && on.offsetTop > nav.clientHeight - 80) nav.scrollTop = on.offsetTop - 120;
     exerciseLink(cur);
+    spy();
+  }
+  /* scroll-spy: mark the section you are reading in the side menu, and keep it in view */
+  var spyOn = false, spyQ = false;
+  function spyUpdate() {
+    spyQ = false;
+    var nav = document.querySelector(".mta-menu"); if (!nav) return;
+    var links = [].slice.call(nav.querySelectorAll(".mta-menu-secs a[href^='#']"));
+    if (!links.length) return;
+    var cur = null, line = Math.min(140, innerHeight * 0.3);
+    links.forEach(function (a) {
+      var t = null; try { t = document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1))); } catch (e) {}
+      if (!t || t.offsetParent === null) return;
+      if (t.getBoundingClientRect().top - line <= 0) cur = a;
+    });
+    if (!cur && scrollY < 40) cur = null;
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = links[links.length - 1];
+    links.forEach(function (a) { a.classList.toggle("on", a === cur); });
+    if (cur) {
+      var r = cur.getBoundingClientRect(), n = nav.getBoundingClientRect();
+      if (r.top < n.top + 60 || r.bottom > n.bottom - 40) nav.scrollTop += r.top - n.top - nav.clientHeight / 2;
+    }
+  }
+  function spy() {
+    if (!spyOn) {
+      spyOn = true;
+      addEventListener("scroll", function () { if (!spyQ) { spyQ = true; requestAnimationFrame(spyUpdate); } }, { passive: true });
+      addEventListener("resize", function () { if (!spyQ) { spyQ = true; requestAnimationFrame(spyUpdate); } });
+    }
+    spyUpdate();
   }
   /* fold the side menu away (desktop) and bring it back; remembered per browser */
   var CKEY = "mta-menu-collapsed";

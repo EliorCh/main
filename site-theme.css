@@ -191,6 +191,7 @@ html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6)
 .mta-menu-secs{display:flex;flex-direction:column;margin:4px 0 10px;padding-inline-start:14px;border-inline-start:2px solid rgba(255,255,255,.14);margin-inline-start:14px}
 .mta-menu-secs a{padding:4px 10px;border-radius:6px;font-size:13.5px;color:rgba(255,255,255,.62)}
 .mta-menu-secs a:hover{color:#fff;background:rgba(255,255,255,.07)}
+.mta-menu-secs a.on{color:#fff;background:rgba(255,255,255,.12);font-weight:700;box-shadow:inset -3px 0 0 var(--mta-hi)}
 .mta-side-home{display:flex;align-items:center;justify-content:center;gap:6px;margin:26px 6px 4px;padding:9px 12px;border-radius:10px;
   border:1.5px solid rgba(255,255,255,.35);color:#fff!important;font-weight:700;background:rgba(255,255,255,.06)}
 .mta-side-home:hover{background:rgba(255,255,255,.14);border-color:var(--mta-hi)}
