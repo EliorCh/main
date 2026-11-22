@@ -99,7 +99,7 @@
     meta.textContent = "טוען את תוכן האתר…";
     load().then(function () {
       var np = {}; IDX.forEach(function (e) { np[e.p] = 1; });
-      meta.textContent = inp.value ? "" : IDX.length + " קטעים ב־" + Object.keys(np).length + " עמודים. אפשר לחפש בעברית ובאנגלית; בכמה מילים — כולן צריכות להופיע.";
+      meta.textContent = inp.value ? "" : IDX.length + " קטעים ב־" + Object.keys(np).length + " עמודים. החיפוש מוצא מילים בדיוק כמו שהן כתובות באתר — אם אין תוצאה, נסה את המונח באנגלית או בעברית (למשל Dijkstra / דייקסטרה). בכמה מילים — כולן צריכות להופיע.";
       if (inp.value) run();
     }).catch(function () { meta.textContent = "לא הצלחתי לטעון את תוכן האתר."; });
   }
@@ -107,7 +107,7 @@
   function href(e) { var q = encodeURIComponent(inp.value.trim()); return e.p + "?q=" + q + (e.id ? "#" + e.id : ""); }
   function run() {
     if (!IDX) return; var q = inp.value, cur = search(q); sel = 0; var T = terms(q);
-    meta.textContent = q.trim() ? (cur.length ? (cur.length >= 60 ? "60+" : cur.length) + " תוצאות" : "אין תוצאות. נסה מילה אחרת, או חלק ממילה.") : "";
+    meta.textContent = q.trim() ? (cur.length ? (cur.length >= 60 ? "60+" : cur.length) + " תוצאות" : "אין תוצאות. החיפוש מוצא מילים בדיוק כמו שהן כתובות באתר — נסה את המונח בשפה השנייה (עברית או אנגלית), כתיב אחר, או רק חלק מהמילה.") : "";
     res.innerHTML = cur.map(function (e, i) {
       return '<li class="' + (i === 0 ? "on" : "") + '"><a href="' + href(e) + '"><span class="mta-srch-where">' + esc(e.pt) + (e.t && e.t !== e.pt ? " › " + mark(e.t, e.nt, T) : "") + '</span><span class="mta-srch-snip">' + snippet(e, q) + "</span></a></li>";
     }).join("");
