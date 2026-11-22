@@ -73,6 +73,7 @@ html[data-mta-theme="sepia"] .mta-foot{color:#5c544c}
 .mta-coffee-pop a{display:flex;flex-direction:column;align-items:center;margin-top:7px;padding:8px 10px;border-radius:10px;font-weight:700;font-size:14.5px;
   text-decoration:none !important;direction:ltr}
 .mta-coffee-pop a small{font-weight:500;font-size:12px;opacity:.85;direction:rtl}
+.mta-cf-bit{background:#00a3a3;color:#fff !important}
 .mta-cf-pb{background:#00b6d6;color:#fff !important}
 .mta-cf-bmc{background:#ffdd00;color:#1c1917 !important}
 .mta-coffee-pop a:hover{filter:brightness(.95)}

@@ -138,7 +138,9 @@
     return w;
   }
 
-  var COFFEE = "https://buymeacoffee.com/elior", PAYBOX = "https://links.payboxapp.com/juFsgRGlh8b";
+  /* donation links. The Bit link expires on 21.11.2027 — renew it (and check the others) once a year */
+  var COFFEE = "https://buymeacoffee.com/elior", PAYBOX = "https://links.payboxapp.com/juFsgRGlh8b",
+      BIT = "https://www.bitpay.co.il/app/share-info?i=z4ZSd5kC&j=true";
   function coffee() {
     if (document.querySelector(".mta-coffee")) return;
     var a = document.createElement("div");
@@ -146,6 +148,7 @@
     a.innerHTML =
       '<div class="mta-coffee-pop" hidden>' +
         '<p>האתר עזר לך? אפשר לפרגן בקפה ☕</p>' +
+        '<a class="mta-cf-bit" href="' + BIT + '" target="_blank" rel="noopener">bit<small>בשקלים, כל סכום</small></a>' +
         '<a class="mta-cf-pb" href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox<small>בשקלים, בלי עמלה</small></a>' +
         '<a class="mta-cf-bmc" href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee<small>בכרטיס אשראי</small></a>' +
       '</div>' +
@@ -178,7 +181,7 @@
     f.setAttribute("dir", "rtl");
     f.innerHTML =
       '<p class="mta-by">נבנה על ידי אליאור חן · <a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a></p>' +
-      '<p class="mta-coffee-line">האתר עזר לך? ☕ אפשר לקנות לי קפה: <a href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox</a> · <a href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee</a></p>' +
+      '<p class="mta-coffee-line">האתר עזר לך? ☕ אפשר לקנות לי קפה: <a href="' + BIT + '" target="_blank" rel="noopener">bit</a> · <a href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox</a> · <a href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee</a></p>' +
       '<p class="mta-note">האתר נועד לעזור בלמידה ונבנה בעזרת בינה מלאכותית, ולכן ייתכנו בו טעויות. כדאי להצליב עם חומרי הקורס. השימוש באתר הוא באחריות הלומד.</p>';
     f.appendChild(switcher("mta-theme-inline"));
     var host = cfg.footer && document.querySelector(cfg.footer);
