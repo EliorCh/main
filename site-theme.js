@@ -138,6 +138,29 @@
     return w;
   }
 
+  var COFFEE = "https://buymeacoffee.com/elior";
+  function coffee() {
+    if (document.querySelector(".mta-coffee")) return;
+    var a = document.createElement("a");
+    a.className = "mta-coffee"; a.href = COFFEE; a.target = "_blank"; a.rel = "noopener";
+    a.setAttribute("dir", "rtl"); a.setAttribute("aria-label", "קנו לי קפה");
+    a.innerHTML = '<span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span>';
+    document.body.appendChild(a);
+    /* sit above anything else pinned to the bottom-left corner (theme switcher, a site's own floating button) */
+    function lift() {
+      var top = innerHeight - 14;
+      document.querySelectorAll("body *").forEach(function (e) {
+        if (e === a || a.contains(e) || e.closest(".mta-menu")) return;
+        var st = getComputedStyle(e); if (st.position !== "fixed" || st.display === "none" || st.visibility === "hidden") return;
+        var q = e.getBoundingClientRect();
+        if (q.width < 2 || q.height < 2 || q.height > 200 || q.left > 260 || q.bottom < innerHeight - 160) return;
+        top = Math.min(top, q.top);
+      });
+      a.style.bottom = Math.round(innerHeight - top + 8) + "px";
+    }
+    lift(); setTimeout(lift, 900);
+    addEventListener("resize", lift);
+  }
   function footer() {
     if (document.querySelector(".mta-foot")) return;
     var f = document.createElement("footer");
@@ -145,6 +168,7 @@
     f.setAttribute("dir", "rtl");
     f.innerHTML =
       '<p class="mta-by">נבנה על ידי אליאור חן · <a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a></p>' +
+      '<p class="mta-coffee-line">האתר עזר לך? <a href="' + COFFEE + '" target="_blank" rel="noopener">☕ אפשר לקנות לי קפה</a></p>' +
       '<p class="mta-note">האתר נועד לעזור בלמידה ונבנה בעזרת בינה מלאכותית, ולכן ייתכנו בו טעויות. כדאי להצליב עם חומרי הקורס. השימוש באתר הוא באחריות הלומד.</p>';
     f.appendChild(switcher("mta-theme-inline"));
     var host = cfg.footer && document.querySelector(cfg.footer);
@@ -533,12 +557,13 @@
     topbar();
     footer();
     if (!document.querySelector(".mta-theme-float")) document.body.appendChild(switcher("mta-theme-float"));
+    coffee();
     set(get());
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
   /* single-page apps that re-render their main view: put the footer back if it was wiped */
-  window.addEventListener("hashchange", function () { setTimeout(function () { footer(); buildMenu(); growAll(); }, 60); });
+  window.addEventListener("hashchange", function () { setTimeout(function () { footer(); coffee(); buildMenu(); growAll(); }, 60); });
   window.addEventListener("load", function () { growAll(); setTimeout(growAll, 800); });
   window.MTATheme = { set: set, get: get, footer: footer };
 })();
