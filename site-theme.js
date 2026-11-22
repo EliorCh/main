@@ -141,6 +141,7 @@
   /* donation links. The Bit link expires on 21.11.2027 — renew it (and check the others) once a year */
   var COFFEE = "https://buymeacoffee.com/elior", PAYBOX = "https://links.payboxapp.com/juFsgRGlh8b",
       BIT = "https://www.bitpay.co.il/app/share-info?i=z4ZSd5kC&j=true";
+  var IMG = (me && me.src ? me.src.replace(/site-theme\.js.*$/, "") : "../main/") + "img/";
   function coffee() {
     if (document.querySelector(".mta-coffee")) return;
     var a = document.createElement("div");
@@ -148,9 +149,9 @@
     a.innerHTML =
       '<div class="mta-coffee-pop" hidden>' +
         '<p>האתר עזר לך? אפשר לפרגן בקפה ☕</p>' +
-        '<a class="mta-cf-bit" href="' + BIT + '" target="_blank" rel="noopener">bit<small>בשקלים, כל סכום</small></a>' +
-        '<a class="mta-cf-pb" href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox<small>בשקלים, בלי עמלה</small></a>' +
-        '<a class="mta-cf-bmc" href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee<small>בכרטיס אשראי</small></a>' +
+        '<a class="mta-cf" href="' + BIT + '" target="_blank" rel="noopener"><img src="' + IMG + 'bit.png" alt=""><span><b dir="ltr">bit</b><small>בשקלים, כל סכום</small></span></a>' +
+        '<a class="mta-cf" href="' + PAYBOX + '" target="_blank" rel="noopener"><img src="' + IMG + 'paybox.png" alt=""><span><b dir="ltr">PayBox</b><small>בשקלים, בלי עמלה</small></span></a>' +
+        '<a class="mta-cf" href="' + COFFEE + '" target="_blank" rel="noopener"><img src="' + IMG + 'bmc.png" alt=""><span><b dir="ltr">Buy Me a Coffee</b><small>בכרטיס אשראי</small></span></a>' +
       '</div>' +
       '<button type="button" class="mta-coffee-btn" aria-expanded="false" aria-label="קנו לי קפה"><span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span></button>';
     var btn = a.querySelector("button"), pop = a.querySelector(".mta-coffee-pop");
