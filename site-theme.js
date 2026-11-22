@@ -139,7 +139,7 @@
   }
 
   /* donation links. The Bit link expires on 21.11.2027 — renew it (and check the others) once a year.
-     When BIT changes, regenerate img/bit-qr.png from the new link (shown to desktop visitors, Bit works only on phones) */
+     When BIT or PAYBOX changes, regenerate img/bit-qr.png / img/paybox-qr.png from the new link (shown to desktop visitors; both apps work only on phones) */
   var COFFEE = "https://buymeacoffee.com/elior", PAYBOX = "https://links.payboxapp.com/juFsgRGlh8b",
       BIT = "https://www.bitpay.co.il/app/share-info?i=z4ZSd5kC&j=true";
   var IMG = (me && me.src ? me.src.replace(/site-theme\.js.*$/, "") : "../main/") + "img/";
@@ -149,22 +149,27 @@
     a.className = "mta-coffee"; a.setAttribute("dir", "rtl");
     a.innerHTML =
       '<div class="mta-coffee-pop" hidden>' +
-        '<p>האתר עזר לך? אפשר לפרגן בקפה ☕</p>' +
-        '<a class="mta-cf mta-cf-bit" href="' + BIT + '" target="_blank" rel="noopener"><img src="' + IMG + 'bit.png" alt=""><span><b dir="ltr">bit</b><small>בשקלים, כל סכום</small></span></a>' +
+        '<p>האתר עזר לך? אפשר לפרגן בקפה ☕<span class="mta-cf-any">כל סכום יתקבל בברכה</span></p>' +
+        '<a class="mta-cf mta-cf-app" href="' + BIT + '" target="_blank" rel="noopener"><img src="' + IMG + 'bit.png" alt=""><span><b dir="ltr">bit</b></span></a>' +
         '<div class="mta-cf-qr" hidden><img src="' + IMG + 'bit-qr.png" alt="QR לתשלום בביט"><span>ביט עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span></div>' +
-        '<a class="mta-cf" href="' + PAYBOX + '" target="_blank" rel="noopener"><img src="' + IMG + 'paybox.png" alt=""><span><b dir="ltr">PayBox</b><small>בשקלים, בלי עמלה</small></span></a>' +
-        '<a class="mta-cf" href="' + COFFEE + '" target="_blank" rel="noopener"><img src="' + IMG + 'bmc.png" alt=""><span><b dir="ltr">Buy Me a Coffee</b><small>בכרטיס אשראי</small></span></a>' +
+        '<a class="mta-cf mta-cf-app" href="' + PAYBOX + '" target="_blank" rel="noopener"><img src="' + IMG + 'paybox.png" alt=""><span><b dir="ltr">PayBox</b></span></a>' +
+        '<div class="mta-cf-qr" hidden><img src="' + IMG + 'paybox-qr.png" alt="QR לתשלום ב-PayBox"><span>PayBox עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span></div>' +
+        '<a class="mta-cf" href="' + COFFEE + '" target="_blank" rel="noopener"><img src="' + IMG + 'bmc.png" alt=""><span><b dir="ltr">Buy Me a Coffee</b></span></a>' +
       '</div>' +
       '<button type="button" class="mta-coffee-btn" aria-expanded="false" aria-label="קנו לי קפה"><span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span></button>';
     var btn = a.querySelector("button"), pop = a.querySelector(".mta-coffee-pop");
-    function show(on) { pop.hidden = !on; if (!on) a.querySelector(".mta-cf-qr").hidden = true; btn.setAttribute("aria-expanded", on ? "true" : "false"); }
+    function show(on) { pop.hidden = !on; if (!on) [].forEach.call(a.querySelectorAll(".mta-cf-qr"), function (q) { q.hidden = true; }); btn.setAttribute("aria-expanded", on ? "true" : "false"); }
     btn.addEventListener("click", function (e) { e.stopPropagation(); show(pop.hidden); });
     /* on a computer the Bit link can't open, so show a QR code to scan with the phone instead */
-    var qr = a.querySelector(".mta-cf-qr");
-    a.querySelector(".mta-cf-bit").addEventListener("click", function (e) {
-      var phone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
-      if (phone) return;
-      e.preventDefault(); qr.hidden = !qr.hidden;
+    var phone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+    [].forEach.call(a.querySelectorAll(".mta-cf-app"), function (l) {
+      l.addEventListener("click", function (e) {
+        if (phone) return;
+        e.preventDefault();
+        var qr = l.nextElementSibling, open = qr.hidden;
+        [].forEach.call(a.querySelectorAll(".mta-cf-qr"), function (q) { q.hidden = true; });
+        qr.hidden = !open;
+      });
     });
     document.addEventListener("click", function (e) { if (!a.contains(e.target)) show(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") show(false); });
