@@ -356,6 +356,13 @@
       });
       return out;
     }
+    /* headings without an id get one, so every page can list (and scroll-spy) its sections */
+    var k = 0;
+    scope.querySelectorAll("h2:not([id]):not(.chapter), h3:not([id])").forEach(function (h) {
+      if (h.closest(".mta-menu, .mta-hero, .box, details")) return;
+      do { k++; } while (document.getElementById("sec-" + k));
+      h.id = "sec-" + k;
+    });
     /* sections are the h2s; a page whose only h2 is its chapter title (cryptosum) keeps its sections in h3 */
     var out = pick("h2[id]:not(.chapter)");
     return out.length ? out : pick("h3[id]");
