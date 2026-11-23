@@ -149,7 +149,7 @@
     a.className = "mta-coffee"; a.setAttribute("dir", "rtl");
     a.innerHTML =
       '<div class="mta-coffee-pop" hidden>' +
-        '<p>האתר עזר לך? אפשר לפרגן בקפה ☕<span class="mta-cf-any">כל סכום יתקבל בברכה</span></p>' +
+        '<p>האתר עזר לך? אפשר לפרגן בקפה ☕<span class="mta-cf-any">כל סכום יתקבל בברכה ויעזור לי לממן את <bdi dir="ltr">Claude</bdi> שמתחזק את האתרים</span></p>' +
         '<a class="mta-cf mta-cf-app" href="' + BIT + '" target="_blank" rel="noopener"><img src="' + IMG + 'bit.png" alt=""><span><b dir="ltr">bit</b></span></a>' +
         '<div class="mta-cf-qr" hidden><img src="' + IMG + 'bit-qr.png" alt="QR לתשלום בביט"><span>ביט עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span></div>' +
         '<a class="mta-cf mta-cf-app" href="' + PAYBOX + '" target="_blank" rel="noopener"><img src="' + IMG + 'paybox.png" alt=""><span><b dir="ltr">PayBox</b></span></a>' +
