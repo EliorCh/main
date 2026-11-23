@@ -144,6 +144,7 @@
       BIT = "https://www.bitpay.co.il/app/share-info?i=z4ZSd5kC&j=true";
   var IMG = (me && me.src ? me.src.replace(/site-theme\.js.*$/, "") : "../main/") + "img/";
   function coffee() {
+    var ua = navigator.userAgent, phone = /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua));
     if (document.querySelector(".mta-coffee")) return;
     var a = document.createElement("div");
     a.className = "mta-coffee"; a.setAttribute("dir", "rtl");
@@ -162,7 +163,6 @@
     btn.addEventListener("click", function (e) { e.stopPropagation(); show(pop.hidden); });
     /* on a computer the Bit link can't open, so show a QR code to scan with the phone instead */
     /* only phones open the app link directly; computers and tablets (iPad, Android tablets) get the QR */
-    var ua = navigator.userAgent, phone = /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua));
     [].forEach.call(a.querySelectorAll(".mta-cf-app"), function (l) {
       l.addEventListener("click", function (e) {
         if (phone) return;
@@ -171,6 +171,15 @@
         [].forEach.call(a.querySelectorAll(".mta-cf-qr"), function (q) { q.hidden = true; });
         qr.hidden = !open;
       });
+    });
+    /* the bit / PayBox links in the footer behave like the chooser: on a computer or tablet they open it with that QR */
+    document.addEventListener("click", function (e) {
+      var f = e.target.closest && e.target.closest(".mta-foot-app");
+      if (!f || phone) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      show(true);
+      var qrs = a.querySelectorAll(".mta-cf-qr");
+      [].forEach.call(qrs, function (q, i) { q.hidden = i !== +f.dataset.app; });
     });
     document.addEventListener("click", function (e) { if (!a.contains(e.target)) show(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") show(false); });
@@ -207,7 +216,7 @@
     f.setAttribute("dir", "rtl");
     f.innerHTML =
       '<p class="mta-by">נבנה על ידי אליאור חן · <a href="mailto:eliorchen@gmail.com" dir="ltr">eliorchen@gmail.com</a></p>' +
-      '<p class="mta-coffee-line">האתר עזר לך? ☕ אפשר לקנות לי קפה: <a href="' + BIT + '" target="_blank" rel="noopener">bit</a> · <a href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox</a> · <a href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee</a></p>' +
+      '<p class="mta-coffee-line">האתר עזר לך? ☕ אפשר לקנות לי קפה: <a class="mta-foot-app" data-app="0" href="' + BIT + '" target="_blank" rel="noopener">bit</a> · <a class="mta-foot-app" data-app="1" href="' + PAYBOX + '" target="_blank" rel="noopener">PayBox</a> · <a href="' + COFFEE + '" target="_blank" rel="noopener">Buy Me a Coffee</a></p>' +
       '<p class="mta-note">האתר נועד לעזור בלמידה ונבנה בעזרת בינה מלאכותית, ולכן ייתכנו בו טעויות. כדאי להצליב עם חומרי הקורס. השימוש באתר הוא באחריות הלומד.</p>';
     f.appendChild(switcher("mta-theme-inline"));
     var host = cfg.footer && document.querySelector(cfg.footer);
