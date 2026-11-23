@@ -151,9 +151,9 @@
       '<div class="mta-coffee-pop" hidden>' +
         '<p>האתר עזר לך? אפשר לפרגן בקפה ☕<span class="mta-cf-any">כל סכום יתקבל בברכה ויעזור לי לממן את <bdi dir="ltr">Claude</bdi> שמתחזק את האתרים</span></p>' +
         '<a class="mta-cf mta-cf-app" href="' + BIT + '" target="_blank" rel="noopener"><img src="' + IMG + 'bit.png" alt=""><span><b dir="ltr">bit</b></span></a>' +
-        '<div class="mta-cf-qr" hidden><img src="' + IMG + 'bit-qr.png" alt="QR לתשלום בביט"><span>ביט עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span></div>' +
+        '<div class="mta-cf-qr" hidden><img src="' + IMG + 'bit-qr.png" alt="QR לתשלום בביט"><span>ביט עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span><a class="mta-cf-open" href="' + BIT + '" target="_blank" rel="noopener">או לפתוח את הקישור כאן</a></div>' +
         '<a class="mta-cf mta-cf-app" href="' + PAYBOX + '" target="_blank" rel="noopener"><img src="' + IMG + 'paybox.png" alt=""><span><b dir="ltr">PayBox</b></span></a>' +
-        '<div class="mta-cf-qr" hidden><img src="' + IMG + 'paybox-qr.png" alt="QR לתשלום ב-PayBox"><span>PayBox עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span></div>' +
+        '<div class="mta-cf-qr" hidden><img src="' + IMG + 'paybox-qr.png" alt="QR לתשלום ב-PayBox"><span>PayBox עובד רק מהטלפון:<br>סרקו את הקוד במצלמה</span><a class="mta-cf-open" href="' + PAYBOX + '" target="_blank" rel="noopener">או לפתוח את הקישור כאן</a></div>' +
         '<a class="mta-cf" href="' + COFFEE + '" target="_blank" rel="noopener"><img src="' + IMG + 'bmc.png" alt=""><span><b dir="ltr">Buy Me a Coffee</b></span></a>' +
       '</div>' +
       '<button type="button" class="mta-coffee-btn" aria-expanded="false" aria-label="קנו לי קפה"><span class="mta-coffee-i">☕</span><span class="mta-coffee-t">קנו לי קפה</span></button>';
@@ -161,7 +161,8 @@
     function show(on) { pop.hidden = !on; if (!on) [].forEach.call(a.querySelectorAll(".mta-cf-qr"), function (q) { q.hidden = true; }); btn.setAttribute("aria-expanded", on ? "true" : "false"); }
     btn.addEventListener("click", function (e) { e.stopPropagation(); show(pop.hidden); });
     /* on a computer the Bit link can't open, so show a QR code to scan with the phone instead */
-    var phone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+    /* only phones open the app link directly; computers and tablets (iPad, Android tablets) get the QR */
+    var ua = navigator.userAgent, phone = /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua));
     [].forEach.call(a.querySelectorAll(".mta-cf-app"), function (l) {
       l.addEventListener("click", function (e) {
         if (phone) return;
