@@ -20,15 +20,15 @@
   };
   /* ---- one place for each course's identity (used by the home hero, menus and top bars) ---- */
   var COURSES = {
-    com:    { icon: "🌐", name: "מבוא לתקשורת מחשבים", num: "141418", who: "ד״ר הדר בינסקי · ד״ר מור פרי", sem: "סמסטר ב׳ · שנה ב׳", sum: "comsum", que: "comque" },
-    ml:     { icon: "🤖", name: "מבוא ללמידת מכונה ומדעי הנתונים", num: "12112123", who: "ד״ר אלה רבינוביץ · פרופ׳ ראיד סעאבנה", sem: "סמסטר ב׳ · שנה ב׳", sum: "mlsum", que: "mlque" },
-    algo:   { icon: "🧭", name: "אלגוריתמים", num: "121120", who: "ד״ר אלעזר גולדנברג · הגב׳ שלומית אריאן", sem: "סמסטר ב׳ · שנה ב׳", sum: "algosum" },
-    stats:  { icon: "📊", name: "סטטיסטיקה", num: "142206", who: "ד״ר נילי בק", sem: "סמסטר ב׳ · שנה ב׳", sum: "statsum" },
-    os:     { icon: "⚙️", name: "מערכות הפעלה", who: "ד״ר משה סולמי רדליך · בוראק מאדי", sem: "סמסטר א׳ · שנה ג׳", sum: "ossum", que: "osque" },
-    db:     { icon: "🗄️", name: "מערכות בסיסי נתונים", who: "פרופ׳ גדעון דרור", sem: "סמסטר א׳ · שנה ג׳", sum: "dbsum" },
-    crypto: { icon: "🔐", name: "מבוא לקריפטוגרפיה שימושית", who: "ד״ר יותם אשכנזי", sem: "סמסטר א׳ · שנה ג׳", sum: "cryptosum" },
-    comp:   { icon: "♾️", name: "חישוביות", who: "פרופ׳ עופר אריאלי", sem: "סמסטר א׳ · שנה ג׳", sum: "computsum", que: "computque" },
-    dl:     { icon: "🧠", name: "למידה עמוקה", num: "14219201", who: "פרופ׳ ראיד סעאבנה", sem: "סמסטר א׳ · שנה ג׳", sum: "dlsum" },
+    com:    { short: "תקשורת", icon: "🌐", name: "מבוא לתקשורת מחשבים", num: "141418", who: "ד״ר הדר בינסקי · ד״ר מור פרי", sem: "סמסטר ב׳ · שנה ב׳", sum: "comsum", que: "comque" },
+    ml:     { short: "למידת מכונה", icon: "🤖", name: "מבוא ללמידת מכונה ומדעי הנתונים", num: "12112123", who: "ד״ר אלה רבינוביץ · פרופ׳ ראיד סעאבנה", sem: "סמסטר ב׳ · שנה ב׳", sum: "mlsum", que: "mlque" },
+    algo:   { short: "אלגוריתמים", icon: "🧭", name: "אלגוריתמים", num: "121120", who: "ד״ר אלעזר גולדנברג · הגב׳ שלומית אריאן", sem: "סמסטר ב׳ · שנה ב׳", sum: "algosum" },
+    stats:  { short: "סטטיסטיקה", icon: "📊", name: "סטטיסטיקה", num: "142206", who: "ד״ר נילי בק", sem: "סמסטר ב׳ · שנה ב׳", sum: "statsum" },
+    os:     { short: "מערכות הפעלה", icon: "⚙️", name: "מערכות הפעלה", who: "ד״ר משה סולמי רדליך · בוראק מאדי", sem: "סמסטר א׳ · שנה ג׳", sum: "ossum", que: "osque" },
+    db:     { short: "בסיסי נתונים", icon: "🗄️", name: "מערכות בסיסי נתונים", who: "פרופ׳ גדעון דרור", sem: "סמסטר א׳ · שנה ג׳", sum: "dbsum" },
+    crypto: { short: "קריפטו", icon: "🔐", name: "מבוא לקריפטוגרפיה שימושית", who: "ד״ר יותם אשכנזי", sem: "סמסטר א׳ · שנה ג׳", sum: "cryptosum" },
+    comp:   { short: "חישוביות", icon: "♾️", name: "חישוביות", who: "פרופ׳ עופר אריאלי", sem: "סמסטר א׳ · שנה ג׳", sum: "computsum", que: "computque" },
+    dl:     { short: "למידה עמוקה", icon: "🧠", name: "למידה עמוקה", num: "14219201", who: "פרופ׳ ראיד סעאבנה", sem: "סמסטר א׳ · שנה ג׳", sum: "dlsum" },
   };
   /* ---- the side menu of every summary site: chapters first, then reference sheets, then exercises ----
      each group: [title, [[label, href], ...]]; "ex" on a chapter = its exercise page (linked at the end of the chapter) */
@@ -585,6 +585,31 @@
     var base = me && me.src ? me.src.replace(/site-theme\.js.*$/, "") : "../main/";
     var s = document.createElement("script"); s.src = base + "site-search.js"; document.body.appendChild(s);
   }
+  /* ---- browser tab: one notebook icon ("מחברת") in the course color, and the title "topic · course | מחברת" ---- */
+  var BRAND = "מחברת", origTitle = document.title;
+  function favicon() {
+    var c = (getComputedStyle(document.documentElement).getPropertyValue("--mta-acc") || "").trim() || "#44403c";
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="4" y="3" width="23" height="26" rx="4" fill="' + c + '"/>' +
+      '<g fill="#fff"><rect x="22" y="6.5" width="7" height="2.6" rx="1.3"/><rect x="22" y="12.3" width="7" height="2.6" rx="1.3"/>' +
+      '<rect x="22" y="18.1" width="7" height="2.6" rx="1.3"/><rect x="22" y="23.9" width="7" height="2.6" rx="1.3"/><rect x="8" y="9" width="10" height="3" rx="1"/></g></svg>';
+    document.querySelectorAll('link[rel~="icon"]').forEach(function (l) { l.parentNode.removeChild(l); });
+    var l = document.createElement("link"); l.rel = "icon"; l.type = "image/svg+xml";
+    l.href = "data:image/svg+xml," + encodeURIComponent(svg);
+    document.head.appendChild(l);
+  }
+  function tabTitle() {
+    var first = origTitle.split(/\s+[—–|·-]\s+|\s*\|\s*/)[0].trim(), topic = first;
+    var menu = SUMMARY_FAMS[cfg.fam] && MENUS[cfg.course];
+    if (menu) {
+      var cur = currentItem(menu);
+      if (cur) topic = cur[0].replace(/^\S+\s+·\s+/, "");
+      else if (here() === "index.html" && (cfg.course !== "comp" || !location.hash || location.hash === "#home")) topic = "דף הבית";
+    } else if (C && C.que && location.pathname.indexOf("/" + C.que + "/") > -1 && here() === "index.html") topic = "תרגול";
+    var parts = [];
+    if (topic && (!C || topic !== C.short)) parts.push(topic);
+    if (C && C.short) parts.push(C.short);
+    document.title = (parts.length ? parts.join(" · ") + " | " : "") + BRAND;
+  }
   function boot() {
     osqBrand();
     hero();
@@ -598,11 +623,13 @@
     if (!document.querySelector(".mta-theme-float")) document.body.appendChild(switcher("mta-theme-float"));
     coffee();
     set(get());
+    favicon();
+    tabTitle();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
   /* single-page apps that re-render their main view: put the footer back if it was wiped */
-  window.addEventListener("hashchange", function () { setTimeout(function () { footer(); coffee(); buildMenu(); growAll(); }, 60); });
+  window.addEventListener("hashchange", function () { setTimeout(function () { footer(); coffee(); buildMenu(); tabTitle(); growAll(); }, 60); });
   window.addEventListener("load", function () { growAll(); setTimeout(growAll, 800); });
   window.MTATheme = { set: set, get: get, footer: footer };
 })();
