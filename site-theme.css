@@ -216,8 +216,8 @@ html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6)
 .mta-menu-brand:hover{color:var(--mta-hi)}
 .mta-brand-icon{font-size:.95em;line-height:1}
 .mta-menu-who{margin:10px 6px 2px;font-size:13.5px;color:rgba(255,255,255,.82)}
-.mta-menu-meta{margin:0 6px 14px;font-size:12px;letter-spacing:.04em;color:rgba(255,255,255,.55);padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.12)}
-.mta-menu-que{display:block;text-align:center;margin:0 6px 14px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--mta-hi);color:var(--mta-hi);font-weight:700}
+.mta-menu-meta{margin:0 6px;font-size:12px;letter-spacing:.04em;color:rgba(255,255,255,.55);padding-bottom:14px}
+.mta-menu-que{display:block;text-align:center;margin:26px 6px 0;padding:8px 10px;border-radius:10px;border:1.5px solid var(--mta-hi);color:var(--mta-hi);font-weight:700}
 .mta-menu-que:hover{background:var(--mta-hi);color:var(--mta-side1)}
 .mta-menu-group{margin:20px 10px 6px;font-size:11.5px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.5)}
 .mta-menu-item{display:block;padding:7px 12px;border-radius:8px;color:rgba(255,255,255,.82);font-weight:500;margin:1px 0}
@@ -229,6 +229,7 @@ html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6)
 .mta-menu-secs a.on{color:#fff;background:rgba(255,255,255,.12);font-weight:700;box-shadow:inset -3px 0 0 var(--mta-hi)}
 .mta-side-home{display:flex;align-items:center;justify-content:center;gap:6px;margin:26px 6px 4px;padding:9px 12px;border-radius:10px;
   border:1.5px solid rgba(255,255,255,.35);color:#fff!important;font-weight:700;background:rgba(255,255,255,.06)}
+.mta-menu-que + .mta-side-home{margin-top:10px}
 .mta-side-home:hover{background:rgba(255,255,255,.14);border-color:var(--mta-hi)}
 .mta-menu-btn,.mta-scrim{display:none}
 .mta-resize{position:fixed;top:0;bottom:0;right:calc(var(--mta-side-w,300px) - 4px);width:8px;cursor:col-resize;z-index:61;touch-action:none}
@@ -257,6 +258,13 @@ html.mta-has-menu[data-fam="ind"] .wrap{max-width:1100px}
 .mta-menu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .mta-collapse{flex:none;margin-top:2px;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);color:#fff;font-size:17px;line-height:1;cursor:pointer}
 .mta-collapse:hover{background:rgba(255,255,255,.16);border-color:var(--mta-hi)}
+/* the magnifier beside the fold button opens the site search */
+.mta-menu-tools{flex:none;display:flex;gap:6px}
+.mta-menu-srch{flex:none;margin-top:2px;width:32px;height:32px;display:grid;place-items:center;padding:0;border-radius:8px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);color:#fff;cursor:pointer}
+.mta-menu-srch svg{width:16px;height:16px}
+.mta-menu-srch:hover{background:rgba(255,255,255,.16);border-color:var(--mta-hi)}
+.mta-hero-btn.mta-open-search{cursor:pointer;font-family:inherit}
+@media print{.mta-menu-srch,.mta-hero-btn.mta-open-search{display:none}}
 .mta-expand{display:none}
 .mta-menu{transition:transform .22s ease}
 html.mta-has-menu body{transition:padding-right .22s ease}

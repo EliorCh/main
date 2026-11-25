@@ -130,7 +130,7 @@
     if ((e.key === "k" || e.key === "K") && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (ov.hidden) open(); else close(); }
     else if (e.key === "/" && ov.hidden && !/input|textarea|select/i.test((document.activeElement || {}).tagName || "") && !(document.activeElement || {}).isContentEditable) { e.preventDefault(); open(); }
   });
-  document.addEventListener("click", function (e) { if (e.target.closest(".mta-menu-search")) open(); });
+  document.addEventListener("click", function (e) { if (e.target.closest(".mta-menu-search, .mta-open-search")) open(); });
   /* ---- on arrival: mark the words in the target part and scroll to it ---- */
   function highlight(q, id) {
     if (!q) return;

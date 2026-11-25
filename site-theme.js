@@ -341,6 +341,7 @@
   }
 
   var C = COURSES[cfg.course];
+  var SRCH_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 
   /* shared header for every site's home page */
   function hero() {
@@ -352,6 +353,7 @@
     var h = document.createElement("header");
     h.className = "mta-hero"; h.setAttribute("dir", "rtl");
     var btns = "";
+    btns += '<button type="button" class="mta-hero-btn ghost mta-open-search">' + SRCH_ICON + " חיפוש באתר</button>";
     if (C.que) btns += '<a class="mta-hero-btn" href="../' + C.que + '/">📝 לאתר התרגול</a>';
     btns += '<a class="mta-hero-btn ghost" href="../main/">כל הקורסים ←</a>';
     h.innerHTML = '<div class="mta-hero-pill">' + C.sem + " · MTA" + (C.num ? " · " + C.num : "") + "</div>" +
@@ -470,11 +472,10 @@
     var cur = currentItem(menu), homeHref = cfg.course === "comp" ? hrefOf("#home") : "index.html";
     var isHome = !cur && (here() === "index.html" || (cfg.course === "comp" && (!location.hash || location.hash === "#home")));
     var h = '<div class="mta-menu-top"><div class="mta-menu-head"><a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
-      '<button type="button" class="mta-collapse" title="קיפול התפריט" aria-label="קיפול התפריט">⇥</button></div>' +
+      '<span class="mta-menu-tools"><button type="button" class="mta-menu-srch mta-open-search" title="חיפוש באתר (Ctrl+K)" aria-label="חיפוש באתר">' + SRCH_ICON + "</button>" +
+      '<button type="button" class="mta-collapse" title="קיפול התפריט" aria-label="קיפול התפריט">⇥</button></span></div>' +
       '<div class="mta-menu-who">' + esc(C.who) + "</div>" +
       '<div class="mta-menu-meta">' + esc(C.sem) + " · MTA" + (C.num ? " · " + C.num : "") + "</div>";
-    h += '<button type="button" class="mta-menu-search"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>חיפוש באתר</span><kbd>Ctrl K</kbd></button>';
-    if (C.que) h += '<a class="mta-menu-que" href="../' + C.que + '/">📝 לאתר התרגול</a>';
     h += '</div><div class="mta-menu-scroll">';   /* the top stays put; only the list below scrolls */
     h += '<a class="mta-menu-item' + (isHome ? " on" : "") + '" href="' + homeHref + '">דף הבית של הקורס</a>';
     menu.forEach(function (g) {
@@ -488,6 +489,7 @@
         }
       });
     });
+    if (C.que) h += '<a class="mta-menu-que" href="../' + C.que + '/">📝 לאתר התרגול</a>';
     h += '<a class="mta-side-home" href="../main/"><span aria-hidden="true">🏠</span> כל הקורסים</a></div>';
     nav.innerHTML = h;
     var sc = menuScroller(nav), on = nav.querySelector(".mta-menu-item.on");
