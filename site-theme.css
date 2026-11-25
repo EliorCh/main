@@ -200,10 +200,16 @@ html[data-fam="osq"] header.top nav.tabs a.ext{border-color:rgba(255,255,255,.6)
 
 /* ---------- 7. The shared side menu (same on every summary site; only the color changes) ---------- */
 .mta-old-menu{display:none!important}
-.mta-menu{position:fixed;top:0;right:0;bottom:0;width:var(--mta-side-w,300px);z-index:60;overflow-y:auto;overscroll-behavior:contain;
-  background:linear-gradient(180deg,var(--mta-side1) 0%,var(--mta-side2) 100%);color:#fff;padding:26px 18px 28px;
+.mta-menu{position:fixed;top:0;right:0;bottom:0;width:var(--mta-side-w,300px);z-index:60;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,var(--mta-side1) 0%,var(--mta-side2) 100%);color:#fff;padding:0;
   font-family:"Assistant",-apple-system,sans-serif;font-size:14.5px;line-height:1.45;text-align:right;box-sizing:border-box}
-.mta-menu::-webkit-scrollbar{width:6px}.mta-menu::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+/* the top of the menu (course name, lecturers, search, practice link) stays put; only the list below it scrolls */
+.mta-menu-top{flex:none;padding:26px 18px 0;border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 6px 10px -8px rgba(0,0,0,.45);position:relative;z-index:1}
+.mta-menu-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px 18px 28px}
+.mta-menu::-webkit-scrollbar,.mta-menu-scroll::-webkit-scrollbar{width:6px}
+.mta-menu::-webkit-scrollbar-thumb,.mta-menu-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+/* very short screens (a phone on its side): the whole menu scrolls as one, so the list is never squeezed away */
+@media (max-height:480px){.mta-menu{display:block;overflow-y:auto}.mta-menu-top{box-shadow:none}.mta-menu-scroll{overflow:visible}}
 .mta-menu a{text-decoration:none}
 .mta-menu-brand{display:inline-flex;align-items:center;gap:10px;font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:21px;line-height:1.25;
   color:#fff;border-bottom:2px solid var(--mta-hi);padding-bottom:4px;margin:0 6px}

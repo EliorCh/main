@@ -469,12 +469,13 @@
     }
     var cur = currentItem(menu), homeHref = cfg.course === "comp" ? hrefOf("#home") : "index.html";
     var isHome = !cur && (here() === "index.html" || (cfg.course === "comp" && (!location.hash || location.hash === "#home")));
-    var h = '<div class="mta-menu-head"><a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
+    var h = '<div class="mta-menu-top"><div class="mta-menu-head"><a class="mta-menu-brand" href="' + homeHref + '" title="לדף הבית של הקורס"><span class="mta-brand-icon" aria-hidden="true">' + C.icon + "</span><span>" + esc(C.name) + "</span></a>" +
       '<button type="button" class="mta-collapse" title="קיפול התפריט" aria-label="קיפול התפריט">⇥</button></div>' +
       '<div class="mta-menu-who">' + esc(C.who) + "</div>" +
       '<div class="mta-menu-meta">' + esc(C.sem) + " · MTA" + (C.num ? " · " + C.num : "") + "</div>";
     h += '<button type="button" class="mta-menu-search"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>חיפוש באתר</span><kbd>Ctrl K</kbd></button>';
     if (C.que) h += '<a class="mta-menu-que" href="../' + C.que + '/">📝 לאתר התרגול</a>';
+    h += '</div><div class="mta-menu-scroll">';   /* the top stays put; only the list below scrolls */
     h += '<a class="mta-menu-item' + (isHome ? " on" : "") + '" href="' + homeHref + '">דף הבית של הקורס</a>';
     menu.forEach(function (g) {
       h += '<div class="mta-menu-group">' + esc(g[0]) + "</div>";
@@ -487,13 +488,14 @@
         }
       });
     });
-    h += '<a class="mta-side-home" href="../main/"><span aria-hidden="true">🏠</span> כל הקורסים</a>';
+    h += '<a class="mta-side-home" href="../main/"><span aria-hidden="true">🏠</span> כל הקורסים</a></div>';
     nav.innerHTML = h;
-    var on = nav.querySelector(".mta-menu-item.on");
-    if (on && on.offsetTop > nav.clientHeight - 80) nav.scrollTop = on.offsetTop - 120;
+    var sc = menuScroller(nav), on = nav.querySelector(".mta-menu-item.on");
+    if (on && on.offsetTop > sc.clientHeight - 80) sc.scrollTop = on.offsetTop - 120;
     exerciseLink(cur);
     spy();
   }
+  function menuScroller(nav) { return nav.querySelector(".mta-menu-scroll") || nav; }
   /* scroll-spy: mark the section you are reading in the side menu, and keep it in view */
   var spyOn = false, spyQ = false;
   function spyUpdate() {
@@ -511,8 +513,8 @@
     if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = links[links.length - 1];
     links.forEach(function (a) { a.classList.toggle("on", a === cur); });
     if (cur) {
-      var r = cur.getBoundingClientRect(), n = nav.getBoundingClientRect();
-      if (r.top < n.top + 60 || r.bottom > n.bottom - 40) nav.scrollTop += r.top - n.top - nav.clientHeight / 2;
+      var sc = menuScroller(nav), r = cur.getBoundingClientRect(), n = sc.getBoundingClientRect();
+      if (r.top < n.top + 60 || r.bottom > n.bottom - 40) sc.scrollTop += r.top - n.top - sc.clientHeight / 2;
     }
   }
   function spy() {
